@@ -4,40 +4,40 @@
 
 ### Users
 
-| Columna  | Tipo dato    | Opciones            |
-| -------- | ------------ | ------------------- |
-| userID   | integer      | PRIMARY KEY, SERIAL |
-| name     | varchar(100) |                     |
-| email    | varchar(100) | UNIQUE              |
-| password | varchar(50)  |                     |
+| Columna  | Tipo dato    | Opciones              |
+| -------- | ------------ | --------------------- |
+| userID   | SERIAL       | PRIMARY KEY, NOT NULL |
+| name     | VARCHAR(100) | NOT NULL              |
+| email    | VARCHAR(100) | UNIQUE, NOT NULL      |
+| password | VARCHAR(50)  | NOT NULL              |
 
 ### HabitTypes
 
-| Columna | Tipo dato   | Opciones    |
-| ------- | ----------- | ----------- |
-| typeID  | integer     | PRIMARY KEY |
-| name    | varchar(50) | UNIQUE      |
-| days    | integer     | unique      |
+| Columna | Tipo dato   | Opciones              |
+| ------- | ----------- | --------------------- |
+| typeID  | INTEGER     | PRIMARY KEY, NOT NULL |
+| name    | VARCHAR(50) | UNIQUE, NOT NULL      |
+| days    | INTEGER     | UNIQUE, NOT NULL      |
 
 ### Habits
 
-| Columna     | Tipo dato    | Opciones                       |
-| ----------- | ------------ | ------------------------------ |
-| habitID     | integer      | PRIMARY KEY                    |
-| userID      | integer      | FOREIGN KEY Users(userID)      |
-| name        | varchar(200) |                                |
-| frequency   | integer      |                                |
-| type        | integer      | FOREIGN KEY HabitTypes(typeID) |
-| startDate   | date         |                                |
-| daysPending | int          |                                |
+| Columna     | Tipo dato    | Opciones                                 |
+| ----------- | ------------ | ---------------------------------------- |
+| habitID     | SERIAL       | PRIMARY KEY, NOT NULL                    |
+| userID      | INTEGER      | FOREIGN KEY Users(userID), NOT NULL      |
+| name        | VARCHAR(200) | NOT NULL                                 |
+| frequency   | INTEGER      | NOT NULL                                 |
+| type        | INTEGER      | FOREIGN KEY HabitTypes(typeID), NOT NULL |
+| startDate   | DATE         | NOT NULL                                 |
+| daysPending | INTEGER      | NOT NULL                                 |
 
 ### History
 
-| Columna | Tipo dato | Opciones                    |
-| ------- | --------- | --------------------------- |
-| entryID | integer   | PRIMARY KEY, SERIAL         |
-| habitID | integer   | FOREIGN KEY Habits(habitID) |
-| date    | timestamp |                             |
+| Columna  | Tipo dato | Opciones                              |
+| -------- | --------- | ------------------------------------- |
+| entryID  | SERIAL    | PRIMARY KEY, NOT NULL                 |
+| habitID  | INTEGER   | FOREIGN KEY Habits(habitID), NOT NULL |
+| DATETime | TIMESTAMP | NOT NULL                              |
 
 ---
 
@@ -51,11 +51,11 @@ Inserta nuevo hábito a la tabla _Habits_
 
 | Nombre     | Tipo         | Requerido                 |
 | ---------- | ------------ | ------------------------- |
-| @name      | varchar(200) | Si                        |
-| @userID    | integer      | Si                        |
-| @frequency | integer      | Si                        |
-| @type      | integer      | Si                        |
-| @startDate | date         | No (default fecha actual) |
+| @name      | VARCHAR(200) | Si                        |
+| @userID    | INTEGER      | Si                        |
+| @frequency | INTEGER      | Si                        |
+| @type      | INTEGER      | Si                        |
+| @startDate | DATE         | No (default fecha actual) |
 
 **Regresa**
 
@@ -69,9 +69,9 @@ Elimina un hábito por su ID de la tabla _Habits_
 
 **Parámetros**
 
-| Nombre   | Tipo | Requerido |
-| -------- | ---- | --------- |
-| @habitID | int  | Si        |
+| Nombre   | Tipo    | Requerido |
+| -------- | ------- | --------- |
+| @habitID | INTEGER | Si        |
 
 **Regresa**
 
@@ -88,18 +88,18 @@ Por defecto obtiene los primeros 20, ordenados de más nuevo a más viejo.
 
 | Nombre   | Tipo       | Requerido           |
 | -------- | ---------- | ------------------- |
-| @userID  | int        | Si                  |
-| @ammount | int        | No (default 20)     |
-| @order   | varchar(8) | No (default newest) |
+| @userID  | INTEGER    | Si                  |
+| @ammount | INTEGER    | No (default 20)     |
+| @order   | VARCHAR(8) | No (default newest) |
 
 **Regresa**
 El tipo de hábito o _type_ regresa el nombre del tipo, por ejemplo _Hábito de Madera_.
 
 | habitID | name         | frequency | type        | startDate | daysPending | totalDays |
 | ------- | ------------ | --------- | ----------- | --------- | ----------- | --------- |
-| int     | varchar(200) | int       | varchar(50) | date      | int         | int       |
+| INTEGER | VARCHAR(200) | INTEGER   | VARCHAR(50) | DATE      | INTEGER     | INTEGER   |
 
-### updateHabit
+### upDATEHabit
 
 Actualiza un hábito por su ID.
 
@@ -107,11 +107,11 @@ Actualiza un hábito por su ID.
 
 | Nombre     | Tipo         | Requerido |
 | ---------- | ------------ | --------- |
-| @habitID   | int          | Si        |
-| @name      | varchar(200) | Si        |
-| @userID    | integer      | Si        |
-| @frequency | integer      | Si        |
-| @type      | integer      | Si        |
+| @habitID   | INTEGER      | Si        |
+| @name      | VARCHAR(200) | Si        |
+| @userID    | INTEGER      | Si        |
+| @frequency | INTEGER      | Si        |
+| @type      | INTEGER      | Si        |
 
 **Regresa**
 
@@ -125,10 +125,10 @@ Inserta una actividad de un hábito en la tabla _History_.
 
 **Parámetros**
 
-| Nombre   | Tipo     | Requerido                 |
-| -------- | -------- | ------------------------- |
-| @habitID | int      | Si                        |
-| @date    | datetime | No (default fecha actual) |
+| Nombre   | Tipo      | Requerido                 |
+| -------- | --------- | ------------------------- |
+| @habitID | INTEGER   | Si                        |
+| @DATE    | TIMESTAMP | No (default fecha actual) |
 
 **Regresa**
 
@@ -144,9 +144,9 @@ Inserta un usuario nuevo
 
 | Nombre    | Tipo         | Requerido |
 | --------- | ------------ | --------- |
-| @name     | varchar(100) | Si        |
-| @email    | varchar(100) | Si        |
-| @password | varchar(50)  | Si        |
+| @name     | VARCHAR(100) | Si        |
+| @email    | VARCHAR(100) | Si        |
+| @password | VARCHAR(50)  | Si        |
 
 **Regresa**
 
@@ -164,9 +164,9 @@ Calcula los días pendientes de un hábito por su habitID.
 
 **Parámetros**
 
-| Nombre   | Tipo | Requerido |
-| -------- | ---- | --------- |
-| @habitID | int  | Si        |
+| Nombre   | Tipo    | Requerido |
+| -------- | ------- | --------- |
+| @habitID | INTEGER | Si        |
 
 **Regresa**
 
@@ -178,6 +178,6 @@ Calcula los días pendientes de un hábito por su habitID.
 
 ## Triggers
 
-### tr_updateDaysPending
+### tr_upDATEDaysPending
 
 Cada vez que se inserta una actividad en la tabla _History_, se actualiza la cantidad de días restantes (daysPending) de ese hábito en la tabla _Habits_
