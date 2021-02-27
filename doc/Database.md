@@ -37,7 +37,7 @@
 | -------- | --------- | ------------------------------------- |
 | entryID  | SERIAL    | PRIMARY KEY, NOT NULL                 |
 | habitID  | INTEGER   | FOREIGN KEY Habits(habitID), NOT NULL |
-| DATETime | TIMESTAMP | NOT NULL                              |
+| dateTime | TIMESTAMP | NOT NULL                              |
 
 ---
 
@@ -99,7 +99,7 @@ El tipo de hábito o _type_ regresa el nombre del tipo, por ejemplo _Hábito de 
 | ------- | ------------ | --------- | ----------- | --------- | ----------- | --------- |
 | INTEGER | VARCHAR(200) | INTEGER   | VARCHAR(50) | DATE      | INTEGER     | INTEGER   |
 
-### upDATEHabit
+### updateHabit
 
 Actualiza un hábito por su ID.
 
@@ -125,10 +125,10 @@ Inserta una actividad de un hábito en la tabla _History_.
 
 **Parámetros**
 
-| Nombre   | Tipo      | Requerido                 |
-| -------- | --------- | ------------------------- |
-| @habitID | INTEGER   | Si                        |
-| @DATE    | TIMESTAMP | No (default fecha actual) |
+| Nombre    | Tipo      | Requerido                 |
+| --------- | --------- | ------------------------- |
+| @habitID  | INTEGER   | Si                        |
+| @dateTime | TIMESTAMP | No (default fecha actual) |
 
 **Regresa**
 
