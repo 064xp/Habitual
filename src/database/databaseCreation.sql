@@ -55,11 +55,28 @@ AS $$
 	BEGIN
 		SELECT days INTO typeDays FROM HabitTypes WHERE typeID = type;
 		IF NOT FOUND THEN
-			RAISE NOTICE 'Invalid habit type %', type;
+			RAISE EXCEPTION 'Invalid habit type %', type;
 			RETURN;
 		END IF;
-	INSERT INTO Habits (userID, name, frequency, type, startDate, daysPending)
-		VALUES (userID, name, frequency, type, startDate, typeDays);
+		INSERT INTO Habits (userID, name, frequency, type, startDate, daysPending)
+			VALUES (userID, name, frequency, type, startDate, typeDays);
+		RAISE NOTICE 'success';
+	END
+$$;
+
+CREATE OR REPLACE PROCEDURE insertUser(
+	name VARCHAR(100),
+	email VARCHAR(100),
+	password VARCHAR(50)
+)
+LANGUAGE plpgsql
+AS $$
+	BEGIN
+		INSERT INTO Users (name, email, password)
+			VALUES (name, email, password);
+		EXCEPTION
+			WHEN unique_violation THEN
+				RAISE EXCEPTION 'Email is already in use';
 	END
 $$;
 
