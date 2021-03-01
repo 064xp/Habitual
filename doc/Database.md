@@ -136,6 +136,8 @@ Inserta una actividad de un hábito en la tabla _History_.
 | ---------------- | ------------------------ |
 | success \| error | habitID \| error message |
 
+<br />
+
 ### insertUser
 
 Inserta un usuario nuevo
@@ -178,6 +180,6 @@ Calcula los días pendientes de un hábito por su habitID.
 
 ## Triggers
 
-### tr_upDATEDaysPending
+### tr_updateDaysPending
 
 Cada vez que se inserta una actividad en la tabla _History_, se actualiza la cantidad de días restantes (daysPending) de ese hábito en la tabla _Habits_
