@@ -39,3 +39,36 @@ CREATE TABLE History (
 	habitID INTEGER REFERENCES Habits (habitID) NOT NULL,
 	dateTime TIMESTAMP NOT NULL
 );
+
+-- Stored Procedures
+
+CREATE OR REPLACE PROCEDURE insertHabit(
+	name VARCHAR(200),
+	userID INTEGER,
+	frequency INTEGER,
+	type INTEGER,
+	startDate DATE = CURRENT_DATE
+)
+LANGUAGE plpgsql
+AS $$
+	DECLARE typeDays INTEGER;
+	BEGIN
+		SELECT days INTO typeDays FROM HabitTypes WHERE typeID = type;
+		IF NOT FOUND THEN
+			RAISE NOTICE 'Invalid habit type %', type;
+			RETURN;
+		END IF;
+	INSERT INTO Habits (userID, name, frequency, type, startDate, daysPending)
+		VALUES (userID, name, frequency, type, startDate, typeDays);
+	END
+$$;
+
+-- Insert initial data 
+INSERT INTO HabitTypes (typeID, name, days)
+	VALUES (1, 'Hábito de Madera', 18);
+
+INSERT INTO HabitTypes (typeID, name, days)
+	VALUES (2, 'Hábito de Piedra', 66);
+
+INSERT INTO HabitTypes (typeID, name, days)
+	VALUES (3, 'Hábito de Acero', 254);
