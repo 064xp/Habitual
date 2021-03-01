@@ -41,7 +41,6 @@ CREATE TABLE History (
 );
 
 -- Stored Procedures
-
 CREATE OR REPLACE PROCEDURE insertHabit(
 	name VARCHAR(200),
 	userID INTEGER,
@@ -77,6 +76,22 @@ AS $$
 		EXCEPTION
 			WHEN unique_violation THEN
 				RAISE EXCEPTION 'Email is already in use';
+	END
+$$;
+
+-- Functions
+
+CREATE OR REPLACE FUNCTION daysPending (_habitID INTEGER)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+	DECLARE
+		habitType INTEGER := (SELECT type FROM Habits WHERE habitID = _habitID);
+		totalDays INTEGER := (SELECT days FROM HabitTypes WHERE typeId = habitType);
+		activitiesDone INTEGER := (SELECT COUNT(DISTINCT dateTime::date) FROM History WHERE habitID = _habitID);	
+		
+	BEGIN
+		RETURN totalDays - activitiesDone;
 	END
 $$;
 
