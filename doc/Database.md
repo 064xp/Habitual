@@ -109,7 +109,6 @@ Actualiza un hábito por su ID.
 | ---------- | ------------ | --------- |
 | @habitID   | INTEGER      | Si        |
 | @name      | VARCHAR(200) | Si        |
-| @userID    | INTEGER      | Si        |
 | @frequency | INTEGER      | Si        |
 | @type      | INTEGER      | Si        |
 
