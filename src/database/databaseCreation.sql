@@ -3,14 +3,14 @@
 -- DROP DATABASE habitual;
 
 CREATE DATABASE habitual
-    WITH 
+    WITH
     OWNER = habitual
     ENCODING = 'UTF8'
     LC_COLLATE = 'en_US.utf8'
     LC_CTYPE = 'en_US.utf8'
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
-	
+
 CREATE TABLE Users (
 	userID SERIAL PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
@@ -50,7 +50,7 @@ CREATE OR REPLACE PROCEDURE insertHabit(
 )
 LANGUAGE plpgsql
 AS $$
-DECLARE 
+DECLARE
 	typeDays INTEGER;
 BEGIN
 	SELECT days INTO typeDays FROM HabitTypes WHERE typeID = _type;
@@ -94,73 +94,16 @@ BEGIN
 END
 $$;
 
--- Trigger
-CREATE TRIGGER tr_updateDaysPending
-AFTER UPDATE ON Habits
-FOR EACH ROW
-	EXECUTE PROCEDURE updateDaysPending();
-
--- Functions
-CREATE OR REPLACE FUNCTION getDaysPending (_habitID INTEGER, _newType INTEGER)
-RETURNS INTEGER
-LANGUAGE plpgsql
-AS $$
-DECLARE
-	totalDays INTEGER := (SELECT days FROM HabitTypes WHERE typeId = _newType);
-	activitiesDone INTEGER := (SELECT COUNT(DISTINCT dateTime::date) FROM History WHERE habitID = _habitID);	
-	daysPending INTEGER;
-BEGIN
-	SELECT totalDays - activitiesDone INTO daysPending;
-	IF daysPending < 0 THEN
-		RETURN 0;
-	ELSE
-		RETURN daysPending;
-	END IF;
-END
-$$;
-
--- Trigger Functions
-CREATE OR REPLACE FUNCTION updateDaysPending()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	IF OLD.type <> NEW.type THEN
-		UPDATE Habits SET daysPending=getDaysPending(NEW.habitID, NEW.type)
-					WHERE habitID = NEW.habitID;
-	END IF;
-
-	RETURN NEW;
-END
-$$;
-
-	
--- Procedure delete habit through ID
-
 CREATE OR REPLACE PROCEDURE deleteHabit(
 	_habitID INTEGER
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	DELETE FROM History WHERE habitID=_habitID;
-	DELETE FROM Habits WHERE habitID=_habitID;
-	
+	DELETE FROM History WHERE habitID = _habitID;
+	DELETE FROM Habits WHERE habitID = _habitID;
 END
 $$;
-
-
-
--- Insert initial data 
-INSERT INTO HabitTypes (typeID, name, days)
-	VALUES (1, 'Hábito de Madera', 18);
-
-INSERT INTO HabitTypes (typeID, name, days)
-	VALUES (2, 'Hábito de Piedra', 66);
-
-INSERT INTO HabitTypes (typeID, name, days)
-	VALUES (3, 'Hábito de Acero', 254);
-	
 
 CREATE OR REPLACE PROCEDURE insertActivity(
 	_habitID INTEGER,
@@ -174,9 +117,33 @@ BEGIN
 END
 $$;
 
--- Function getUserHabits
+-- Trigger
+CREATE TRIGGER tr_updateDaysPending
+AFTER UPDATE ON Habits
+FOR EACH ROW
+	EXECUTE PROCEDURE updateDaysPending();
+
+-- Functions
+CREATE OR REPLACE FUNCTION getDaysPending (_habitID INTEGER, _newType INTEGER)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	totalDays INTEGER := (SELECT days FROM HabitTypes WHERE typeId = _newType);
+	activitiesDone INTEGER := (SELECT COUNT(DISTINCT dateTime::date) FROM History WHERE habitID = _habitID);
+	daysPending INTEGER;
+BEGIN
+	SELECT totalDays - activitiesDone INTO daysPending;
+	IF daysPending < 0 THEN
+		RETURN 0;
+	ELSE
+		RETURN daysPending;
+	END IF;
+END
+$$;
+
 CREATE OR REPLACE FUNCTION getUserHabits (
-	_userID INTEGER, 
+	_userID INTEGER,
 	_ammount INTEGER=20)
 RETURNS TABLE (
 	_habitId INTEGER,
@@ -188,10 +155,39 @@ RETURNS TABLE (
 	_totalDays INTEGER
 )
 LANGUAGE plpgsql
-AS $$	
+AS $$
 BEGIN
 	RETURN QUERY
-	SELECT habitId,name,frequency,(SELECT name from HabitTypes WHERE typeId=type ),startDate,daysPending,(SELECT days FROM HabitTypes WHERE typeID=type) FROM Habits WHERE userID=_userID 
+	SELECT
+    habitId, name, frequency,
+    (SELECT name from HabitTypes WHERE typeId=type ),
+    startDate,daysPending,
+    (SELECT days FROM HabitTypes WHERE typeID=type)
+  FROM Habits WHERE userID=_userID
 	LIMIT _ammount;
 END;
 $$
+
+-- Trigger Functions
+CREATE OR REPLACE FUNCTION updateDaysPending()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	IF OLD.type <> NEW.type THEN
+		UPDATE Habits SET daysPending=getDaysPending(NEW.habitID, NEW.type)
+					WHERE habitID = NEW.habitID;
+	END IF;
+	RETURN NEW;
+END
+$$;
+
+-- Insert initial data
+INSERT INTO HabitTypes (typeID, name, days)
+	VALUES (1, 'Hábito de Madera', 18);
+
+INSERT INTO HabitTypes (typeID, name, days)
+	VALUES (2, 'Hábito de Piedra', 66);
+
+INSERT INTO HabitTypes (typeID, name, days)
+	VALUES (3, 'Hábito de Acero', 254);
