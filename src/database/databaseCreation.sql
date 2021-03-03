@@ -174,8 +174,24 @@ BEGIN
 END
 $$;
 
-
-
-
-
-
+-- Function getUserHabits
+CREATE OR REPLACE FUNCTION getUserHabits (
+	_userID INTEGER, 
+	_ammount INTEGER=20)
+RETURNS TABLE (
+	_habitId INTEGER,
+	_name VARCHAR(200),
+	_frequency INTEGER,
+	_type VARCHAR(50),
+	_startDate DATE,
+	_dayPending INTEGER,
+	_totalDays INTEGER
+)
+LANGUAGE plpgsql
+AS $$	
+BEGIN
+	RETURN QUERY
+	SELECT habitId,name,frequency,(SELECT name from HabitTypes WHERE typeId=type ),startDate,daysPending,(SELECT days FROM HabitTypes WHERE typeID=type) FROM Habits WHERE userID=_userID 
+	LIMIT _ammount;
+END;
+$$
