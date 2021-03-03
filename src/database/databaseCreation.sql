@@ -53,13 +53,13 @@ AS $$
 DECLARE 
 	typeDays INTEGER;
 BEGIN
-	SELECT days INTO typeDays FROM HabitTypes WHERE typeID = type;
+	SELECT days INTO typeDays FROM HabitTypes WHERE typeID = _type;
 	IF NOT FOUND THEN
 		RAISE EXCEPTION 'Invalid habit type %', type;
 		RETURN;
 	END IF;
 	INSERT INTO Habits (userID, name, frequency, type, startDate, daysPending)
-		VALUES (userID, name, frequency, type, startDate, typeDays);
+		VALUES (_userID, _name, _frequency, _type, _startDate, typeDays);
 	RAISE NOTICE 'success';
 END
 $$;
@@ -73,7 +73,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 	INSERT INTO Users (name, email, password)
-		VALUES (name, email, password);
+		VALUES (_name, _email, _password);
 	EXCEPTION
 		WHEN unique_violation THEN
 			RAISE EXCEPTION 'Email is already in use';
@@ -89,7 +89,7 @@ CREATE OR REPLACE PROCEDURE updateHabit(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	UPDATE Habits SET name=name, frequency=_frequency, type=_type
+	UPDATE Habits SET name=_name, frequency=_frequency, type=_type
 		WHERE habitID = _habitID;
 END
 $$;
@@ -134,6 +134,23 @@ BEGIN
 END
 $$;
 
+	
+-- Procedure delete habit through ID
+
+CREATE OR REPLACE PROCEDURE deleteHabit(
+	_habitID INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	DELETE FROM History WHERE habitID=_habitID;
+	DELETE FROM Habits WHERE habitID=_habitID;
+	
+END
+$$;
+
+
+
 -- Insert initial data 
 INSERT INTO HabitTypes (typeID, name, days)
 	VALUES (1, 'Hábito de Madera', 18);
@@ -143,3 +160,22 @@ INSERT INTO HabitTypes (typeID, name, days)
 
 INSERT INTO HabitTypes (typeID, name, days)
 	VALUES (3, 'Hábito de Acero', 254);
+	
+
+CREATE OR REPLACE PROCEDURE insertActivity(
+	_habitID INTEGER,
+	_dateTime TIMESTAMP= CURRENT_DATE
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	INSERT INTO History (habitID, dateTime)
+		VALUES (_habitID,_dateTime);
+END
+$$;
+
+
+
+
+
+
