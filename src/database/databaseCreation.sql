@@ -74,6 +74,8 @@ AS $$
 BEGIN
 	INSERT INTO Users (name, email, password)
 		VALUES (_name, _email, _password);
+	RAISE NOTICE 'success';
+
 	EXCEPTION
 		WHEN unique_violation THEN
 			RAISE EXCEPTION 'Email is already in use';
@@ -91,6 +93,7 @@ AS $$
 BEGIN
 	UPDATE Habits SET name=_name, frequency=_frequency, type=_type
 		WHERE habitID = _habitID;
+	RAISE NOTICE 'success';
 END
 $$;
 
@@ -102,6 +105,7 @@ AS $$
 BEGIN
 	DELETE FROM History WHERE habitID = _habitID;
 	DELETE FROM Habits WHERE habitID = _habitID;
+	RAISE NOTICE 'success';
 END
 $$;
 
@@ -114,6 +118,7 @@ AS $$
 BEGIN
 	INSERT INTO History (habitID, dateTime)
 		VALUES (_habitID,_dateTime);
+	RAISE NOTICE 'success';
 END
 $$;
 
