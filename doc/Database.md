@@ -9,7 +9,7 @@
 | userID   | SERIAL       | PRIMARY KEY, NOT NULL |
 | name     | VARCHAR(100) | NOT NULL              |
 | email    | VARCHAR(100) | UNIQUE, NOT NULL      |
-| password | VARCHAR(50)  | NOT NULL              |
+| password | CHAR(60)     | NOT NULL              |
 
 ### HabitTypes
 
@@ -49,19 +49,25 @@ Inserta nuevo hábito a la tabla _Habits_
 
 **Parámetros**
 
-| Nombre     | Tipo         | Requerido                 |
-| ---------- | ------------ | ------------------------- |
-| @name      | VARCHAR(200) | Si                        |
-| @userID    | INTEGER      | Si                        |
-| @frequency | INTEGER      | Si                        |
-| @type      | INTEGER      | Si                        |
-| @startDate | DATE         | No (default fecha actual) |
+| Nombre      | Tipo         | Requerido                 |
+| ----------- | ------------ | ------------------------- |
+| \_name      | VARCHAR(200) | Si                        |
+| \_userID    | INTEGER      | Si                        |
+| \_frequency | INTEGER      | Si                        |
+| \_type      | INTEGER      | Si                        |
+| \_startDate | DATE         | No (default fecha actual) |
 
 **Regresa**
 
-| status           | message                  |
-| ---------------- | ------------------------ |
-| success \| error | habitID \| error message |
+Notice:
+
+- **success** Se agregó el hábito exitosamente.
+
+Error:
+
+- **Invalid habit type [tipo]** El tipo de hábito que se especificó es incorrecto.
+
+<br />
 
 ### deleteHabit
 
@@ -69,35 +75,17 @@ Elimina un hábito por su ID de la tabla _Habits_
 
 **Parámetros**
 
-| Nombre   | Tipo    | Requerido |
-| -------- | ------- | --------- |
-| @habitID | INTEGER | Si        |
+| Nombre    | Tipo    | Requerido |
+| --------- | ------- | --------- |
+| \_habitID | INTEGER | Si        |
 
 **Regresa**
 
-| status           | message                  |
-| ---------------- | ------------------------ |
-| success \| error | habitID \| error message |
+Notice:
 
-### getUserHabits
+- **success** Se eliminó el hábito exitosamente.
 
-Obtiene los hábitos de un usuario.
-Por defecto obtiene los primeros 20, ordenados de más nuevo a más viejo.
-
-**Parámetros**
-
-| Nombre   | Tipo       | Requerido           |
-| -------- | ---------- | ------------------- |
-| @userID  | INTEGER    | Si                  |
-| @ammount | INTEGER    | No (default 20)     |
-| @order   | VARCHAR(8) | No (default newest) |
-
-**Regresa**
-El tipo de hábito o _type_ regresa el nombre del tipo, por ejemplo _Hábito de Madera_.
-
-| habitID | name         | frequency | type        | startDate | daysPending | totalDays |
-| ------- | ------------ | --------- | ----------- | --------- | ----------- | --------- |
-| INTEGER | VARCHAR(200) | INTEGER   | VARCHAR(50) | DATE      | INTEGER     | INTEGER   |
+<br />
 
 ### updateHabit
 
@@ -105,18 +93,20 @@ Actualiza un hábito por su ID.
 
 **Parámetros**
 
-| Nombre     | Tipo         | Requerido |
-| ---------- | ------------ | --------- |
-| @habitID   | INTEGER      | Si        |
-| @name      | VARCHAR(200) | Si        |
-| @frequency | INTEGER      | Si        |
-| @type      | INTEGER      | Si        |
+| Nombre      | Tipo         | Requerido |
+| ----------- | ------------ | --------- |
+| \_habitID   | INTEGER      | Si        |
+| \_name      | VARCHAR(200) | Si        |
+| \_frequency | INTEGER      | Si        |
+| \_type      | INTEGER      | Si        |
 
 **Regresa**
 
-| status           | message                  |
-| ---------------- | ------------------------ |
-| success \| error | habitID \| error message |
+Notice:
+
+- **success** Se actualizó el hábito exitosamente.
+
+<br />
 
 ### insertActivity
 
@@ -124,16 +114,16 @@ Inserta una actividad de un hábito en la tabla _History_.
 
 **Parámetros**
 
-| Nombre    | Tipo      | Requerido                 |
-| --------- | --------- | ------------------------- |
-| @habitID  | INTEGER   | Si                        |
-| @dateTime | TIMESTAMP | No (default fecha actual) |
+| Nombre     | Tipo      | Requerido                 |
+| ---------- | --------- | ------------------------- |
+| \_habitID  | INTEGER   | Si                        |
+| \_dateTime | TIMESTAMP | No (default fecha actual) |
 
 **Regresa**
 
-| status           | message                  |
-| ---------------- | ------------------------ |
-| success \| error | habitID \| error message |
+Notice:
+
+- **success** Se agregó la actividad exitosamente.
 
 <br />
 
@@ -143,31 +133,56 @@ Inserta un usuario nuevo
 
 **Parámetros**
 
-| Nombre    | Tipo         | Requerido |
-| --------- | ------------ | --------- |
-| @name     | VARCHAR(100) | Si        |
-| @email    | VARCHAR(100) | Si        |
-| @password | VARCHAR(50)  | Si        |
+| Nombre     | Tipo         | Requerido |
+| ---------- | ------------ | --------- |
+| \_name     | VARCHAR(100) | Si        |
+| \_email    | VARCHAR(100) | Si        |
+| \_password | CHAR(60)     | Si        |
 
 **Regresa**
 
-| status           | message                  |
-| ---------------- | ------------------------ |
-| success \| error | habitID \| error message |
+Notice:
+
+- **success** Se agregó el usuario exitosamente.
+
+Error:
+
+- **Email is already in use** Ya existe un usuario registrado con el correo especificado.
 
 ---
 
 ## Funciones
 
-### daysPending()
+### getUserHabits(\_userID, \_ammount)
+
+Obtiene los hábitos de un usuario.
+Por defecto obtiene los primeros 20, ordenados de más nuevo a más viejo.
+
+**Parámetros**
+
+| Nombre    | Tipo    | Requerido       |
+| --------- | ------- | --------------- |
+| \_userID  | INTEGER | Si              |
+| \_ammount | INTEGER | No (default 20) |
+
+**Regresa**
+El tipo de hábito o _type_ regresa el nombre del tipo, por ejemplo _Hábito de Madera_.
+
+| habitID | name         | frequency | type        | startDate | daysPending | totalDays |
+| ------- | ------------ | --------- | ----------- | --------- | ----------- | --------- |
+| INTEGER | VARCHAR(200) | INTEGER   | VARCHAR(50) | DATE      | INTEGER     | INTEGER   |
+
+<br />
+
+### daysPending(\_habitID)
 
 Calcula los días pendientes de un hábito por su habitID.
 
 **Parámetros**
 
-| Nombre   | Tipo    | Requerido |
-| -------- | ------- | --------- |
-| @habitID | INTEGER | Si        |
+| Nombre    | Tipo    | Requerido |
+| --------- | ------- | --------- |
+| \_habitID | INTEGER | Si        |
 
 **Regresa**
 
