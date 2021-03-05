@@ -15,7 +15,7 @@ CREATE TABLE Users (
 	userID SERIAL PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
 	email VARCHAR(100) UNIQUE NOT NULL,
-	password VARCHAR(50) NOT NULL
+	password CHAR(60) NOT NULL
 );
 
 CREATE TABLE HabitTypes (
@@ -67,7 +67,7 @@ $$;
 CREATE OR REPLACE PROCEDURE insertUser(
 	_name VARCHAR(100),
 	_email VARCHAR(100),
-	_password VARCHAR(50)
+	_password CHAR(60)
 )
 LANGUAGE plpgsql
 AS $$
@@ -144,7 +144,8 @@ $$;
 
 CREATE OR REPLACE FUNCTION getUserHabits (
 	_userID INTEGER,
-	_ammount INTEGER=20)
+	_ammount INTEGER=20
+)
 RETURNS TABLE (
 	_habitId INTEGER,
 	_name VARCHAR(200),
@@ -157,14 +158,14 @@ RETURNS TABLE (
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	RETURN QUERY
-	SELECT
-    habitId, name, frequency,
-    (SELECT name from HabitTypes WHERE typeId=type ),
-    startDate,daysPending,
-    (SELECT days FROM HabitTypes WHERE typeID=type)
-  FROM Habits WHERE userID=_userID
-	LIMIT _ammount;
+  RETURN QUERY
+    SELECT
+      habitId, name, frequency,
+      (SELECT name from HabitTypes WHERE typeId=type ),
+      startDate,daysPending,
+      (SELECT days FROM HabitTypes WHERE typeID=type)
+    FROM Habits WHERE userID=_userID
+    LIMIT _ammount;
 END;
 $$
 
