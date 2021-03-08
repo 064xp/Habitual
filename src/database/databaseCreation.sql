@@ -11,6 +11,16 @@ CREATE DATABASE habitual
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
 
+-- User role
+CREATE ROLE habitualUser;
+	WITH encrypted password [replace_password] LOGIN;
+
+GRANT UPDATE(name, email, password), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
+GRANT UPDATE(name, frequency, type, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
+GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
+GRANT SELECT ON TABLE HabitTypes TO habitualUser;
+
+-- Tables
 CREATE TABLE Users (
 	userID SERIAL PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
@@ -122,6 +132,20 @@ BEGIN
 END
 $$;
 
+-- Trigger Functions
+CREATE OR REPLACE FUNCTION updateDaysPending()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	IF OLD.type <> NEW.type THEN
+		UPDATE Habits SET daysPending=getDaysPending(NEW.habitID, NEW.type)
+					WHERE habitID = NEW.habitID;
+	END IF;
+	RETURN NEW;
+END
+$$;
+
 -- Trigger
 CREATE TRIGGER tr_updateDaysPending
 AFTER UPDATE ON Habits
@@ -171,20 +195,6 @@ BEGIN
       (SELECT days FROM HabitTypes WHERE typeID=type)
     FROM Habits WHERE userID=_userID
     LIMIT _ammount;
-END;
-$$
-
--- Trigger Functions
-CREATE OR REPLACE FUNCTION updateDaysPending()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	IF OLD.type <> NEW.type THEN
-		UPDATE Habits SET daysPending=getDaysPending(NEW.habitID, NEW.type)
-					WHERE habitID = NEW.habitID;
-	END IF;
-	RETURN NEW;
 END
 $$;
 
