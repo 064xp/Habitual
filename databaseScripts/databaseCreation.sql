@@ -75,24 +75,6 @@ BEGIN
 END
 $$;
 
-CREATE OR REPLACE PROCEDURE insertUser(
-	_name VARCHAR(100),
-	_email VARCHAR(100),
-	_password CHAR(60)
-)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	INSERT INTO Users (name, email, password)
-		VALUES (_name, _email, _password);
-	RAISE NOTICE 'success';
-
-	EXCEPTION
-		WHEN unique_violation THEN
-			RAISE EXCEPTION 'Email is already in use';
-END
-$$;
-
 CREATE OR REPLACE PROCEDURE updateHabit(
 	_habitID INTEGER,
 	_name VARCHAR(200),
@@ -154,6 +136,28 @@ FOR EACH ROW
 	EXECUTE PROCEDURE updateDaysPending();
 
 -- Functions
+CREATE OR REPLACE FUNCTION insertUser(
+	_name VARCHAR(100),
+ 	_email VARCHAR(100),
+	_password CHAR(60)
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+
+DECLARE
+	uid INTEGER;
+BEGIN
+	INSERT INTO Users (name, email, password)
+				VALUES (_name, _email, _password) RETURNING userId INTO uid;
+	RETURN uid;
+
+EXCEPTION
+	WHEN unique_violation THEN
+		RAISE EXCEPTION USING message = 'Email is already in use', errcode = '23505';
+END
+$$;
+
 CREATE OR REPLACE FUNCTION getDaysPending (_habitID INTEGER, _newType INTEGER)
 RETURNS INTEGER
 LANGUAGE plpgsql
