@@ -16,6 +16,7 @@ CREATE ROLE habitualUser;
 	WITH encrypted password [replace_password] LOGIN;
 
 GRANT UPDATE(name, email, password), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
+GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
 GRANT UPDATE(name, frequency, type, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
 GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
 GRANT SELECT ON TABLE HabitTypes TO habitualUser;

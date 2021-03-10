@@ -10,3 +10,12 @@ const pool = new Pool({
   port: 5432,
   database: "habitual",
 });
+
+module.exports.insertUser = async (user) => {
+  const result = await pool.query("SELECT insertUser($1, $2, $3);", [
+    user.name,
+    user.email,
+    user.password,
+  ]);
+  return result.rows[0].insertuser;
+};
