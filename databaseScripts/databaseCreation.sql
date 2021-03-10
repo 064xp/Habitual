@@ -203,6 +203,17 @@ BEGIN
 END
 $$;
 
+CREATE OR REPLACE FUNCTION emailExists(_email VARCHAR)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	exists BOOLEAN := (SELECT EXISTS(SELECT * FROM Users WHERE email = _email));
+BEGIN
+	RETURN exists;
+END
+$$;
+
 -- Insert initial data
 INSERT INTO HabitTypes (typeID, name, days)
 	VALUES (1, 'Hábito de Madera', 18);

@@ -19,3 +19,8 @@ module.exports.insertUser = async (user) => {
   ]);
   return result.rows[0].insertuser;
 };
+
+module.exports.emailExists = async (userEmail) => {
+  const result = await pool.query("SELECT emailExists($1)", [userEmail]);
+  return result.rows[0].emailexists;
+};
