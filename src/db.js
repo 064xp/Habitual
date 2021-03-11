@@ -24,3 +24,11 @@ module.exports.emailExists = async (userEmail) => {
   const result = await pool.query("SELECT emailExists($1)", [userEmail]);
   return result.rows[0].emailexists;
 };
+
+module.exports.getUser = async (email) => {
+  const result = await pool.query(
+    "SELECT userId, name, email, password  FROM Users WHERE email = $1",
+    [email]
+  );
+  return result.rows[0];
+};

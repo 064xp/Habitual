@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
-const { insertUser, emailExists } = require("../db.js");
+const jwt = require("jsonwebtoken");
+const { insertUser, emailExists, getUser } = require("../db.js");
 const { validateUser } = require("../validation.js");
 
-router.post("/sign-up", async (req, res) => {
+router.post("/signup", async (req, res) => {
   let newUser = { ...req.body };
   // Validate data
   const { error } = validateUser(req.body);
@@ -25,6 +26,24 @@ router.post("/sign-up", async (req, res) => {
     console.log(e);
     return res.status(500).send("Database error");
   }
+});
+
+router.post("/login", async (req, res) => {
+  const exists = await emailExists(req.body.email);
+  if (!exists) return res.status(400).json({ error: "Invalid credentials" });
+
+  const user = await getUser(req.body.email);
+  const validPass = await bcrypt.compare(req.body.password, user.password);
+
+  if (!validPass) res.status(400).json({ error: "Invalid credentials" });
+
+  const token = jwt.sign({ id: user.userid }, process.env.JWT_SECRET);
+  res
+    .cookie("authToken", token, {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      secure: process.env.NODE_ENV == "production" ? true : false,
+    })
+    .json({ status: "success", token: token });
 });
 
 module.exports = router;
