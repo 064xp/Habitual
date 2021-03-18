@@ -32,3 +32,27 @@ module.exports.getUser = async (email) => {
   );
   return result.rows[0];
 };
+
+module.exports.getUserHabits = async (userID, ammount = 20) => {
+  const result = await pool.query("SELECT getUserHabits($1, $2)", [
+    userID,
+    ammount,
+  ]);
+};
+
+module.exports.insertHabit = async (
+  name,
+  userID,
+  frequency,
+  type,
+  startDate = new Date()
+) => {
+  const result = await pool.query("SELECT insertHabit($1, $2, $3, $4, $5)", [
+    name,
+    userID,
+    frequency,
+    type,
+    startDate,
+  ]);
+  return result.rows[0].inserthabit;
+};

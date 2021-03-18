@@ -17,6 +17,7 @@ CREATE ROLE habitualUser;
 
 GRANT UPDATE(name, email, password), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
+GRANT USAGE, SELECT ON SEQUENCE habits_habitid_seq TO habitualUser;
 GRANT UPDATE(name, frequency, type, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
 GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
 GRANT SELECT ON TABLE HabitTypes TO habitualUser;
@@ -66,7 +67,7 @@ DECLARE
 BEGIN
 	SELECT days INTO typeDays FROM HabitTypes WHERE typeID = _type;
 	IF NOT FOUND THEN
-		RAISE EXCEPTION 'Invalid habit type %', type;
+		RAISE EXCEPTION 'Invalid habit type %', _type;
 		RETURN;
 	END IF;
 	INSERT INTO Habits (userID, name, frequency, type, startDate, daysPending)

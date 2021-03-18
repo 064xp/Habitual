@@ -6,7 +6,7 @@ module.exports = verifyToken = (req, res, next) => {
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = verified;
+    req.userID = verified.id;
   } catch (err) {
     res.status(401).json({ error: "Not authorized" });
   }
