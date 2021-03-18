@@ -34,10 +34,11 @@ module.exports.getUser = async (email) => {
 };
 
 module.exports.getUserHabits = async (userID, ammount = 20) => {
-  const result = await pool.query("SELECT getUserHabits($1, $2)", [
-    userID,
-    ammount,
-  ]);
+  const result = await pool.query(
+    "SELECT json_agg(h) from (SELECT * from getUserHabits($1, $2)) h",
+    [userID, ammount]
+  );
+  return result.rows[0].json_agg;
 };
 
 module.exports.insertHabit = async (

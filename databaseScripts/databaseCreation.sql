@@ -53,29 +53,6 @@ CREATE TABLE History (
 );
 
 -- Stored Procedures
-CREATE OR REPLACE PROCEDURE insertHabit(
-	_name VARCHAR(200),
-	_userID INTEGER,
-	_frequency INTEGER,
-	_type INTEGER,
-	_startDate DATE = CURRENT_DATE
-)
-LANGUAGE plpgsql
-AS $$
-DECLARE
-	typeDays INTEGER;
-BEGIN
-	SELECT days INTO typeDays FROM HabitTypes WHERE typeID = _type;
-	IF NOT FOUND THEN
-		RAISE EXCEPTION 'Invalid habit type %', _type;
-		RETURN;
-	END IF;
-	INSERT INTO Habits (userID, name, frequency, type, startDate, daysPending)
-		VALUES (_userID, _name, _frequency, _type, _startDate, typeDays);
-	RAISE NOTICE 'success';
-END
-$$;
-
 CREATE OR REPLACE PROCEDURE updateHabit(
 	_habitID INTEGER,
 	_name VARCHAR(200),
@@ -137,6 +114,32 @@ FOR EACH ROW
 	EXECUTE PROCEDURE updateDaysPending();
 
 -- Functions
+CREATE OR REPLACE FUNCTION insertHabit(
+	_name VARCHAR(200),
+	_userID INTEGER,
+	_frequency INTEGER,
+	_type INTEGER,
+	_startDate DATE = CURRENT_DATE
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	typeDays INTEGER;
+	insertedHabit INTEGER;
+BEGIN
+	SELECT days INTO typeDays FROM HabitTypes WHERE typeID = _type;
+	IF NOT FOUND THEN
+		RAISE EXCEPTION 'Invalid habit type %', _type;
+		RETURN -1;
+	END IF;
+	INSERT INTO Habits (userID, name, frequency, type, startDate, daysPending)
+		VALUES (_userID, _name, _frequency, _type, _startDate, typeDays) RETURNING habitID INTO insertedHabit;
+	RAISE NOTICE 'success';
+	RETURN insertedHabit;
+END
+$$;
+
 CREATE OR REPLACE FUNCTION insertUser(
 	_name VARCHAR(100),
  	_email VARCHAR(100),
@@ -182,24 +185,24 @@ CREATE OR REPLACE FUNCTION getUserHabits (
 	_ammount INTEGER=20
 )
 RETURNS TABLE (
-	_habitId INTEGER,
-	_name VARCHAR(200),
-	_frequency INTEGER,
-	_type VARCHAR(50),
-	_startDate DATE,
-	_dayPending INTEGER,
-	_totalDays INTEGER
+	habitId INTEGER,
+	name VARCHAR(200),
+	frequency INTEGER,
+	type VARCHAR(50),
+	startDate DATE,
+	dayPending INTEGER,
+	totalDays INTEGER
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
   RETURN QUERY
     SELECT
-      habitId, name, frequency,
-      (SELECT name from HabitTypes WHERE typeId=type ),
-      startDate,daysPending,
-      (SELECT days FROM HabitTypes WHERE typeID=type)
-    FROM Habits WHERE userID=_userID
+      h.habitId, h.name, h.frequency,
+      (SELECT ht.name from HabitTypes ht WHERE typeId=h.type ),
+      h.startDate, h.daysPending,
+      (SELECT days FROM HabitTypes WHERE typeID=h.type)
+    FROM Habits as h WHERE userID=_userID
     LIMIT _ammount;
 END
 $$;

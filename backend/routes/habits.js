@@ -18,4 +18,9 @@ router.post("/new", verify, async (req, res) => {
   }
 });
 
+router.get("/", verify, async (req, res) => {
+  const habits = await db.getUserHabits(req.userID, req.body.ammount);
+  res.json({ status: "success", habits: habits });
+});
+
 module.exports = router;
