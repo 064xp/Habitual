@@ -1,10 +1,12 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 const app = express();
 const authRouter = require("./routes/auth");
 const habitRouter = require("./routes/habits");
 const verifyToken = require("./routes/verifyToken");
 
+app.use("/", express.static(path.join(__dirname, "public")));
 //Middleware
 app.use(express.json());
 //Invalid JSON error handler
@@ -20,4 +22,4 @@ app.use(cookieParser());
 app.use("/api/user", authRouter);
 app.use("/api/habits", habitRouter);
 
-app.listen(3002, () => console.log("Server listening on port 3000"));
+app.listen(3002, () => console.log("Server listening on port 3002"));
