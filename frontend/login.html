@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="assets/css/login_signup.css">
+    <link rel="stylesheet" href="assets/css/auth-styles.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
 
 
@@ -19,17 +19,19 @@
         <h1>Ingresa</h1>
         <form action="/login" method="POST" class="user_form">
             <label for="email">Correo</label>
-            <input type="text" name="email" id="email">
+            <input type="email" name="email" id="email">
             <label for="pass">Contraseña</label>
             <input type="password" name="pass" id="pass">
             <button type="submit">Ingresar</button>
-            <a href="#">
-                ¿Eres nuevo? 
+            <a href="#">¿Olvidaste tu contraseña?</a>
+            <hr>
+            <a href="signup.html">
+                ¿Eres nuevo?
                 <br>
-               <b>Registrate </b> 
+               <b>Registrate </b>
             </ah>
         </form>
-       
+
     </section>
 </body>
 </html>
