@@ -30,18 +30,19 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const exists = await emailExists(req.body.email);
-  if (!exists) return res.status(400).json({ error: "Invalid credentials" });
+  if (!exists) return res.status(401).json({ error: "Invalid credentials" });
 
   const user = await getUser(req.body.email);
   const validPass = await bcrypt.compare(req.body.password, user.password);
 
-  if (!validPass) res.status(400).json({ error: "Invalid credentials" });
+  if (!validPass) return res.status(401).json({ error: "Invalid credentials" });
 
   const token = jwt.sign({ id: user.userid }, process.env.JWT_SECRET);
   res
     .cookie("authToken", token, {
       maxAge: 1000 * 60 * 60 * 24 * 30,
       secure: process.env.NODE_ENV == "production" ? true : false,
+      sameSite: "strict",
     })
     .json({ status: "success", token: token });
 });
