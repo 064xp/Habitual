@@ -6,8 +6,7 @@ const authRouter = require("./routes/auth");
 const habitRouter = require("./routes/habits");
 const verifyToken = require("./routes/verifyToken");
 
-// app.use("/", express.static(path.join(__dirname, "public")));
-app.use(express.static("public"));
+app.use("/", express.static(path.join(__dirname, "public")));
 //Middleware
 app.use(express.json());
 //Invalid JSON error handler
