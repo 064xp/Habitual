@@ -45,12 +45,12 @@ router.post("/login", async (req, res) => {
       secure: process.env.NODE_ENV == "production" ? true : false,
       sameSite: "strict",
     })
-    .json({ status: "success", token: token });
+    .json({ status: "success", token: token, name: user.name });
 });
 
-router.post('/logout', verify, (req, res)=>{
-  res.clearCookie('authToken');
-  res.json({'status': 'logged out'})
-})
+router.post("/logout", verify, (req, res) => {
+  res.clearCookie("authToken");
+  res.json({ status: "logged out" });
+});
 
 module.exports = router;

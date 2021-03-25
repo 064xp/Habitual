@@ -7,15 +7,17 @@ form.addEventListener("submit", function (e) {
   else if (formType == "signup") signUp();
 });
 
-function login() {
+function login(correo, password) {
   const credenciales = {
-    email: document.querySelector("#email").value,
-    password: document.querySelector("#pass").value,
+    email: correo || document.querySelector("#email").value,
+    password: password || document.querySelector("#pass").value,
   };
 
   requests.post("/api/user/login", credenciales).then(function (res) {
-    if (res.ok) alert("Credenciales correctas");
-    else {
+    if (res.ok) {
+      localStorage.setItem("name", res.body.name);
+      window.location = "/dashboard.html";
+    } else {
       document.querySelector(".auth-error").classList.remove("hide");
     }
   });
@@ -36,7 +38,9 @@ function signUp() {
         repeat_password: confirmacion,
       })
       .then(function (res) {
-        if (res.ok) alert("usuario creado!");
+        if (res.ok) {
+          login(correo, password);
+        }
       });
   }
 }
