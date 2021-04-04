@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="assets/css/formHabito.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <title>Nuevo Hábito</title>
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>Nuevo Hábito</h1>
+        <a href="/dashboard.html" class="btn-cerrar">+</a>
+      </header>
+      <form id="habito-form">
+        <div class="input-container">
+          <label for="nombre-habito"><h2>Nombre</h2></label>
+          <input type="text" id="nombre-habito" name="nombre" />
+        </div>
+
+        <h2>Tipo</h2>
+        <div class="tipo-container">
+          <input
+            type="radio"
+            name="tipo-habito"
+            id="tipo-habito_madera"
+            value="1"
+            class="radio-tipo_habito"
+            checked
+          />
+          <label for="tipo-habito_madera" class="tipo-habito_label">
+            <h4>Hábito De Madera</h4>
+            <img src="assets/img/wood.svg" alt="Hábito de Madera" />
+            <p>18 días consecutivos</p>
+          </label>
+          <input
+            type="radio"
+            name="tipo-habito"
+            id="tipo-habito_piedra"
+            value="2"
+            class="radio-tipo_habito"
+          />
+          <label for="tipo-habito_piedra" class="tipo-habito_label">
+            <h4>Hábito De Piedra</h4>
+            <img src="assets/img/stones.svg" alt="Hábito de Piedra" />
+            <p>66 días consecutivos</p>
+          </label>
+          <input
+            type="radio"
+            name="tipo-habito"
+            id="tipo-habito_acero"
+            value="3"
+            class="radio-tipo_habito"
+          />
+          <label for="tipo-habito_acero" class="tipo-habito_label">
+            <h4>Hábito De Acero</h4>
+            <img src="assets/img/beam.svg" alt="Hábito de Acero" />
+            <p>254 días consecutivos</p>
+          </label>
+        </div>
+
+        <label for="frecuencia-habito"> <h2>Frecuencia</h2></label>
+        <input
+          type="number"
+          inputmode="numeric"
+          name="frecuencia"
+          id="frecuencia-habito"
+          value="3"
+        />
+        <span class="frecuencia-span">veces por semana</span>
+
+        <h2>Recordatorio</h2>
+        <input
+          name="hora-recordatorio"
+          type="time"
+          value="00:00"
+          id="input-recordatorio"
+        />
+        <button type="submit" class="btn-submit">Crear</button>
+      </form>
+    </main>
+  </body>
+</html>

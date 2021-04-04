@@ -1,0 +1,138 @@
+body {
+  margin: 0;
+  background: #023e8a;
+  font-family: Roboto, sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+header {
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 1.4em;
+  margin: 0;
+}
+header h1 {
+  margin: 0;
+}
+
+.btn-cerrar {
+  background: white;
+  display: block;
+  width: 1.3em;
+  height: 1.3em;
+  color: #023e8a;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  font-weight: bold;
+  font-size: 1.5em;
+  transform: rotateZ(45deg);
+}
+
+#habito-form {
+  background: white;
+  height: 100%;
+  border-radius: 1em 1em 0 0;
+  padding: 1.5em;
+}
+
+#habito-form label:first-child h2 {
+  margin: 0;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+#nombre-habito {
+  font-size: 1.1em;
+  border: 1px solid #cccbcb;
+  padding: 0.3em 0.5em;
+  border-radius: 5px;
+}
+
+.tipo-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.radio-tipo_habito {
+  display: none;
+}
+
+.radio-tipo_habito:checked + .tipo-habito_label {
+  background: #023e8a;
+  color: white;
+}
+
+.tipo-habito_label {
+  width: 31%;
+  border: 1px solid #023e8a;
+  text-align: center;
+  padding: 0.2em;
+  box-sizing: border-box;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.tipo-habito_label img {
+  width: 45%;
+  margin: 0.2em 0;
+}
+
+.tipo-habito_label h4 {
+  margin: 0;
+}
+
+.tipo-habito_label p {
+  font-size: 0.7em;
+  margin: 0;
+}
+
+#frecuencia-habito {
+  background: #0077b6;
+  border-radius: 5px;
+  border: none;
+  padding: 0.3em;
+  color: white;
+  text-align: center;
+  font-size: 1.5em;
+  width: 2em;
+}
+
+.frecuencia-span {
+  font-size: 1.3em;
+  margin-left: 0.6em;
+}
+
+#input-recordatorio {
+  font-family: Roboto, sans-serif;
+  font-size: 1.3em;
+  border: none;
+  border-radius: 5px;
+  background: #0077b6;
+  padding: 0.3em;
+  color: white;
+}
+
+.btn-submit {
+  display: block;
+  background: #023e8a;
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font-size: 1.8em;
+  width: 60%;
+  margin: 1.5em auto 0 auto;
+  cursor: pointer;
+}
