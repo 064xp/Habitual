@@ -136,3 +136,37 @@ header h1 {
   margin: 1.5em auto 0 auto;
   cursor: pointer;
 }
+
+.toggle-slider_slider {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 2em;
+  width: 4em;
+  padding: 0 0.3em;
+  border-radius: 80px;
+  background-color: #787878;
+  box-sizing: border-box;
+  margin: 0 0 1em 0;
+  transition: background-color 120ms ease-in-out;
+}
+
+.toggle-slider_inner {
+  display: block;
+  border-radius: 100%;
+  height: 1.6em;
+  width: 1.6em;
+  background: white;
+  transition: transform 120ms ease-in-out;
+}
+
+.toggle-slider_checkbox {
+  display: none;
+}
+
+.toggle-slider_checkbox:checked + .toggle-slider_slider .toggle-slider_inner {
+  transform: translateX(110%);
+}
+.toggle-slider_checkbox:checked + .toggle-slider_slider {
+  background-color: #023e8a;
+}
