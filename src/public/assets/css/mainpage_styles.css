@@ -52,8 +52,33 @@ header h2{
     margin: 1.9em 0em 0em 1.5em
 
 }
-#pendientes div>*{
+.Habito_Check{
+    display: none;
+
+
+}
+.Habito_Check:checked + .Habito_Check_Label{
+    background-color: #023E8A;
+    background-image: url("../img/check.svg");
+    background-size: 60%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.Habito_Check_Label{
+    border-radius: 200px;
+    background-color: white;
+    width:1.5em;
+    height:1.5em;
+    cursor: pointer;
+}
+#pendientes div{
     margin: 0em; 
+}
+.actividad_terminado{
+   background-color:  #d7d7d7 !important;
+}
+.actividad_terminado h3,.actividad_terminado p{
+    color: black;
 }
 #terminados{
 
@@ -62,5 +87,7 @@ header h2{
 
 .actividad{
     display: flex;
+    background-color:#023E8A ;  
+    color: white;
 
 }
