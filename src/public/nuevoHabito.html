@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
       rel="stylesheet"
     />
-    <title>Nuevo Hábito</title>
+    <title>Habitual | Nuevo Hábito</title>
   </head>
   <body>
     <main class="container">
@@ -21,14 +21,14 @@
       <form id="habito-form">
         <div class="input-container">
           <label for="nombre-habito"><h2>Nombre</h2></label>
-          <input type="text" id="nombre-habito" name="nombre" />
+          <input type="text" id="nombre-habito" name="nombre" required />
         </div>
 
         <h2>Tipo</h2>
         <div class="tipo-container">
           <input
             type="radio"
-            name="tipo-habito"
+            name="tipo"
             id="tipo-habito_madera"
             value="1"
             class="radio-tipo_habito"
@@ -41,7 +41,7 @@
           </label>
           <input
             type="radio"
-            name="tipo-habito"
+            name="tipo"
             id="tipo-habito_piedra"
             value="2"
             class="radio-tipo_habito"
@@ -53,7 +53,7 @@
           </label>
           <input
             type="radio"
-            name="tipo-habito"
+            name="tipo"
             id="tipo-habito_acero"
             value="3"
             class="radio-tipo_habito"
@@ -80,19 +80,26 @@
           type="checkbox"
           class="toggle-slider_checkbox"
           id="recordatorio-toggle"
+          name="recordar"
           checked
         />
         <label for="recordatorio-toggle" class="toggle-slider_slider">
           <span class="toggle-slider_inner"></span>
         </label>
         <input
-          name="hora-recordatorio"
+          name="recordatorio"
           type="time"
           value="00:00"
           id="input-recordatorio"
+          required
         />
         <button type="submit" class="btn-submit">Crear</button>
       </form>
     </main>
   </body>
+  <script>
+    const site = "nuevoHabito";
+  </script>
+  <script src="assets/js/requests.js"></script>
+  <script src="assets/js/habitForm.js"></script>
 </html>

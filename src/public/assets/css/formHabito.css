@@ -8,6 +8,8 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  max-width: 700px;
+  margin: auto;
 }
 
 header {
@@ -40,13 +42,25 @@ header h1 {
 
 #habito-form {
   background: white;
-  height: 100%;
   border-radius: 1em 1em 0 0;
-  padding: 1.5em;
+  padding: 1.5em 1.5em 7em 1.5em;
+  margin: 0 auto;
+  flex-grow: 1;
+  position: relative;
+}
+
+#habito-form h2 {
+  margin: 1.2em 0 0.5em 0;
+}
+
+@media only screen and (min-width: 600px) {
+  #habito-form {
+    padding: 4em 4em 11em 4em;
+  }
 }
 
 #habito-form label:first-child h2 {
-  margin: 0;
+  margin-top: 0;
 }
 
 .input-container {
@@ -76,13 +90,18 @@ header h1 {
 }
 
 .tipo-habito_label {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
   width: 31%;
   border: 1px solid #023e8a;
   text-align: center;
-  padding: 0.2em;
+  padding: 0.5em;
   box-sizing: border-box;
   border-radius: 12px;
   cursor: pointer;
+  transition: background-color 150ms ease-out;
 }
 
 .tipo-habito_label img {
@@ -97,6 +116,30 @@ header h1 {
 .tipo-habito_label p {
   font-size: 0.7em;
   margin: 0;
+}
+
+@media only screen and (min-width: 510px) {
+  #nombre-habito {
+    font-size: 1.6em;
+  }
+
+  .tipo-habito_label h4 {
+    font-size: 1.2em;
+  }
+
+  .tipo-habito_label p {
+    font-size: 0.9em;
+  }
+}
+
+@media only screen and (min-width: 700px) {
+  .tipo-habito_label h4 {
+    font-size: 1.4em;
+  }
+
+  .tipo-habito_label p {
+    font-size: 1em;
+  }
 }
 
 #frecuencia-habito {
@@ -135,6 +178,10 @@ header h1 {
   width: 60%;
   margin: 1.5em auto 0 auto;
   cursor: pointer;
+  position: absolute;
+  bottom: 1.5em;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .toggle-slider_slider {
