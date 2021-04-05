@@ -43,7 +43,7 @@ header h1 {
 #habito-form {
   background: white;
   border-radius: 1em 1em 0 0;
-  padding: 1.5em 1.5em 7em 1.5em;
+  padding: 1.5em;
   margin: 0 auto;
   flex-grow: 1;
   position: relative;
@@ -55,7 +55,7 @@ header h1 {
 
 @media only screen and (min-width: 600px) {
   #habito-form {
-    padding: 4em 4em 11em 4em;
+    padding: 4em;
   }
 }
 
@@ -75,9 +75,15 @@ header h1 {
   border-radius: 5px;
 }
 
-.tipo-container {
+.flex-around {
   display: flex;
   justify-content: space-around;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .radio-tipo_habito {
@@ -140,6 +146,11 @@ header h1 {
   .tipo-habito_label p {
     font-size: 1em;
   }
+
+  #habito-form {
+    flex-grow: initial;
+    border-radius: 1em;
+  }
 }
 
 #frecuencia-habito {
@@ -158,32 +169,6 @@ header h1 {
   margin-left: 0.6em;
 }
 
-#input-recordatorio {
-  font-family: Roboto, sans-serif;
-  font-size: 1.3em;
-  border: none;
-  border-radius: 5px;
-  background: #0077b6;
-  padding: 0.3em;
-  color: white;
-}
-
-.btn-submit {
-  display: block;
-  background: #023e8a;
-  color: white;
-  border: none;
-  border-radius: 100px;
-  font-size: 1.8em;
-  width: 60%;
-  margin: 1.5em auto 0 auto;
-  cursor: pointer;
-  position: absolute;
-  bottom: 1.5em;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .toggle-slider_slider {
   display: flex;
   justify-content: flex-start;
@@ -194,7 +179,7 @@ header h1 {
   border-radius: 80px;
   background-color: #787878;
   box-sizing: border-box;
-  margin: 0 0 1em 0;
+  margin: 0;
   transition: background-color 120ms ease-in-out;
 }
 
@@ -216,4 +201,51 @@ header h1 {
 }
 .toggle-slider_checkbox:checked + .toggle-slider_slider {
   background-color: #023e8a;
+}
+
+#input-recordatorio {
+  font-family: Roboto, sans-serif;
+  font-size: 1.6em;
+  border: none;
+  border-radius: 5px;
+  background: #0077b6;
+  padding: 0.3em;
+  margin: 0.7em 0;
+  color: white;
+}
+
+.rec-dias_checkbox {
+  display: none;
+}
+
+.rec-dias_checkbox:checked + .rec-dias_label {
+  background: #023e8a;
+  color: white;
+}
+
+.rec-dias_label {
+  height: 2em;
+  width: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  border: 2px solid #023e8a;
+  border-radius: 6px;
+  color: #023e8a;
+  font-size: 1.5em;
+  cursor: pointer;
+  margin: 0.2em;
+}
+
+.btn-submit {
+  display: block;
+  background: #023e8a;
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font-size: 1.8em;
+  width: 60%;
+  margin: 1.5em auto 0 auto;
+  cursor: pointer;
 }
