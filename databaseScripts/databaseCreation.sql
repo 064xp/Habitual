@@ -119,8 +119,9 @@ FOR EACH ROW
 CREATE OR REPLACE FUNCTION insertHabit(
 	_name VARCHAR(200),
 	_userID INTEGER,
-	_frequency INTEGER,
+	_frequency INTEGER [],
 	_type INTEGER,
+	_reminder INTEGER [],
 	_startDate DATE = CURRENT_DATE
 )
 RETURNS INTEGER
@@ -135,8 +136,8 @@ BEGIN
 		RAISE EXCEPTION 'Invalid habit type %', _type;
 		RETURN -1;
 	END IF;
-	INSERT INTO Habits (userID, name, frequency, type, startDate, daysPending)
-		VALUES (_userID, _name, _frequency, _type, _startDate, typeDays) RETURNING habitID INTO insertedHabit;
+	INSERT INTO Habits (userID, name, frequency, type, reminderHour, reminderMinute, startDate, daysPending)
+		VALUES (_userID, _name, _frequency, _type, _reminder[1], _reminder[2], _startDate, typeDays) RETURNING habitID INTO insertedHabit;
 	RAISE NOTICE 'success';
 	RETURN insertedHabit;
 END
