@@ -153,20 +153,11 @@ header h1 {
   }
 }
 
-#frecuencia-habito {
-  background: #0077b6;
-  border-radius: 5px;
-  border: none;
-  padding: 0.3em;
-  color: white;
+.form-error {
+  color: #cc4545;
   text-align: center;
-  font-size: 1.5em;
-  width: 2em;
-}
-
-.frecuencia-span {
-  font-size: 1.3em;
-  margin-left: 0.6em;
+  margin: 0.6em;
+  font-size: 1.4em;
 }
 
 .toggle-slider_slider {
@@ -248,4 +239,8 @@ header h1 {
   width: 60%;
   margin: 1.5em auto 0 auto;
   cursor: pointer;
+}
+
+.hide {
+  display: none;
 }

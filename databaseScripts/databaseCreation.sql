@@ -40,10 +40,12 @@ CREATE TABLE Habits (
 	habitID SERIAL PRIMARY KEY NOT NULL,
 	userID INTEGER REFERENCES Users (userID) NOT NULL,
 	name VARCHAR(200) NOT NULL,
-	frequency INTEGER NOT NULL,
+	frequency INTEGER [],
 	type INTEGER REFERENCES HabitTypes (typeID) NOT NULL,
 	startDate DATE NOT NULL,
-	daysPending INTEGER NOT NULL
+	daysPending INTEGER NOT NULL,
+	reminderHour INTEGER,
+	reminderMinute INTEGER
 );
 
 CREATE TABLE History (

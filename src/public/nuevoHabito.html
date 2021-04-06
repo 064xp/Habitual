@@ -11,6 +11,7 @@
       rel="stylesheet"
     />
     <title>Habitual | Nuevo Hábito</title>
+    <script src="assets/js/verifyAuth.js"></script>
   </head>
   <body>
     <main class="container">
@@ -65,15 +66,69 @@
           </label>
         </div>
 
-        <label for="frecuencia-habito"> <h2>Frecuencia</h2></label>
-        <input
-          type="number"
-          inputmode="numeric"
-          name="frecuencia"
-          id="frecuencia-habito"
-          value="3"
-        />
-        <span class="frecuencia-span">veces por semana</span>
+        <h2>Frecuencia</h2>
+        <p class="form-error hide" id="error-frecuencia">
+          Debes escoger al menos 1 día por semana
+        </p>
+        <div class="flex-center">
+          <input
+            type="checkbox"
+            id="recordatorio-lun"
+            class="rec-dias_checkbox"
+            value="1"
+            name="diasRec"
+            checked
+          />
+          <label for="recordatorio-lun" class="rec-dias_label">L</label>
+          <input
+            type="checkbox"
+            id="recordatorio-mar"
+            class="rec-dias_checkbox"
+            value="2"
+            name="diasRec"
+          />
+          <label for="recordatorio-mar" class="rec-dias_label">M</label>
+          <input
+            type="checkbox"
+            id="recordatorio-mi"
+            class="rec-dias_checkbox"
+            value="3"
+            name="diasRec"
+          />
+          <label for="recordatorio-mi" class="rec-dias_label">Mi</label>
+          <input
+            type="checkbox"
+            id="recordatorio-jue"
+            class="rec-dias_checkbox"
+            value="4"
+            name="diasRec"
+          />
+          <label for="recordatorio-jue" class="rec-dias_label">J</label>
+          <input
+            type="checkbox"
+            id="recordatorio-vie"
+            class="rec-dias_checkbox"
+            value="5"
+            name="diasRec"
+          />
+          <label for="recordatorio-vie" class="rec-dias_label">V</label>
+          <input
+            type="checkbox"
+            id="recordatorio-sab"
+            class="rec-dias_checkbox"
+            value="6"
+            name="diasRec"
+          />
+          <label for="recordatorio-sab" class="rec-dias_label">S</label>
+          <input
+            type="checkbox"
+            id="recordatorio-dom"
+            class="rec-dias_checkbox"
+            value="0"
+            name="diasRec"
+          />
+          <label for="recordatorio-dom" class="rec-dias_label">D</label>
+        </div>
 
         <h2>Recordatorio</h2>
         <input
@@ -94,65 +149,6 @@
             id="input-recordatorio"
             required
           />
-          <div class="flex-center">
-            <input
-              type="checkbox"
-              id="recordatorio-lun"
-              class="rec-dias_checkbox"
-              value="L"
-              name="diasRec"
-              checked
-            />
-            <label for="recordatorio-lun" class="rec-dias_label">L</label>
-            <input
-              type="checkbox"
-              id="recordatorio-mar"
-              class="rec-dias_checkbox"
-              value="M"
-              name="diasRec"
-            />
-            <label for="recordatorio-mar" class="rec-dias_label">M</label>
-            <input
-              type="checkbox"
-              id="recordatorio-mi"
-              class="rec-dias_checkbox"
-              value="Mi"
-              name="diasRec"
-            />
-            <label for="recordatorio-mi" class="rec-dias_label">Mi</label>
-            <input
-              type="checkbox"
-              id="recordatorio-jue"
-              class="rec-dias_checkbox"
-              value="J"
-              name="diasRec"
-            />
-            <label for="recordatorio-jue" class="rec-dias_label">J</label>
-            <input
-              type="checkbox"
-              id="recordatorio-vie"
-              class="rec-dias_checkbox"
-              value="V"
-              name="diasRec"
-            />
-            <label for="recordatorio-vie" class="rec-dias_label">V</label>
-            <input
-              type="checkbox"
-              id="recordatorio-sab"
-              class="rec-dias_checkbox"
-              value="S"
-              name="diasRec"
-            />
-            <label for="recordatorio-sab" class="rec-dias_label">S</label>
-            <input
-              type="checkbox"
-              id="recordatorio-dom"
-              class="rec-dias_checkbox"
-              value="D"
-              name="diasRec"
-            />
-            <label for="recordatorio-dom" class="rec-dias_label">D</label>
-          </div>
         </div>
         <button type="submit" class="btn-submit">Crear</button>
       </form>

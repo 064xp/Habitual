@@ -46,14 +46,19 @@ module.exports.insertHabit = async (
   userID,
   frequency,
   type,
+  reminder,
   startDate = new Date()
 ) => {
-  const result = await pool.query("SELECT insertHabit($1, $2, $3, $4, $5)", [
-    name,
-    userID,
-    frequency,
-    type,
-    startDate,
-  ]);
+  const result = await pool.query(
+    "SELECT insertHabit($1, $2, $3, $4, $5, $6)",
+    [
+      name, //1
+      userID, //2
+      frequency, //3
+      type, //4
+      reminder, //5
+      startDate, //6
+    ]
+  );
   return result.rows[0].inserthabit;
 };

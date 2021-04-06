@@ -10,3 +10,17 @@ module.exports.validateUser = (user) => {
 
   return schema.validate(user);
 };
+
+module.exports.validateHabit = (habit) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).max(200).required(),
+    frequency: Joi.array()
+      .items(Joi.number().integer().min(0).max(6))
+      .required(),
+    reminder: Joi.array().items(Joi.number().integer()).length(2).allow(null),
+    type: Joi.number().integer().required(),
+    startDate: Joi.date(),
+  });
+
+  return schema.validate(habit);
+};
