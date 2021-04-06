@@ -5,6 +5,9 @@ const requests = {
   get: function (url) {
     return makeRequest(url, "GET");
   },
+  resHandlers: {
+    on401: null,
+  },
 };
 
 function makeRequest(url, method, body) {
@@ -19,6 +22,10 @@ function makeRequest(url, method, body) {
     .then(function (res) {
       resObj.status = res.status;
       resObj.ok = res.ok;
+
+      if (res.status == 401 && typeof requests.resHandlers.on401 == "function")
+        requests.resHandlers.on401();
+
       return res.json();
     })
     .then(function (json) {

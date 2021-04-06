@@ -48,9 +48,13 @@ router.post("/login", async (req, res) => {
     .json({ status: "success", token: token, name: user.name });
 });
 
+router.get("/verifyToken", verify, (req, res) => {
+  res.json({ status: "success", userID: req.userID });
+});
+
 router.post("/logout", verify, (req, res) => {
   res.clearCookie("authToken");
-  res.json({ status: "logged out" });
+  res.redirect("/");
 });
 
 module.exports = router;

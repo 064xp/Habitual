@@ -29,15 +29,8 @@ function onSubmit(e) {
 
   if (form.recordar.checked) recordatorio = toUTCTime(form.recordatorio.value);
 
-  dias = [];
-  Object.values(form.diasRec).forEach(function (dia) {
-    if (dia.checked) dias.push(parseInt(dia.value));
-  });
-
-  if (dias.length == 0) {
-    frecError.classList.remove("hide");
-    return;
-  }
+  dias = getDias(form.diasRec, frecError);
+  if (!dias) return;
 
   var data = {
     name: form.nombre.value,
@@ -46,9 +39,7 @@ function onSubmit(e) {
     reminder: recordatorio,
   };
 
-  console.log(data);
-
-  if (site == "nuevoHabito") {
+  if (site == "auth_nuevoHabito") {
     requests.post("/api/habits/new", data).then(function (res) {
       console.log(res);
       if (res.ok) {
@@ -58,7 +49,7 @@ function onSubmit(e) {
         alert(res.body.error);
       }
     });
-  } else if (site == "editarHabito") {
+  } else if (site == "auth_editarHabito") {
     //enviar a ruta de editar habito
   }
 }
@@ -71,4 +62,17 @@ function toUTCTime(timeStr) {
   var horaUTC = Math.floor(((totalMin + offset) / 60) % 24);
 
   return [horaUTC, parseInt(horasMin[1])];
+}
+
+function getDias(elems, error) {
+  var dias = [];
+  Object.values(elems).forEach(function (dia) {
+    if (dia.checked) dias.push(parseInt(dia.value));
+  });
+
+  if (dias.length == 0) {
+    error.classList.remove("hide");
+    return null;
+  }
+  return dias;
 }
