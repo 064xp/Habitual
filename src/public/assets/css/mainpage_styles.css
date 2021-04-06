@@ -73,6 +73,7 @@ header h2{
 }
 #pendientes div{
     margin: 0em; 
+    background-color: #023E8A;
 }
 .actividad_terminado{
    background-color:  #d7d7d7 !important;
@@ -80,8 +81,8 @@ header h2{
 .actividad_terminado h3,.actividad_terminado p{
     color: black;
 }
-#terminados{
-
+#terminados div{
+    background-color: #d7d7d7;
 }
 
 
@@ -90,4 +91,19 @@ header h2{
     background-color:#023E8A ;  
     color: white;
 
+}
+
+.icons a{
+    display: flex;
+    flex-direction: row;
+    border: 1px solid white;    
+    width: 2.5em;
+    height: 2.5em;
+}
+.add{
+    border-radius: 2500px;
+    background-color:white;
+    justify-content: center;
+    text-decoration: none;
+    padding:;
 }
