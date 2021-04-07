@@ -29,21 +29,32 @@ header h2{
 #lista{
     background-color: #F5F5F5;
     flex-grow: 1;
+    padding: 1.9em;
+    padding-bottom: 5em;
 }
 #info_completado{
     margin: auto;
     border-radius: 100%;
-    width: 43vw;
-    height: 43vw;
+    width: 48vw;
+    height: 48vw;
     border: 1.5em solid #2BBD4B;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-bottom: 1.5em;
   
 }
 
-#info_completado h2,#info_completado h4{
+#info_completado h2{
+    font-size: 288%;
+    font-weight: normal;
+    margin: 0%;
+    margin-bottom: .25em;
+    color:#F5F5F5 ;
+}
+
+#info_completado h4{
     margin: 0%;
     color:#F5F5F5;
 }
@@ -55,7 +66,9 @@ header h2{
 #pendientes{
     display: flex;
     flex-direction: column;
-    margin: 1.9em 0em 0em 1.5em
+   
+
+
 
 }
 .Habito_Check{
@@ -78,15 +91,10 @@ header h2{
     cursor: pointer;
 }
 #pendientes div{
-    margin: 0em; 
-    background-color: #023E8A;
-    border-radius: 5px;
-    align-items: center;
-    max-width: 90%;
-   
-    
-    
 
+    background-color: #023E8A;
+    border-radius: 13px;
+    align-items: center;
 }
 .actividad_terminado{
    background-color:  #d7d7d7 !important;
@@ -95,7 +103,7 @@ header h2{
 }
 .actividad_terminado h3,.actividad_terminado p{
     color: black;
-    
+     margin-left: 5%;
     
 }
 #terminados div{
@@ -103,13 +111,24 @@ header h2{
     
 }
 
+.info_actividad{
+    margin-left: 5%;
+}
+
+.info_actividad h3{
+    margin: 0%;
+    font-weight: normal;
+    font-size: 1.4em;
+}
+.info_actividad p{
+    margin: 0%;
+}
 
 .actividad{
     display: flex;
     background-color:#023E8A ;  
     color: white;
-    padding-left: 5%;
-    
+    padding: 5%;
 
 }
 
@@ -144,8 +163,8 @@ header h2{
     color: white;
     text-decoration: none;
     font-size:3em;
-    width: 1.3em !important;
-    height: 1.3em;    
+    width: 1.1em !important;
+    height: 1.1em;    
     padding: 0;
 
 }
