@@ -20,8 +20,13 @@ header {
   padding: 1em 1.4em;
   margin: 0;
 }
+
 header h1 {
   margin: 0;
+}
+
+#titulo_nombre-habito {
+  font-weight: normal;
 }
 
 .btn-cerrar {

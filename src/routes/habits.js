@@ -30,4 +30,12 @@ router.get("/", verify, async (req, res) => {
   res.json({ status: "success", habits: habits });
 });
 
+router.get("/:habitID", verify, async (req, res) => {
+  try {
+    const habit = await db.getHabit(req.params.habitID);
+    res.json({ status: "success", habit: habit });
+  } catch (e) {
+    res.status(500).json({ status: "error" });
+  }
+});
 module.exports = router;

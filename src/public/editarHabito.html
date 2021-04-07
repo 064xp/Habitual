@@ -10,12 +10,12 @@
       href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
       rel="stylesheet"
     />
-    <title>Habitual | Nuevo Hábito</title>
+    <title>Habitual | Editar Hábito</title>
   </head>
   <body>
     <main class="container">
       <header>
-        <h1>Nuevo Hábito</h1>
+        <h1>Editar Hábito <span id="titulo_nombre-habito"></span></h1>
         <a href="/dashboard.html" class="btn-cerrar">+</a>
       </header>
       <form id="habito-form">
@@ -149,14 +149,14 @@
             required
           />
         </div>
-        <button type="submit" class="btn-submit">Crear</button>
+        <button type="submit" class="btn-submit">Guardar</button>
       </form>
     </main>
   </body>
   <script>
-    const site = "auth_nuevoHabito";
+    const site = "auth_editarHabito";
   </script>
   <script src="assets/js/requests.js"></script>
-  <script src="assets/js/verifyAuth.js"></script>
+  <!-- <script src="assets/js/verifyAuth.js"></script> -->
   <script src="assets/js/habitForm.js"></script>
 </html>

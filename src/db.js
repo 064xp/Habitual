@@ -41,6 +41,14 @@ module.exports.getUserHabits = async (userID, ammount = 20) => {
   return result.rows[0].json_agg;
 };
 
+module.exports.getHabit = async (habitID) => {
+  const result = await pool.query(
+    "SELECT json_agg(h) from (SELECT * FROM Habits WHERE habitid = $1) h",
+    [habitID]
+  );
+  return result.rows[0].json_agg[0];
+};
+
 module.exports.insertHabit = async (
   name,
   userID,

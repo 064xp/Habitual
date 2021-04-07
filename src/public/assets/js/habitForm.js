@@ -1,9 +1,22 @@
-window.onload = function () {
+window.addEventListener("load", function () {
   document
     .querySelector("#recordatorio-toggle")
     .addEventListener("change", toggleRecordatorio);
   document.querySelector("#habito-form").addEventListener("submit", onSubmit);
-};
+
+  if (site == "auth_editarHabito") {
+    var habitID = getParam("habitID");
+    if (!habitID) window.location = "/";
+    requests.get("/api/habits/" + habitID).then(function (res) {
+      if (!res.ok) {
+        alert("Ocurrio un error, intentalo mas tarde");
+        window.location = "/";
+      }
+      console.log(res.body.habit);
+      rellenarCampos(res.body.habit);
+    });
+  }
+});
 
 function toggleRecordatorio(e) {
   var timeInput = document.querySelector("#input-recordatorio");
@@ -75,4 +88,49 @@ function getDias(elems, error) {
     return null;
   }
   return dias;
+}
+
+function getParam(searchParam) {
+  var params = window.location.search;
+  params = params.replace("?", "").split("&");
+  for (var i = 0; i < params.length; i++) {
+    var param = params[i].split("=");
+    if (param[0] == searchParam) return param[1];
+  }
+
+  return null;
+}
+
+function rellenarCampos(habit) {
+  const nombreTitulo = document.querySelector("#titulo_nombre-habito");
+  const nombre = document.querySelector("#nombre-habito");
+  const tipos = document.querySelectorAll(".radio-tipo_habito");
+  const dias = document.querySelectorAll(".rec-dias_checkbox");
+  const recordatorioToggle = document.querySelector("#recordatorio-toggle");
+  const inputRec = document.querySelector("#input-recordatorio");
+
+  nombreTitulo.innerText = '"' + habit.name + '"';
+  nombre.value = habit.name;
+  tipos[habit.type - 1].checked = true;
+
+  dias.forEach(function (diaInput) {
+    diaInput.checked = false;
+  });
+
+  habit.frequency.forEach(function (dia) {
+    dias[dia].checked = true;
+  });
+
+  if (habit.reminderhour != null) {
+    recordatorioToggle.checked = true;
+    inputRec.value =
+      pad0(habit.reminderhour.toString()) +
+      ":" +
+      pad0(habit.reminderminute.toString());
+  }
+}
+
+function pad0(numStr) {
+  if (numStr.length == 1) return "0" + numStr;
+  return numStr;
 }
