@@ -199,7 +199,12 @@ header h1 {
   background-color: #023e8a;
 }
 
+.toggle-slider_checkbox:checked ~ #input-recordatorio {
+  display: block;
+}
+
 #input-recordatorio {
+  display: none;
   font-family: Roboto, sans-serif;
   font-size: 1.6em;
   border: none;

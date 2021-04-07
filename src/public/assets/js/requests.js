@@ -5,6 +5,9 @@ const requests = {
   get: function (url) {
     return makeRequest(url, "GET");
   },
+  put: function (url, body = {}) {
+    return makeRequest(url, "PUT", body);
+  },
   resHandlers: {
     on401: null,
   },

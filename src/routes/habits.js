@@ -26,8 +26,13 @@ router.post("/new", verify, async (req, res) => {
 });
 
 router.get("/", verify, async (req, res) => {
-  const habits = await db.getUserHabits(req.userID, req.body.ammount);
-  res.json({ status: "success", habits: habits });
+  try {
+    const habits = await db.getUserHabits(req.userID, req.body.ammount);
+    res.json({ status: "success", habits: habits });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ status: "error" });
+  }
 });
 
 router.get("/:habitID", verify, async (req, res) => {
@@ -35,7 +40,27 @@ router.get("/:habitID", verify, async (req, res) => {
     const habit = await db.getHabit(req.params.habitID);
     res.json({ status: "success", habit: habit });
   } catch (e) {
+    console.log(e);
     res.status(500).json({ status: "error" });
   }
 });
+
+router.put("/update/:habitID", verify, async (req, res) => {
+  const { name, type, frequency, reminder } = req.body;
+  try {
+    const habit = await db.updateHabit(
+      req.params.habitID,
+      name,
+      frequency,
+      type,
+      reminder
+    );
+
+    res.json({ status: "success", message: "Updated habitID " + habit });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ status: "error" });
+  }
+});
+
 module.exports = router;

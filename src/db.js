@@ -70,3 +70,20 @@ module.exports.insertHabit = async (
   );
   return result.rows[0].inserthabit;
 };
+
+module.exports.updateHabit = async (
+  habitID,
+  name,
+  frequency,
+  type,
+  reminder
+) => {
+  const result = await pool.query("SELECT updateHabit($1, $2, $3, $4, $5)", [
+    habitID,
+    name,
+    frequency,
+    type,
+    reminder,
+  ]);
+  return result.rows[0].updatehabit;
+};

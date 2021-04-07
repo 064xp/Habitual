@@ -1,7 +1,4 @@
 window.addEventListener("load", function () {
-  document
-    .querySelector("#recordatorio-toggle")
-    .addEventListener("change", toggleRecordatorio);
   document.querySelector("#habito-form").addEventListener("submit", onSubmit);
 
   if (site == "auth_editarHabito") {
@@ -18,19 +15,6 @@ window.addEventListener("load", function () {
   }
 });
 
-function toggleRecordatorio(e) {
-  var timeInput = document.querySelector("#input-recordatorio");
-  var recContainer = document.querySelector(".recordatorio-container");
-  if (e.target.checked) {
-    if (timeInput.value.length === 0) {
-      timeInput.value = "00:00";
-    }
-    recContainer.classList.remove("hide");
-  } else {
-    recContainer.classList.add("hide");
-  }
-}
-
 function onSubmit(e) {
   e.preventDefault();
   var form = e.target;
@@ -40,7 +24,8 @@ function onSubmit(e) {
 
   frecError.classList.add("hide");
 
-  if (form.recordar.checked) recordatorio = toUTCTime(form.recordatorio.value);
+  if (form.recordar.checked)
+    recordatorio = convertTime(form.recordatorio.value, "UTC");
 
   dias = getDias(form.diasRec, frecError);
   if (!dias) return;
@@ -54,7 +39,6 @@ function onSubmit(e) {
 
   if (site == "auth_nuevoHabito") {
     requests.post("/api/habits/new", data).then(function (res) {
-      console.log(res);
       if (res.ok) {
         alert("Agregado correctamente");
         window.location = "/dashboard.html";
@@ -63,18 +47,39 @@ function onSubmit(e) {
       }
     });
   } else if (site == "auth_editarHabito") {
-    //enviar a ruta de editar habito
+    requests
+      .put("/api/habits/update/" + getParam("habitID"), data)
+      .then(function (res) {
+        console.log(res);
+        if (res.ok) {
+          alert("Modificado correctamente");
+          // window.location = "/dashboard.html";
+        } else {
+          alert(res.body.error);
+        }
+      });
   }
 }
 
-function toUTCTime(timeStr) {
+function convertTime(timeStr, converTo = "UTC") {
   //Offset en horas a tiempo UTC
   var horasMin = timeStr.split(":");
   var offset = new Date().getTimezoneOffset();
   var totalMin = parseInt(horasMin[0]) * 60 + parseInt(horasMin[1]);
-  var horaUTC = Math.floor(((totalMin + offset) / 60) % 24);
+  if (converTo == "local") offset = -offset;
+  var horaConv = Math.floor(((totalMin + offset) / 60) % 24);
+  if (horaConv < 0) horaConv = 24 + horaConv;
 
-  return [horaUTC, parseInt(horasMin[1])];
+  return [horaConv, parseInt(horasMin[1])];
+}
+
+function pad0(numStr) {
+  if (numStr.length == 1) return "0" + numStr;
+  return numStr;
+}
+
+function timeToString(timeArr) {
+  return pad0(timeArr[0].toString()) + ":" + pad0(timeArr[1].toString());
 }
 
 function getDias(elems, error) {
@@ -121,16 +126,10 @@ function rellenarCampos(habit) {
     dias[dia].checked = true;
   });
 
+  recordatorioToggle.checked = false;
   if (habit.reminderhour != null) {
     recordatorioToggle.checked = true;
-    inputRec.value =
-      pad0(habit.reminderhour.toString()) +
-      ":" +
-      pad0(habit.reminderminute.toString());
+    var timeStr = timeToString([habit.reminderhour, habit.reminderminute]);
+    inputRec.value = timeToString(convertTime(timeStr, "local"));
   }
-}
-
-function pad0(numStr) {
-  if (numStr.length == 1) return "0" + numStr;
-  return numStr;
 }

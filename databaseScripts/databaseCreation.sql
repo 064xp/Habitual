@@ -18,7 +18,7 @@ CREATE ROLE habitualUser;
 GRANT UPDATE(name, email, password), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE habits_habitid_seq TO habitualUser;
-GRANT UPDATE(name, frequency, type, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
+GRANT UPDATE(name, frequency, type, reminderHour, reminderMinute, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
 GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
 GRANT SELECT ON TABLE HabitTypes TO habitualUser;
 
@@ -220,6 +220,28 @@ BEGIN
 	RETURN exists;
 END
 $$;
+
+CREATE OR REPLACE FUNCTION updateHabit(
+	_habitID INTEGER,
+	_name VARCHAR(200),
+	_frequency INTEGER [],
+	_type INTEGER,
+	_reminder INTEGER []
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	updatedHabit INTEGER;
+BEGIN	
+	UPDATE Habits SET name=_name, frequency=_frequency, type=_type, reminderHour=_reminder[1], reminderMinute=_reminder[2]
+		WHERE habitID = _habitID RETURNING habitID into updatedHabit;
+
+	RAISE NOTICE 'success';
+	RETURN updatedHabit;
+END
+$$;
+
 
 -- Insert initial data
 INSERT INTO HabitTypes (typeID, name, days)
