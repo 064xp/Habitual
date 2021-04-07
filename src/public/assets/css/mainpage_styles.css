@@ -81,15 +81,26 @@ header h2{
     margin: 0em; 
     background-color: #023E8A;
     border-radius: 5px;
+    align-items: center;
+    max-width: 90%;
+   
+    
+    
+
 }
 .actividad_terminado{
    background-color:  #d7d7d7 !important;
+   
+  
 }
 .actividad_terminado h3,.actividad_terminado p{
     color: black;
+    
+    
 }
 #terminados div{
     background-color: #d7d7d7;
+    
 }
 
 
@@ -97,6 +108,8 @@ header h2{
     display: flex;
     background-color:#023E8A ;  
     color: white;
+    padding-left: 5%;
+    
 
 }
 
