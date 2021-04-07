@@ -47,6 +47,10 @@ router.get("/:habitID", verify, async (req, res) => {
 
 router.put("/update/:habitID", verify, async (req, res) => {
   const { name, type, frequency, reminder } = req.body;
+  const { error } = validateHabit(req.body);
+
+  if (error) return res.status(400).json({ error: error.details[0].message });
+
   try {
     const habit = await db.updateHabit(
       req.params.habitID,
