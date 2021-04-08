@@ -168,7 +168,6 @@ header h2{
     width: 1.1em !important;
     height: 1.1em;    
     padding: 0;
-    
 }
 
 
@@ -181,5 +180,11 @@ header h2{
         border-radius: 0%;
         padding: 1.9em;
         padding-bottom: 5em;
+    }
+    .actividad h3{
+        font-size:clamp(25px,12vw,30px );
+    }
+    .actividad p{
+        font-size: clamp(5px,12vw,20px);
     }
 }
