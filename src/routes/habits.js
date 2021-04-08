@@ -67,4 +67,15 @@ router.put("/update/:habitID", verify, async (req, res) => {
   }
 });
 
+router.delete("/:habitID", verify, async (req, res) => {
+  try {
+    const habit = await db.deleteHabit(req.userID, req.params.habitID);
+
+    res.json({ status: "success", message: "Deleted habitID " + habit });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ status: "error" });
+  }
+});
+
 module.exports = router;

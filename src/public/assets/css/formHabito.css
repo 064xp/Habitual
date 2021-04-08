@@ -239,6 +239,18 @@ header h1 {
   margin: 0.2em;
 }
 
+#btn-eliminar {
+  display: block;
+  background: #d23434;
+  border: none;
+  color: white;
+  margin: 1.7em auto;
+  border-radius: 5px;
+  font-size: 1.7em;
+  padding: 0.1em 1.6em;
+  cursor: pointer;
+}
+
 .btn-submit {
   display: block;
   background: #023e8a;

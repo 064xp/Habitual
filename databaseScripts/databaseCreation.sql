@@ -242,6 +242,23 @@ BEGIN
 END
 $$;
 
+CREATE OR REPLACE FUNCTION deleteHabit(
+	_userID INTEGER,
+	_habitID INTEGER
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	deletedHabit INTEGER;
+BEGIN	
+	DELETE FROM Habits WHERE habitID = _habitID AND userID = _userID RETURNING habitID into deletedHabit;
+
+	RAISE NOTICE 'success';
+	RETURN deletedHabit;
+END
+$$;
+
 
 -- Insert initial data
 INSERT INTO HabitTypes (typeID, name, days)

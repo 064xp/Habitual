@@ -2,6 +2,7 @@ window.addEventListener("load", function () {
   document.querySelector("#habito-form").addEventListener("submit", onSubmit);
 
   if (site == "auth_editarHabito") {
+    //Obtener datos de habito por su ID y rellenar campos
     var habitID = getParam("habitID");
     if (!habitID) window.location = "/";
     requests.get("/api/habits/" + habitID).then(function (res) {
@@ -9,9 +10,15 @@ window.addEventListener("load", function () {
         alert("Ocurrio un error, intentalo mas tarde");
         window.location = "/";
       }
-      console.log(res.body.habit);
       rellenarCampos(res.body.habit);
     });
+
+    //Event listener para eliminar hábito
+    document
+      .querySelector("#btn-eliminar")
+      .addEventListener("click", function () {
+        eliminarHabito(habitID);
+      });
   }
 });
 
@@ -50,7 +57,6 @@ function onSubmit(e) {
     requests
       .put("/api/habits/update/" + getParam("habitID"), data)
       .then(function (res) {
-        console.log(res);
         if (res.ok) {
           alert("Modificado correctamente");
           // window.location = "/dashboard.html";
@@ -131,5 +137,16 @@ function rellenarCampos(habit) {
     recordatorioToggle.checked = true;
     var timeStr = timeToString([habit.reminderhour, habit.reminderminute]);
     inputRec.value = timeToString(convertTime(timeStr, "local"));
+  }
+}
+
+function eliminarHabito(habitID) {
+  const confirmacion = confirm("¿Realmente quieres eliminar este hábito?");
+  if (confirmacion) {
+    requests.delete("/api/habits/" + habitID).then(function (res) {
+      if (!res.ok) alert("Ocurrió un error, intentalo más tarde");
+      else alert("El hábito se eliminó correctamente");
+      window.location = "/dashboard.html";
+    });
   }
 }

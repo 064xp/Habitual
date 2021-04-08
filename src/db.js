@@ -87,3 +87,11 @@ module.exports.updateHabit = async (
   ]);
   return result.rows[0].updatehabit;
 };
+
+module.exports.deleteHabit = async (userID, habitID) => {
+  const result = await pool.query("SELECT deleteHabit($1, $2)", [
+    userID,
+    habitID,
+  ]);
+  return result.rows[0].deletehabit;
+};

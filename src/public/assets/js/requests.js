@@ -3,10 +3,13 @@ const requests = {
     return makeRequest(url, "POST", body, headers);
   },
   get: function (url, headers = {}) {
-    return makeRequest(url, "GET", headers);
+    return makeRequest(url, "GET", undefined, headers);
   },
   put: function (url, body = {}, headers = {}) {
     return makeRequest(url, "PUT", body, headers);
+  },
+  delete: function (url, body = {}, headers = {}) {
+    return makeRequest(url, "DELETE", body, headers);
   },
   resHandlers: {},
   customHeaders: {},
