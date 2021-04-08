@@ -181,7 +181,7 @@ RETURNS TABLE (
 	frequency INTEGER [],
 	reminderHour INTEGER,
 	reminderMinute INTEGER,
-	type VARCHAR(50),
+	type INTEGER,
 	startDate DATE,
 	dayPending INTEGER,
 	totalDays INTEGER
@@ -192,13 +192,13 @@ BEGIN
   RETURN QUERY
     SELECT
       h.habitId, h.name, h.frequency, h.reminderHour, h.reminderMinute,
-      (SELECT ht.name from HabitTypes ht WHERE typeId=h.type ),
-      h.startDate, h.daysPending,
+      h.type, h.startDate, h.daysPending,
       (SELECT days FROM HabitTypes WHERE typeID=h.type)
     FROM Habits as h WHERE userID=_userID
     LIMIT _ammount;
 END
 $$;
+
 
 CREATE OR REPLACE FUNCTION emailExists(_email VARCHAR)
 RETURNS BOOLEAN
