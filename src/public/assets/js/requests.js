@@ -1,24 +1,24 @@
 const requests = {
-  post: function (url, body = {}) {
-    return makeRequest(url, "POST", body);
+  post: function (url, body = {}, headers = {}) {
+    return makeRequest(url, "POST", body, headers);
   },
-  get: function (url) {
-    return makeRequest(url, "GET");
+  get: function (url, headers = {}) {
+    return makeRequest(url, "GET", headers);
   },
-  put: function (url, body = {}) {
-    return makeRequest(url, "PUT", body);
+  put: function (url, body = {}, headers = {}) {
+    return makeRequest(url, "PUT", body, headers);
   },
-  resHandlers: {
-    on401: null,
-  },
+  resHandlers: {},
+  customHeaders: {},
 };
 
-function makeRequest(url, method, body) {
+function makeRequest(url, method, body, headers) {
   let resObj = {};
   return fetch(url, {
     method: method,
     headers: {
       "Content-Type": "application/json;charset=utf-8",
+      ...requests.customHeaders,
     },
     body: JSON.stringify(body),
   })
