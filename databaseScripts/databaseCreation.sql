@@ -178,7 +178,9 @@ CREATE OR REPLACE FUNCTION getUserHabits (
 RETURNS TABLE (
 	habitId INTEGER,
 	name VARCHAR(200),
-	frequency INTEGER,
+	frequency INTEGER [],
+	reminderHour INTEGER,
+	reminderMinute INTEGER,
 	type VARCHAR(50),
 	startDate DATE,
 	dayPending INTEGER,
@@ -189,7 +191,7 @@ AS $$
 BEGIN
   RETURN QUERY
     SELECT
-      h.habitId, h.name, h.frequency,
+      h.habitId, h.name, h.frequency, h.reminderHour, h.reminderMinute,
       (SELECT ht.name from HabitTypes ht WHERE typeId=h.type ),
       h.startDate, h.daysPending,
       (SELECT days FROM HabitTypes WHERE typeID=h.type)
