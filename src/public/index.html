@@ -29,6 +29,7 @@
         <input type="email" name="email" id="email" />
         <label for="pass">Contraseña</label>
         <input type="password" name="pass" id="pass" />
+        <p class="auth-error hide">Correo o contraseña incorrectos</p>
         <button type="submit">Ingresar</button>
         <a href="#">¿Olvidaste tu contraseña?</a>
         <hr />
@@ -40,6 +41,10 @@
       </form>
     </section>
   </body>
+  <script>
+    const site = "init_login";
+  </script>
+  <script src="assets/js/verifyAuth.js"></script>
   <script src="assets/js/auth.js"></script>
   <script src="assets/js/requests.js"></script>
 </html>

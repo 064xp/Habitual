@@ -19,20 +19,28 @@
     </nav>
     <section class="form_container">
       <h1>Registrate</h1>
-      <form
-        action="/login"
-        method="POST"
-        class="user_form"
-        data-form-type="signup"
-      >
+      <form action="#" class="user_form" data-form-type="signup">
         <label for="name">Nombre</label>
         <input type="text" name="name" id="name" />
+        <p class="auth-error hide" id="error-name">
+          El nombre debe tener mínimo 2 letras
+        </p>
         <label for="email">Correo</label>
         <input type="text" name="email" id="email" />
+        <p class="auth-error hide" id="error-email">
+          Ingresa un correo válido
+        </p>
         <label for="pass">Contraseña</label>
         <input type="password" name="pass" id="pass" />
+        <p class="auth-error hide" id="error-password">
+          La contraseña debe ser de 6 a 35 caracteres
+        </p>
         <label for="conf_pass">Confirmar Contraseña</label>
         <input type="password" name="conf_pass" id="conf_pass" />
+
+        <p class="auth-error hide" id="error-conf">
+          Las contraseñas no concuerdan
+        </p>
         <button type="submit">Crear Cuenta</button>
         <a href="index.html">
           ¿Ya tienes una cuenta?
@@ -42,4 +50,10 @@
       </form>
     </section>
   </body>
+  <script>
+    const site = "init_signup";
+  </script>
+  <script src="assets/js/verifyAuth.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/requests.js"></script>
 </html>

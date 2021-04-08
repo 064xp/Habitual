@@ -6,8 +6,21 @@ const authRouter = require("./routes/auth");
 const habitRouter = require("./routes/habits");
 const verifyToken = require("./routes/verifyToken");
 
-// app.use("/", express.static(path.join(__dirname, "public")));
-app.use(express.static("public"));
+app.set("trust proxy", true);
+app.use((req, res, next) => {
+  let current = new Date();
+  let cTime =
+    current.getHours() +
+    ":" +
+    current.getMinutes() +
+    ":" +
+    current.getSeconds();
+  console.log(
+    `[${cTime}] Connection from ${req.ip} ${req.method} to ${req.originalUrl}`
+  );
+  next();
+});
+app.use("/", express.static(path.join(__dirname, "public")));
 //Middleware
 app.use(express.json());
 //Invalid JSON error handler

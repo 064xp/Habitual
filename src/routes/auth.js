@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { insertUser, emailExists, getUser } = require("../db.js");
 const { validateUser } = require("../validation.js");
+const verify = require("./verifyToken");
 
 router.post("/signup", async (req, res) => {
   let newUser = { ...req.body };
@@ -44,7 +45,16 @@ router.post("/login", async (req, res) => {
       secure: process.env.NODE_ENV == "production" ? true : false,
       sameSite: "strict",
     })
-    .json({ status: "success", token: token });
+    .json({ status: "success", token: token, name: user.name });
+});
+
+router.get("/verifyToken", verify, (req, res) => {
+  res.json({ status: "success", userID: req.userID });
+});
+
+router.post("/logout", verify, (req, res) => {
+  res.clearCookie("authToken");
+  res.redirect("/");
 });
 
 module.exports = router;

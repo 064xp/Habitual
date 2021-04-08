@@ -1,78 +1,89 @@
-body{
-    background: #023E8A;
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
+body {
+  background: #023e8a;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
 }
 
-nav{
-    padding: .5em 1.5em;
+nav {
+  padding: 0.5em 1.5em;
 }
 
-
-nav h1{
-    color: white;
-    font-weight: normal;
-    font-size: 1.9em;
-    margin: 0;
+nav h1 {
+  color: white;
+  font-weight: normal;
+  font-size: 1.9em;
+  margin: 0;
 }
 .form_container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.form_container h1{
-    color: white;
-    font-size: 3em;
-    font-weight: normal;
-}
-.user_form{
-    display: flex;
-    flex-direction: column;
-
-    background: white;
-    border-radius: 3px 12% 3px 12%;
-    width: 80vw;
-    max-width: 350px;
-    justify-content: center;
-    padding: 1.9em 1.1em;
-
+.form_container h1 {
+  color: white;
+  font-size: 3em;
+  font-weight: normal;
 }
 
+.user_form {
+  display: flex;
+  flex-direction: column;
 
-.user_form label{
-    font-size: 1.5em;
+  background: white;
+  border-radius: 3px 12% 3px 12%;
+  width: 80vw;
+  max-width: 350px;
+  justify-content: center;
+  padding: 1.9em 1.1em;
 }
 
-
-.user_form input{
-    margin-bottom: 25px;
-    font-size: 1.25em;
-    border-radius: 6px;
-    border: 2px solid #CCCBCB;
-    padding: .5em;
+.user_form label {
+  font-size: 1.5em;
+  margin-top: 1em;
 }
 
-.user_form button{
-    color: white;
-    background:#023E8A;
-    border-radius: 500px;
-    font-size: 1.2em;
-    width: 80%;
-    /* Restringir tamaño*/
-    margin: .5em auto 0.5em auto;
-    font-size: 1.9em;
-    /*padding: .25em;*/
+.user_form label:first-child {
+  margin: 0;
 }
 
-.user_form a{
-    text-decoration: none;
-    text-align: center;
-    font-size: 1.1em ;
-    color: #023E8A;
+.user_form input {
+  font-size: 1.25em;
+  border-radius: 6px;
+  border: 2px solid #cccbcb;
+  padding: 0.5em;
 }
-.user_form hr{
+
+.user_form button {
+  color: white;
+  background: #023e8a;
+  border-radius: 500px;
+  font-size: 1.2em;
+  width: 80%;
+  /* Restringir tamaño*/
+  margin: 0.5em auto 0.5em auto;
+  font-size: 1.9em;
+  border: none;
+}
+
+.user_form a {
+  text-decoration: none;
+  text-align: center;
+  font-size: 1.1em;
+  color: #023e8a;
+}
+.user_form hr {
   width: 40%;
-    color: #023E8A;
+  color: #023e8a;
+}
+
+.auth-error {
+  color: #cc4545;
+  text-align: center;
+  margin: 0.4em 0 0 0;
+  font-size: 1.2em;
+}
+
+.hide {
+  display: none;
 }

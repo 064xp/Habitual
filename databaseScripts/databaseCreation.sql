@@ -18,7 +18,7 @@ CREATE ROLE habitualUser;
 GRANT UPDATE(name, email, password), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE habits_habitid_seq TO habitualUser;
-GRANT UPDATE(name, frequency, type, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
+GRANT UPDATE(name, frequency, type, reminderHour, reminderMinute, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
 GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
 GRANT SELECT ON TABLE HabitTypes TO habitualUser;
 
@@ -40,10 +40,12 @@ CREATE TABLE Habits (
 	habitID SERIAL PRIMARY KEY NOT NULL,
 	userID INTEGER REFERENCES Users (userID) NOT NULL,
 	name VARCHAR(200) NOT NULL,
-	frequency INTEGER NOT NULL,
+	frequency INTEGER [],
 	type INTEGER REFERENCES HabitTypes (typeID) NOT NULL,
 	startDate DATE NOT NULL,
-	daysPending INTEGER NOT NULL
+	daysPending INTEGER NOT NULL,
+	reminderHour INTEGER,
+	reminderMinute INTEGER
 );
 
 CREATE TABLE History (
@@ -117,8 +119,9 @@ FOR EACH ROW
 CREATE OR REPLACE FUNCTION insertHabit(
 	_name VARCHAR(200),
 	_userID INTEGER,
-	_frequency INTEGER,
+	_frequency INTEGER [],
 	_type INTEGER,
+	_reminder INTEGER [],
 	_startDate DATE = CURRENT_DATE
 )
 RETURNS INTEGER
@@ -133,8 +136,8 @@ BEGIN
 		RAISE EXCEPTION 'Invalid habit type %', _type;
 		RETURN -1;
 	END IF;
-	INSERT INTO Habits (userID, name, frequency, type, startDate, daysPending)
-		VALUES (_userID, _name, _frequency, _type, _startDate, typeDays) RETURNING habitID INTO insertedHabit;
+	INSERT INTO Habits (userID, name, frequency, type, reminderHour, reminderMinute, startDate, daysPending)
+		VALUES (_userID, _name, _frequency, _type, _reminder[1], _reminder[2], _startDate, typeDays) RETURNING habitID INTO insertedHabit;
 	RAISE NOTICE 'success';
 	RETURN insertedHabit;
 END
@@ -217,6 +220,46 @@ BEGIN
 	RETURN exists;
 END
 $$;
+
+CREATE OR REPLACE FUNCTION updateHabit(
+	_userID INTEGER,
+	_habitID INTEGER,
+	_name VARCHAR(200),
+	_frequency INTEGER [],
+	_type INTEGER,
+	_reminder INTEGER []
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	updatedHabit INTEGER;
+BEGIN	
+	UPDATE Habits SET name=_name, frequency=_frequency, type=_type, reminderHour=_reminder[1], reminderMinute=_reminder[2]
+		WHERE habitID = _habitID RETURNING habitID into updatedHabit;
+
+	RAISE NOTICE 'success';
+	RETURN updatedHabit;
+END
+$$;
+
+CREATE OR REPLACE FUNCTION deleteHabit(
+	_userID INTEGER,
+	_habitID INTEGER
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	deletedHabit INTEGER;
+BEGIN	
+	DELETE FROM Habits WHERE habitID = _habitID AND userID = _userID RETURNING habitID into deletedHabit;
+
+	RAISE NOTICE 'success';
+	RETURN deletedHabit;
+END
+$$;
+
 
 -- Insert initial data
 INSERT INTO HabitTypes (typeID, name, days)

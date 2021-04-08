@@ -41,19 +41,55 @@ module.exports.getUserHabits = async (userID, ammount = 20) => {
   return result.rows[0].json_agg;
 };
 
+module.exports.getHabit = async (userID, habitID) => {
+  const result = await pool.query(
+    "SELECT json_agg(h) from (SELECT * FROM Habits WHERE habitid = $1 and userID = $2) h",
+    [habitID, userID]
+  );
+  return result.rows[0].json_agg ? result.rows[0].json_agg[0] : null;
+};
+
 module.exports.insertHabit = async (
   name,
   userID,
   frequency,
   type,
+  reminder,
   startDate = new Date()
 ) => {
-  const result = await pool.query("SELECT insertHabit($1, $2, $3, $4, $5)", [
-    name,
-    userID,
-    frequency,
-    type,
-    startDate,
-  ]);
+  const result = await pool.query(
+    "SELECT insertHabit($1, $2, $3, $4, $5, $6)",
+    [
+      name, //1
+      userID, //2
+      frequency, //3
+      type, //4
+      reminder, //5
+      startDate, //6
+    ]
+  );
   return result.rows[0].inserthabit;
+};
+
+module.exports.updateHabit = async (
+  userID,
+  habitID,
+  name,
+  frequency,
+  type,
+  reminder
+) => {
+  const result = await pool.query(
+    "SELECT updateHabit($1, $2, $3, $4, $5, $6)",
+    [userID, habitID, name, frequency, type, reminder]
+  );
+  return result.rows[0].updatehabit;
+};
+
+module.exports.deleteHabit = async (userID, habitID) => {
+  const result = await pool.query("SELECT deleteHabit($1, $2)", [
+    userID,
+    habitID,
+  ]);
+  return result.rows[0].deletehabit;
 };
