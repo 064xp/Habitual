@@ -1,7 +1,6 @@
 -- Database: habitual
 
 -- DROP DATABASE habitual;
-
 CREATE DATABASE habitual
     WITH
     OWNER = habitual
@@ -10,17 +9,6 @@ CREATE DATABASE habitual
     LC_CTYPE = 'en_US.utf8'
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
-
--- User role
-CREATE ROLE habitualUser;
-	WITH encrypted password [replace_password] LOGIN;
-
-GRANT UPDATE(name, email, password), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
-GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
-GRANT USAGE, SELECT ON SEQUENCE habits_habitid_seq TO habitualUser;
-GRANT UPDATE(name, frequency, type, reminderHour, reminderMinute, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
-GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
-GRANT SELECT ON TABLE HabitTypes TO habitualUser;
 
 -- Tables
 CREATE TABLE Users (
@@ -270,3 +258,14 @@ INSERT INTO HabitTypes (typeID, name, days)
 
 INSERT INTO HabitTypes (typeID, name, days)
 	VALUES (3, 'Hábito de Acero', 254);
+
+-- User role
+CREATE ROLE habitualUser
+	WITH encrypted password 'stivimcgall' LOGIN;
+
+GRANT UPDATE(name, email, password), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
+GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
+GRANT USAGE, SELECT ON SEQUENCE habits_habitid_seq TO habitualUser;
+GRANT UPDATE(name, frequency, type, reminderHour, reminderMinute, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
+GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
+GRANT SELECT ON TABLE HabitTypes TO habitualUser;
