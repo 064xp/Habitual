@@ -261,7 +261,7 @@ INSERT INTO HabitTypes (typeID, name, days)
 
 -- User role
 CREATE ROLE habitualUser
-	WITH encrypted password 'stivimcgall' LOGIN;
+	WITH encrypted password '' LOGIN;
 
 GRANT UPDATE(name, email, password), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
