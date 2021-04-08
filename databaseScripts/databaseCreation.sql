@@ -222,6 +222,7 @@ END
 $$;
 
 CREATE OR REPLACE FUNCTION updateHabit(
+	_userID INTEGER,
 	_habitID INTEGER,
 	_name VARCHAR(200),
 	_frequency INTEGER [],

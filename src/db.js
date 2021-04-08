@@ -41,12 +41,12 @@ module.exports.getUserHabits = async (userID, ammount = 20) => {
   return result.rows[0].json_agg;
 };
 
-module.exports.getHabit = async (habitID) => {
+module.exports.getHabit = async (userID, habitID) => {
   const result = await pool.query(
-    "SELECT json_agg(h) from (SELECT * FROM Habits WHERE habitid = $1) h",
-    [habitID]
+    "SELECT json_agg(h) from (SELECT * FROM Habits WHERE habitid = $1 and userID = $2) h",
+    [habitID, userID]
   );
-  return result.rows[0].json_agg[0];
+  return result.rows[0].json_agg ? result.rows[0].json_agg[0] : null;
 };
 
 module.exports.insertHabit = async (
@@ -72,19 +72,17 @@ module.exports.insertHabit = async (
 };
 
 module.exports.updateHabit = async (
+  userID,
   habitID,
   name,
   frequency,
   type,
   reminder
 ) => {
-  const result = await pool.query("SELECT updateHabit($1, $2, $3, $4, $5)", [
-    habitID,
-    name,
-    frequency,
-    type,
-    reminder,
-  ]);
+  const result = await pool.query(
+    "SELECT updateHabit($1, $2, $3, $4, $5, $6)",
+    [userID, habitID, name, frequency, type, reminder]
+  );
   return result.rows[0].updatehabit;
 };
 

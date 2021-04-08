@@ -37,8 +37,12 @@ router.get("/", verify, async (req, res) => {
 
 router.get("/:habitID", verify, async (req, res) => {
   try {
-    const habit = await db.getHabit(req.params.habitID);
-    res.json({ status: "success", habit: habit });
+    const habit = await db.getHabit(req.userID, req.params.habitID);
+    if (!habit)
+      return res
+        .status(400)
+        .json({ status: "error", message: "Habit does not exist" });
+    return res.json({ status: "success", habit: habit });
   } catch (e) {
     console.log(e);
     res.status(500).json({ status: "error" });
@@ -53,6 +57,7 @@ router.put("/update/:habitID", verify, async (req, res) => {
 
   try {
     const habit = await db.updateHabit(
+      req.userID,
       req.params.habitID,
       name,
       frequency,

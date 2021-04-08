@@ -4,11 +4,11 @@ window.addEventListener("load", function () {
   if (site == "auth_editarHabito") {
     //Obtener datos de habito por su ID y rellenar campos
     var habitID = getParam("habitID");
-    if (!habitID) window.location = "/";
+    if (!habitID) window.location = "/dashboard.html";
     requests.get("/api/habits/" + habitID).then(function (res) {
       if (!res.ok) {
         alert("Ocurrio un error, intentalo mas tarde");
-        window.location = "/";
+        window.location = "/dashboard.html";
       }
       rellenarCampos(res.body.habit);
     });
@@ -59,7 +59,7 @@ function onSubmit(e) {
       .then(function (res) {
         if (res.ok) {
           alert("Modificado correctamente");
-          // window.location = "/dashboard.html";
+          window.location = "/dashboard.html";
         } else {
           alert(res.body.error);
         }
