@@ -261,9 +261,7 @@ CREATE TRIGGER trHabitActivityIns
 BEFORE INSERT ON History
 FOR EACH ROW
 	EXECUTE PROCEDURE updateDaysPendingActivityIns();
-
-drop TRIGGER trHabitActivityDel ON history;
-
+	
 CREATE TRIGGER trHabitActivityDel
 AFTER DELETE ON History
 FOR EACH ROW
