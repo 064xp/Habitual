@@ -27,14 +27,10 @@ window.addEventListener("load", function () {
 function onSubmit(e) {
   e.preventDefault();
   var form = e.target;
-  var recordatorio = null;
   var dias = null;
   var frecError = document.querySelector("#error-frecuencia");
 
   frecError.classList.add("hide");
-
-  if (form.recordar.checked)
-    recordatorio = convertTime(form.recordatorio.value, "UTC");
 
   dias = getDias(form.diasRec, frecError);
   if (!dias) return;
@@ -43,7 +39,9 @@ function onSubmit(e) {
     name: form.nombre.value,
     type: parseInt(form.tipo.value),
     frequency: dias,
-    reminder: recordatorio,
+    reminder: form.recordar.checked
+      ? stringToTime(form.recordatorio.value)
+      : null,
   };
 
   if (site == "auth_nuevoHabito") {
@@ -69,18 +67,6 @@ function onSubmit(e) {
   }
 }
 
-function convertTime(timeStr, converTo = "UTC") {
-  //Offset en horas a tiempo UTC
-  var horasMin = timeStr.split(":");
-  var offset = new Date().getTimezoneOffset();
-  var totalMin = parseInt(horasMin[0]) * 60 + parseInt(horasMin[1]);
-  if (converTo == "local") offset = -offset;
-  var horaConv = Math.floor(((totalMin + offset) / 60) % 24);
-  if (horaConv < 0) horaConv = 24 + horaConv;
-
-  return [horaConv, parseInt(horasMin[1])];
-}
-
 function pad0(numStr) {
   if (numStr.length == 1) return "0" + numStr;
   return numStr;
@@ -88,6 +74,10 @@ function pad0(numStr) {
 
 function timeToString(timeArr) {
   return pad0(timeArr[0].toString()) + ":" + pad0(timeArr[1].toString());
+}
+
+function stringToTime(timeStr) {
+  return timeStr.split(":").map((t) => parseInt(t));
 }
 
 function getDias(elems, error) {
