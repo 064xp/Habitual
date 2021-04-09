@@ -15,7 +15,8 @@ CREATE TABLE Users (
 	userID SERIAL PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
 	email VARCHAR(100) UNIQUE NOT NULL,
-	password CHAR(60) NOT NULL
+	password CHAR(60) NOT NULL,
+	tzOffset INTEGER
 );
 
 CREATE TABLE HabitTypes (
@@ -33,55 +34,16 @@ CREATE TABLE Habits (
 	startDate DATE NOT NULL,
 	daysPending INTEGER NOT NULL,
 	reminderHour INTEGER,
-	reminderMinute INTEGER
+	reminderMinute INTEGER,
+	isOverdue BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE History (
 	entryID SERIAL PRIMARY KEY NOT NULL,
 	habitID INTEGER REFERENCES Habits (habitID) NOT NULL,
-	dateTime TIMESTAMP NOT NULL
+	dateTime TIMESTAMP NOT NULL,
+	isOverdueEntry BOOLEAN NOT NULL DEFAULT false
 );
-
--- Stored Procedures
-CREATE OR REPLACE PROCEDURE updateHabit(
-	_habitID INTEGER,
-	_name VARCHAR(200),
-	_frequency INTEGER,
-	_type INTEGER
-)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	UPDATE Habits SET name=_name, frequency=_frequency, type=_type
-		WHERE habitID = _habitID;
-	RAISE NOTICE 'success';
-END
-$$;
-
-CREATE OR REPLACE PROCEDURE deleteHabit(
-	_habitID INTEGER
-)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	DELETE FROM History WHERE habitID = _habitID;
-	DELETE FROM Habits WHERE habitID = _habitID;
-	RAISE NOTICE 'success';
-END
-$$;
-
-CREATE OR REPLACE PROCEDURE insertActivity(
-	_habitID INTEGER,
-	_dateTime TIMESTAMP= CURRENT_DATE
-)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	INSERT INTO History (habitID, dateTime)
-		VALUES (_habitID,_dateTime);
-	RAISE NOTICE 'success';
-END
-$$;
 
 -- Trigger Functions
 CREATE OR REPLACE FUNCTION updateDaysPending()
