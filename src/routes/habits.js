@@ -2,6 +2,7 @@ const router = require("express").Router();
 const verify = require("./verifyToken");
 const db = require("../db");
 const { validateHabit } = require("../validation");
+const { extractTzHeader } = require("../middleware/headerParsing");
 
 router.post("/new", verify, async (req, res) => {
   const { name, frequency, type, startDate, reminder } = req.body;
@@ -25,7 +26,7 @@ router.post("/new", verify, async (req, res) => {
   }
 });
 
-router.get("/", verify, async (req, res) => {
+router.get("/", [verify, extractTzHeader], async (req, res) => {
   try {
     const habits = await db.getUserHabits(req.userID, req.body.ammount);
     res.json({ status: "success", habits: habits });

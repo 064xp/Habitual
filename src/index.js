@@ -8,7 +8,6 @@ const habitRouter = require("./routes/habits");
 const verifyToken = require("./routes/verifyToken");
 const jsonValidation = require("./middleware/jsonValidation");
 const logging = require("./middleware/logging");
-const { extractTzHeader } = require("./middleware/headerParsing");
 
 app.set("trust proxy", true);
 //Middleware
@@ -17,7 +16,6 @@ app.use(logging);
 app.use(express.json());
 app.use(jsonValidation);
 app.use(cookieParser());
-app.use(extractTzHeader);
 
 //Routers
 app.use("/api/user", authRouter);

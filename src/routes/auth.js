@@ -1,7 +1,12 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { insertUser, emailExists, getUser } = require("../db.js");
+const {
+  insertUser,
+  emailExists,
+  getUser,
+  updateTimezone,
+} = require("../db.js");
 const { validateUser } = require("../validation.js");
 const verify = require("./verifyToken");
 
@@ -46,6 +51,8 @@ router.post("/login", async (req, res) => {
       sameSite: "strict",
     })
     .json({ status: "success", token: token, name: user.name });
+
+  updateTimezone(user.userid, req.headers.tz_offset);
 });
 
 router.get("/verifyToken", verify, (req, res) => {

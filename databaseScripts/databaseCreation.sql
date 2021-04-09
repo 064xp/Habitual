@@ -133,9 +133,28 @@ BEGIN
 END
 $$;
 
+CREATE OR REPLACE FUNCTION hasActivityToday (
+	_userID INTEGER,
+	_habitID INTEGER
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	userTzOffset INTEGER := (SELECT tzOffset FROM Users WHERE userID = _userID);
+	latestEntry TIMESTAMP := (SELECT datetime FROM History WHERE habitID = _habitID ORDER BY datetime DESC LIMIT 1);
+	userDay DATE := (SELECT (now() AT TIME ZONE ('-' || userTzOffset || 'min')::INTERVAL)::DATE);
+BEGIN
+	IF latestEntry < userDay OR latestEntry IS null THEN
+		RETURN false;
+	END IF;
+	RETURN true;
+END
+$$;
+
 CREATE OR REPLACE FUNCTION getUserHabits (
 	_userID INTEGER,
-	_ammount INTEGER=20
+	_ammount INTEGER=NULL
 )
 RETURNS TABLE (
 	habitId INTEGER,
@@ -146,7 +165,8 @@ RETURNS TABLE (
 	type INTEGER,
 	startDate DATE,
 	dayPending INTEGER,
-	totalDays INTEGER
+	totalDays INTEGER,
+	completed BOOLEAN
 )
 LANGUAGE plpgsql
 AS $$
@@ -155,12 +175,12 @@ BEGIN
     SELECT
       h.habitId, h.name, h.frequency, h.reminderHour, h.reminderMinute,
       h.type, h.startDate, h.daysPending,
-      (SELECT days FROM HabitTypes WHERE typeID=h.type)
+      (SELECT days FROM HabitTypes WHERE typeID=h.type),
+	  (SELECT * FROM hasActivityToday(_userID, h.habitID))
     FROM Habits as h WHERE userID=_userID
     LIMIT _ammount;
 END
 $$;
-
 
 CREATE OR REPLACE FUNCTION emailExists(_email VARCHAR)
 RETURNS BOOLEAN

@@ -33,7 +33,25 @@ module.exports.getUser = async (email) => {
   return result.rows[0];
 };
 
-module.exports.getUserHabits = async (userID, ammount = 20) => {
+module.exports.updateTimezone = async (userID, newTzOffset) => {
+  const currentOffset = await pool.query(
+    "SELECT tzoffset FROM Users WHERE userID = $1",
+    [userID]
+  );
+  if (currentOffset.rows[0] !== newTzOffset) {
+    try {
+      await pool.query("UPDATE Users SET tzoffset = $1 WHERE userID = $2", [
+        newTzOffset,
+        userID,
+      ]);
+    } catch (e) {
+      console.log(`Error updating timezone for user ${userID}`);
+      console.log(e);
+    }
+  }
+};
+
+module.exports.getUserHabits = async (userID, ammount = null) => {
   const result = await pool.query(
     "SELECT json_agg(h) from (SELECT * from getUserHabits($1, $2)) h",
     [userID, ammount]
