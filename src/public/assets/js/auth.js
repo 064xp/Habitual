@@ -1,4 +1,5 @@
 const form = document.querySelector(".user_form");
+requests.customHeaders.tz_offset = new Date().getTimezoneOffset();
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();

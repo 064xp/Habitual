@@ -21,6 +21,7 @@ function makeRequest(url, method, body, headers) {
     method: method,
     headers: {
       "Content-Type": "application/json;charset=utf-8",
+      ...headers,
       ...requests.customHeaders,
     },
     body: JSON.stringify(body),

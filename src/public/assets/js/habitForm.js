@@ -1,3 +1,5 @@
+requests.customHeaders.tz_offset = new Date().getTimezoneOffset();
+
 window.addEventListener("load", function () {
   document.querySelector("#habito-form").addEventListener("submit", onSubmit);
 
