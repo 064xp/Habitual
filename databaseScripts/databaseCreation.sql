@@ -45,25 +45,6 @@ CREATE TABLE History (
 	isOverdueEntry BOOLEAN NOT NULL DEFAULT false
 );
 
--- Trigger Functions
-CREATE OR REPLACE FUNCTION updateDaysPending()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	IF OLD.type <> NEW.type THEN
-		UPDATE Habits SET daysPending=getDaysPending(NEW.habitID, NEW.type)
-					WHERE habitID = NEW.habitID;
-	END IF;
-	RETURN NEW;
-END
-$$;
-
--- Trigger
-CREATE TRIGGER tr_updateDaysPending
-AFTER UPDATE ON Habits
-FOR EACH ROW
-	EXECUTE PROCEDURE updateDaysPending();
 
 -- Functions
 CREATE OR REPLACE FUNCTION insertHabit(
@@ -231,6 +212,62 @@ BEGIN
 	RETURN deletedHabit;
 END
 $$;
+
+
+-- Trigger Functions
+CREATE OR REPLACE FUNCTION updateDaysPendingTypeChange()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	IF OLD.type <> NEW.type THEN
+		UPDATE Habits SET daysPending=getDaysPending(NEW.habitID, NEW.type)
+					WHERE habitID = NEW.habitID;
+	END IF;
+	RETURN NEW;
+END
+$$;
+
+CREATE OR REPLACE FUNCTION updateDaysPendingActivityIns()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+DECLARE userID INTEGER := (SELECT userID FROM Habits WHERE habitID = NEW.habitID);
+BEGIN
+	IF NOT hasActivityToday(userID, NEW.habitID) THEN
+		UPDATE Habits SET daysPending = daysPending - 1 WHERE habitID = NEW.habitID;
+	END IF;
+	RETURN NEW;
+END
+$$;
+
+CREATE OR REPLACE FUNCTION updateDaysPendingActivityDel()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	UPDATE Habits SET daysPending = daysPending + 1 WHERE habitID = OLD.habitID;
+	RETURN NEW;
+END
+$$;
+
+-- Trigger
+CREATE TRIGGER trHabitTypeChange
+AFTER UPDATE ON Habits
+FOR EACH ROW
+	EXECUTE PROCEDURE updateDaysPendingTypeChange();
+	
+CREATE TRIGGER trHabitActivityIns
+BEFORE INSERT ON History
+FOR EACH ROW
+	EXECUTE PROCEDURE updateDaysPendingActivityIns();
+
+drop TRIGGER trHabitActivityDel ON history;
+
+CREATE TRIGGER trHabitActivityDel
+AFTER DELETE ON History
+FOR EACH ROW
+	EXECUTE PROCEDURE updateDaysPendingActivityDel();
 
 
 -- Insert initial data
