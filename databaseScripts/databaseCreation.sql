@@ -129,7 +129,7 @@ DECLARE
 	userDay DATE := _day;
 BEGIN
 	IF userDay IS NULL THEN
-		SELECT (now() AT TIME ZONE ('-' || userTzOffset || 'min')::INTERVAL)::DATE INTO userDay;
+		SELECT currentTimeAtTz(userTzOffset)::DATE INTO userDay;
 	END IF;
 	IF latestEntry < _day OR latestEntry IS null THEN
 		RETURN false;
@@ -224,21 +224,32 @@ RETURNS TIMESTAMP
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	RETURN NOW() AT TIME ZONE ('-'||tzOffset||'min')::INTERVAL;
+	RETURN NOW() AT TIME ZONE (tzOffset*-1||'min')::INTERVAL;
 END
 $$;
 
--- Views
 
+-- Views
 CREATE OR REPLACE VIEW overdueHabits AS 
-SELECT h.habitID, u.userID, h.name, h.isOverdue, h.frequency, h.startDate, (select extract('dow' from (SELECT NOW() AT TIME ZONE ('-'||u.tzOffset||'min')::INTERVAL)))
+SELECT h.habitID, u.userID, h.name, h.isOverdue, h.frequency, h.startDate, u.tzOffset
 		FROM Habits h 
 		INNER JOIN Users u ON  h.userID = u.userID
 		WHERE 
 			(SELECT DATE_PART('dow', currentTimeAtTz(u.tzOffset) - '1day'::INTERVAL)) = ANY(h.frequency)
 			AND NOT hasActivity(h.userID, h.habitID, (currentTimeAtTz(u.tzOffset) - '1day'::INTERVAL)::DATE)
 			AND DATE_PART('hour', currentTimeAtTz(u.tzOffset)) = 0
-			AND h.startDate < currentTimeAtTz(u.tzOffset)::DATE;
+			AND h.startDate < currentTimeAtTz(u.tzOffset)::DATE
+			AND NOT h.isOverdue;
+	
+	
+-- Stored Procedures
+CREATE OR REPLACE PROCEDURE setHabitOverdue(_habitID INTEGER, userTzOffset INTEGER) 
+LANGUAGE SQL
+AS $$
+	UPDATE Habits SET isOverdue = true WHERE habitID = _habitID;
+    INSERT INTO History (habitID, dateTime, isOverdueEntry) VALUES (_habitID, currentTimeAtTz(userTzOffset) - '1day'::INTERVAL, true);
+$$;
+
 
 -- Trigger Functions
 CREATE OR REPLACE FUNCTION updateDaysPendingTypeChange()
@@ -308,9 +319,11 @@ INSERT INTO HabitTypes (typeID, name, days)
 CREATE ROLE habitualUser
 	WITH encrypted password '' LOGIN;
 
-GRANT UPDATE(name, email, password), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
+GRANT UPDATE(name, email, password, tzOffset), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE habits_habitid_seq TO habitualUser;
-GRANT UPDATE(name, frequency, type, reminderHour, reminderMinute, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
+GRANT UPDATE(name, frequency, type, reminderHour, reminderMinute, daysPending, isOverdue), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
 GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
+GRANT USAGE, SELECT ON SEQUENCE history_entryid_seq TO habitualUser;
 GRANT SELECT ON TABLE HabitTypes TO habitualUser;
+GRANT SELECT ON overdueHabits TO habitualUser;

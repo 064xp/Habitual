@@ -11,6 +11,8 @@ const pool = new Pool({
   database: "habitual",
 });
 
+module.exports.pool = pool;
+
 module.exports.insertUser = async (user) => {
   const result = await pool.query("SELECT insertUser($1, $2, $3);", [
     user.name,
@@ -110,4 +112,10 @@ module.exports.deleteHabit = async (userID, habitID) => {
     habitID,
   ]);
   return result.rows[0].deletehabit;
+};
+
+module.exports.setHabitOverdue = async (habitID, userTzOffset) => {
+  const query = "CALL setHabitOverdue($1, $2)";
+  const result = await pool.query(query, [habitID, userTzOffset]);
+  return result;
 };

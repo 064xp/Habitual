@@ -14,7 +14,9 @@
     "express": "^4.17.1",
     "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
-    "pg": "^8.5.1"
+    "node-schedule": "^2.0.0",
+    "pg": "^8.5.1",
+    "pg-cursor": "^2.5.2"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
