@@ -114,9 +114,11 @@ BEGIN
 END
 $$;
 
-CREATE OR REPLACE FUNCTION hasActivityToday (
+CREATE OR REPLACE FUNCTION hasActivity (
 	_userID INTEGER,
-	_habitID INTEGER
+	_habitID INTEGER,
+	--default day is current day for user
+	_day DATE = NULL
 )
 RETURNS BOOLEAN
 LANGUAGE plpgsql
@@ -124,9 +126,12 @@ AS $$
 DECLARE
 	userTzOffset INTEGER := (SELECT tzOffset FROM Users WHERE userID = _userID);
 	latestEntry TIMESTAMP := (SELECT datetime FROM History WHERE habitID = _habitID ORDER BY datetime DESC LIMIT 1);
-	userDay DATE := (SELECT (now() AT TIME ZONE ('-' || userTzOffset || 'min')::INTERVAL)::DATE);
+	userDay DATE := _day;
 BEGIN
-	IF latestEntry < userDay OR latestEntry IS null THEN
+	IF userDay IS NULL THEN
+		SELECT (now() AT TIME ZONE ('-' || userTzOffset || 'min')::INTERVAL)::DATE INTO userDay;
+	END IF;
+	IF latestEntry < _day OR latestEntry IS null THEN
 		RETURN false;
 	END IF;
 	RETURN true;
@@ -145,7 +150,8 @@ RETURNS TABLE (
 	reminderMinute INTEGER,
 	type INTEGER,
 	startDate DATE,
-	dayPending INTEGER,
+	daysPending INTEGER,
+	isOverdue BOOLEAN,
 	totalDays INTEGER,
 	completed BOOLEAN
 )
@@ -155,9 +161,9 @@ BEGIN
   RETURN QUERY
     SELECT
       h.habitId, h.name, h.frequency, h.reminderHour, h.reminderMinute,
-      h.type, h.startDate, h.daysPending,
+      h.type, h.startDate, h.daysPending, h.isOverdue,
       (SELECT days FROM HabitTypes WHERE typeID=h.type),
-	  (SELECT * FROM hasActivityToday(_userID, h.habitID))
+	  (SELECT * FROM hasActivity(_userID, h.habitID))
     FROM Habits as h WHERE userID=_userID
     LIMIT _ammount;
 END
@@ -213,6 +219,26 @@ BEGIN
 END
 $$;
 
+CREATE OR REPLACE FUNCTION currentTimeAtTz(tzOffset INTEGER)
+RETURNS TIMESTAMP
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	RETURN NOW() AT TIME ZONE ('-'||tzOffset||'min')::INTERVAL;
+END
+$$;
+
+-- Views
+
+CREATE OR REPLACE VIEW overdueHabits AS 
+SELECT h.habitID, u.userID, h.name, h.isOverdue, h.frequency, h.startDate, (select extract('dow' from (SELECT NOW() AT TIME ZONE ('-'||u.tzOffset||'min')::INTERVAL)))
+		FROM Habits h 
+		INNER JOIN Users u ON  h.userID = u.userID
+		WHERE 
+			(SELECT DATE_PART('dow', currentTimeAtTz(u.tzOffset) - '1day'::INTERVAL)) = ANY(h.frequency)
+			AND NOT hasActivity(h.userID, h.habitID, (currentTimeAtTz(u.tzOffset) - '1day'::INTERVAL)::DATE)
+			AND DATE_PART('hour', currentTimeAtTz(u.tzOffset)) = 0
+			AND h.startDate < currentTimeAtTz(u.tzOffset)::DATE;
 
 -- Trigger Functions
 CREATE OR REPLACE FUNCTION updateDaysPendingTypeChange()
@@ -234,7 +260,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE userID INTEGER := (SELECT userID FROM Habits WHERE habitID = NEW.habitID);
 BEGIN
-	IF NOT hasActivityToday(userID, NEW.habitID) THEN
+	IF NOT hasActivity(userID, NEW.habitID) THEN
 		UPDATE Habits SET daysPending = daysPending - 1 WHERE habitID = NEW.habitID;
 	END IF;
 	RETURN NEW;
@@ -261,7 +287,7 @@ CREATE TRIGGER trHabitActivityIns
 BEFORE INSERT ON History
 FOR EACH ROW
 	EXECUTE PROCEDURE updateDaysPendingActivityIns();
-	
+
 CREATE TRIGGER trHabitActivityDel
 AFTER DELETE ON History
 FOR EACH ROW
