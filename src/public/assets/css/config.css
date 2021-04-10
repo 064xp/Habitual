@@ -3,7 +3,8 @@ body{
     background-color:#F5F5F5;
     margin: 0;
     font-family: 'Roboto', sans-serif;
-}
+   
+    }
 header{
     background-color: white;
     display: flex;
@@ -20,6 +21,32 @@ header h4{
     margin-top: 0%;
 }
 ul{
+    display: flex;
     list-style: none;
+    text-decoration: none;   
+    padding: 1em;
+    align-items: center;
+    flex-direction: column;
+    margin: 2em,5em;
     
+}
+li{
+    
+    border-bottom: 106% solid gray;
+    
+    
+   
+    
+}
+div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+button{
+    width: 12em;
+    color: red;
+    background-color: white;    
+
 }
