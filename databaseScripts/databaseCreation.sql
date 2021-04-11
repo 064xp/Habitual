@@ -1,14 +1,14 @@
 -- Database: habitual
 
 -- DROP DATABASE habitual;
-CREATE DATABASE habitual
-    WITH
-    OWNER = habitual
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'en_US.utf8'
-    LC_CTYPE = 'en_US.utf8'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1;
+-- CREATE DATABASE habitual
+--     WITH
+--     OWNER = habitual
+--     ENCODING = 'UTF8'
+--     LC_COLLATE = 'en_US.utf8'
+--     LC_CTYPE = 'en_US.utf8'
+--     TABLESPACE = pg_default
+--     CONNECTION LIMIT = -1;
 
 -- Tables
 CREATE TABLE Users (
@@ -31,7 +31,7 @@ CREATE TABLE Habits (
 	name VARCHAR(200) NOT NULL,
 	frequency INTEGER [],
 	type INTEGER REFERENCES HabitTypes (typeID) NOT NULL,
-	startDate DATE NOT NULL,
+	startDate TIMESTAMP NOT NULL,
 	daysPending INTEGER NOT NULL,
 	reminderHour INTEGER,
 	reminderMinute INTEGER,
@@ -53,7 +53,7 @@ CREATE OR REPLACE FUNCTION insertHabit(
 	_frequency INTEGER [],
 	_type INTEGER,
 	_reminder INTEGER [],
-	_startDate DATE = CURRENT_DATE
+	_startDate TIMESTAMP = NOW()
 )
 RETURNS INTEGER
 LANGUAGE plpgsql
@@ -125,13 +125,14 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 	userTzOffset INTEGER := (SELECT tzOffset FROM Users WHERE userID = _userID);
-	latestEntry TIMESTAMP := (SELECT datetime FROM History WHERE habitID = _habitID ORDER BY datetime DESC LIMIT 1);
+	latestEntry TIMESTAMP := timeAtTz(userTzOffset, (SELECT datetime FROM History WHERE habitID = _habitID ORDER BY datetime DESC LIMIT 1));
 	userDay DATE := _day;
 BEGIN
 	IF userDay IS NULL THEN
-		SELECT currentTimeAtTz(userTzOffset)::DATE INTO userDay;
+		SELECT timeAtTz(userTzOffset)::DATE INTO userDay;
 	END IF;
-	IF latestEntry < _day OR latestEntry IS null THEN
+
+	IF latestEntry < userDay OR latestEntry IS null THEN
 		RETURN false;
 	END IF;
 	RETURN true;
@@ -149,7 +150,7 @@ RETURNS TABLE (
 	reminderHour INTEGER,
 	reminderMinute INTEGER,
 	type INTEGER,
-	startDate DATE,
+	startDate TIMESTAMP,
 	daysPending INTEGER,
 	isOverdue BOOLEAN,
 	totalDays INTEGER,
@@ -219,12 +220,33 @@ BEGIN
 END
 $$;
 
-CREATE OR REPLACE FUNCTION currentTimeAtTz(tzOffset INTEGER)
+CREATE OR REPLACE FUNCTION timeAtTz(
+	_tzOffset INTEGER, 
+	_time TIMESTAMPTZ = NOW()
+)
 RETURNS TIMESTAMP
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	RETURN NOW() AT TIME ZONE (tzOffset*-1||'min')::INTERVAL;
+	RETURN _time AT TIME ZONE (_tzOffset*-1||'min')::INTERVAL;
+END
+$$;
+
+CREATE OR REPLACE FUNCTION insertHistoryEntry(
+	_habitID INTEGER, 
+	_isOverdueEntry BOOLEAN = false, 
+	_dateTime TIMESTAMPTZ = NOW()
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	newEntryID INTEGER;
+BEGIN	
+	INSERT INTO History (habitID, dateTime, isOverdueEntry) 
+		VALUES (_habitID, _dateTime, _isOverdueEntry)
+		RETURNING entryID INTO newEntryID;
+	RETURN newEntryID;
 END
 $$;
 
@@ -235,19 +257,18 @@ SELECT h.habitID, u.userID, h.name, h.isOverdue, h.frequency, h.startDate, u.tzO
 		FROM Habits h 
 		INNER JOIN Users u ON  h.userID = u.userID
 		WHERE 
-			(SELECT DATE_PART('dow', currentTimeAtTz(u.tzOffset) - '1day'::INTERVAL)) = ANY(h.frequency)
-			AND NOT hasActivity(h.userID, h.habitID, (currentTimeAtTz(u.tzOffset) - '1day'::INTERVAL)::DATE)
-			AND DATE_PART('hour', currentTimeAtTz(u.tzOffset)) = 0
-			AND h.startDate < currentTimeAtTz(u.tzOffset)::DATE
+			(SELECT DATE_PART('dow', timeAtTz(u.tzOffset) - '1day'::INTERVAL)) = ANY(h.frequency)
+			AND NOT hasActivity(h.userID, h.habitID, (timeAtTz(u.tzOffset) - '1day'::INTERVAL)::DATE)
+			AND DATE_PART('hour', timeAtTz(u.tzOffset)) = 0
+			AND timeAtTz(u.tzOffset, h.startDate) < timeAtTz(u.tzOffset)::DATE
 			AND NOT h.isOverdue;
-	
-	
+
 -- Stored Procedures
-CREATE OR REPLACE PROCEDURE setHabitOverdue(_habitID INTEGER, userTzOffset INTEGER) 
+CREATE OR REPLACE PROCEDURE setHabitOverdue(_habitID INTEGER) 
 LANGUAGE SQL
 AS $$
 	UPDATE Habits SET isOverdue = true WHERE habitID = _habitID;
-    INSERT INTO History (habitID, dateTime, isOverdueEntry) VALUES (_habitID, currentTimeAtTz(userTzOffset) - '1day'::INTERVAL, true);
+	SELECT insertHistoryEntry(_habitID, true, NOW() - '10min'::INTERVAL);
 $$;
 
 
@@ -288,7 +309,7 @@ BEGIN
 END
 $$;
 
--- Trigger
+-- Triggers
 CREATE TRIGGER trHabitTypeChange
 AFTER UPDATE ON Habits
 FOR EACH ROW

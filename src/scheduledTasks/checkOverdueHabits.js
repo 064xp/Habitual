@@ -13,10 +13,10 @@ module.exports = async () => {
     try {
       let habit = await cursor.readAsync(1);
       if (habit.length == 0) break;
-      const { habitid, tzoffset } = habit[0];
+      const { habitid } = habit[0];
 
       try {
-        const res = await setHabitOverdue(habitid, tzoffset);
+        const res = await setHabitOverdue(habitid);
       } catch (err) {
         console.log(`error while setting habitID ${habitid} to overdue`);
         console.log(err);

@@ -114,8 +114,8 @@ module.exports.deleteHabit = async (userID, habitID) => {
   return result.rows[0].deletehabit;
 };
 
-module.exports.setHabitOverdue = async (habitID, userTzOffset) => {
-  const query = "CALL setHabitOverdue($1, $2)";
-  const result = await pool.query(query, [habitID, userTzOffset]);
+module.exports.setHabitOverdue = async (habitID) => {
+  const query = "CALL setHabitOverdue($1)";
+  const result = await pool.query(query, [habitID]);
   return result;
 };
