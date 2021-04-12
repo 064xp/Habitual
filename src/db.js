@@ -115,7 +115,34 @@ module.exports.deleteHabit = async (userID, habitID) => {
 };
 
 module.exports.setHabitOverdue = async (habitID) => {
-  const query = "CALL setHabitOverdue($1)";
-  const result = await pool.query(query, [habitID]);
+  const result = await pool.query("CALL setHabitOverdue($1)", [habitID]);
   return result;
+};
+
+module.exports.addHistoryEntry = async (habitID, dateTime = new Date()) => {
+  const result = await pool.query("SELECT insertHistoryEntry($1, false, $2)", [
+    habitID,
+    dateTime,
+  ]);
+  return result.rows[0].inserthistoryentry;
+};
+
+module.exports.resetHabit = async (habit) => {
+  try {
+    const typeQuery = await pool.query(
+      "SELECT days FROM habitTypes WHERE typeID = $1",
+      [habit.type]
+    );
+    const typeDays = typeQuery.rows[0].days;
+
+    const result = await pool.query(
+      "UPDATE Habits SET startDate = NOW(), daysPending = $1, isOverdue = false WHERE habitID = $2",
+      [typeDays, habit.habitid]
+    );
+    return true;
+  } catch (err) {
+    console.log(`Error while reseting habit ${habit.habitid}`);
+    console.log(err);
+    return false;
+  }
 };

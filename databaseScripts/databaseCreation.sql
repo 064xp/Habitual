@@ -101,8 +101,9 @@ RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
 DECLARE
+	startDate TIMESTAMP := (SELECT startDate FROM Habits WHERE habitID = _habitID);
 	totalDays INTEGER := (SELECT days FROM HabitTypes WHERE typeId = _newType);
-	activitiesDone INTEGER := (SELECT COUNT(DISTINCT dateTime::date) FROM History WHERE habitID = _habitID);
+	activitiesDone INTEGER := (SELECT COUNT(DISTINCT dateTime::date) FROM History WHERE habitID = _habitID AND dateTime > startDate);
 	daysPending INTEGER;
 BEGIN
 	SELECT totalDays - activitiesDone INTO daysPending;

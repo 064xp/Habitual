@@ -5,6 +5,7 @@ const schedule = require("node-schedule");
 
 const authRouter = require("./routes/auth");
 const habitRouter = require("./routes/habits");
+const activityRouter = require("./routes/activities");
 const verifyToken = require("./routes/verifyToken");
 
 const jsonValidation = require("./middleware/jsonValidation");
@@ -28,5 +29,6 @@ const overdueHabitsJob = schedule.scheduleJob("0 * * * *", checkOverdueHabits);
 //Routers
 app.use("/api/user", authRouter);
 app.use("/api/habits", habitRouter);
+app.use("/api/activities", activityRouter);
 
 app.listen(3002, () => console.log("Server listening on port 3002"));
