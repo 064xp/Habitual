@@ -17,7 +17,9 @@
     <main>
       <section>
         <header>
-          <h2 id="saludo">Buenos días,<br />Steve</h2>
+          <h2 id="saludo">
+            Buenos días,<br /><span id="nombre-usuario">Steve</span>
+          </h2>
           <h2 id="fecha">
             Lunes 07 <br />
             Feb 21
@@ -28,40 +30,14 @@
           <h4>4/5 Completado</h4>
         </div>
       </section>
-      <section id="lista">
-        <div id="pendientes">
-          <h2>Pendiente</h2>
-          <div class="actividad">
-            <input
-              type="checkbox"
-              name="Pendiente"
-              id="Habito_1"
-              class="Habito_Check"
-            />
-            <label for="Habito_1" class="Habito_Check_Label"></label>
-            <div class="info_actividad">
-              <h3>Hacer Ejercicio</h3>
-              <p>4 veces por semana</p>
-            </div>
 
-            <div></div>
-          </div>
+      <section id="lista">
+        <div class="habitos-container">
+          <h2>Pendiente</h2>
+          <div id="pendientes"></div>
+
           <h2>Terminado</h2>
-          <div id="terminados">
-            <div class="actividad actividad_terminado">
-              <input
-                type="checkbox"
-                name="Pendiente"
-                id="Habito_2"
-                class="Habito_Check"
-              />
-              <label for="Habito_2" class="Habito_Check_Label"></label>
-              <div class="info_actividad">
-                <h3>Leer</h3>
-                <p>5 veces por semana</p>
-              </div>
-            </div>
-          </div>
+          <div id="completados"></div>
         </div>
       </section>
     </main>
@@ -92,4 +68,5 @@
   </script>
   <script src="assets/js/requests.js"></script>
   <script src="assets/js/verifyAuth.js"></script>
+  <script src="assets/js/dashboard.js"></script>
 </html>

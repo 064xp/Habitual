@@ -1,190 +1,179 @@
-body{
-    background-color: #023E8A;
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
+body {
+  background-color: #023e8a;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
 }
 
 main {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-header{
-    display: flex;
-    color:#F5F5F5;
-    justify-content: space-between;
-    margin: .8em;
-    
+header {
+  display: flex;
+  color: #f5f5f5;
+  justify-content: space-between;
+  margin: 0.8em;
 }
 
-header h2{
-    margin: 0%;
-    font-weight: normal;
+header h2 {
+  margin: 0%;
+  font-weight: normal;
 }
-#fecha{
-    text-align: right;
+#fecha {
+  text-align: right;
 }
 
-#lista{
-    background-color: #F5F5F5;
-    flex-grow: 1;
+#lista {
+  background-color: #f5f5f5;
+  flex-grow: 1;
+  padding: 1.9em;
+  padding-bottom: 5em;
+}
+#info_completado {
+  margin: auto;
+  border-radius: 100%;
+  width: 48vw;
+  height: 48vw;
+  border: 1.5em solid #2bbd4b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5em;
+  max-width: 280px;
+  max-height: 280px;
+}
+
+#info_completado h2 {
+  font-weight: normal;
+  margin: 0%;
+  margin-bottom: 0.1m;
+  color: #f5f5f5;
+  font-size: clamp(40px, 12vw, 80px);
+}
+
+#info_completado h4 {
+  margin: 0%;
+  color: #f5f5f5;
+  font-size: clamp(10px, 5vw, 20px);
+}
+
+#lista {
+  border-radius: 30px 30px 0px 0px;
+}
+
+.habitos-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 530px;
+  margin: auto;
+}
+.habitos-container h2 {
+  margin-bottom: 0.25em;
+  font-weight: normal;
+}
+.Habito_Check {
+  display: none;
+}
+.Habito_Check:checked + .Habito_Check_Label {
+  background-color: #023e8a;
+  background-image: url("../img/check.svg");
+  background-size: 60%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.Habito_Check_Label {
+  border-radius: 200px;
+  background-color: white;
+  width: 1.5em;
+  height: 1.5em;
+  cursor: pointer;
+}
+
+.actividad_terminado {
+  background-color: #d7d7d7 !important;
+}
+.actividad_terminado h3,
+.actividad_terminado p {
+  color: black;
+  margin-left: 5%;
+}
+
+.info_actividad {
+  margin-left: 5%;
+}
+
+.info_actividad h3 {
+  margin: 0%;
+  font-weight: normal;
+  font-size: 1.4em;
+}
+.info_actividad p {
+  margin: 0%;
+}
+
+.actividad {
+  display: flex;
+  background-color: #023e8a;
+  color: white;
+  padding: 5%;
+  border-radius: 14px;
+  align-items: center;
+}
+
+.bottom-bar {
+  background-color: white;
+  width: 100vw;
+  position: fixed;
+  bottom: 0%;
+}
+.bottom-bar div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0.2em;
+  max-width: 530px;
+  margin: auto;
+}
+
+.bottom-bar a {
+  width: 7%;
+}
+
+.bottom-bar svg {
+  fill: #aaa;
+}
+
+.add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 300px;
+  background-color: #023e8a;
+  color: white;
+  text-decoration: none;
+  font-size: 4em;
+  width: 1.1em !important;
+  height: 1.1em;
+  padding: 0;
+}
+
+.bottom-bar_icon-active {
+  fill: black !important;
+}
+@media only screen and (min-width: 730px) {
+  #lista {
+    padding: 3em;
+    border-radius: 0%;
     padding: 1.9em;
     padding-bottom: 5em;
-    
-}
-#info_completado{
-    margin: auto;
-    border-radius: 100%;
-    width: 48vw;
-    height: 48vw;
-    border: 1.5em solid #2BBD4B;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1.5em;
-    max-width: 280px;
-    max-height: 280px;
-    }
-
-#info_completado h2{
-    font-weight: normal;
-    margin: 0%;
-    margin-bottom: .1m;
-    color:#F5F5F5 ;
-    font-size: clamp(40px,12vw,80px );
-
-}
-
-#info_completado h4{
-    margin: 0%;
-    color:#F5F5F5;
-    font-size: clamp(10px,5vw,20px );
-
-}
-
-#lista{
-    border-radius: 30px 30px 0px 0px;
-}
-
-#pendientes{
-    display: flex;
-    flex-direction: column;
-    max-width: 530px;
-    margin: auto;
-}
-#pendientes h2{
-    margin-bottom: .25em;
-    font-weight: normal;
-}
-.Habito_Check{
-    display: none;
-
-
-}
-.Habito_Check:checked + .Habito_Check_Label{
-    background-color: #023E8A;
-    background-image: url("../img/check.svg");
-    background-size: 60%;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-.Habito_Check_Label{
-    border-radius: 200px;
-    background-color: white;
-    width:1.5em;
-    height:1.5em;
-    cursor: pointer;
-}
-
-.actividad_terminado{
-   background-color:  #d7d7d7 !important;
-   
-  
-}
-.actividad_terminado h3,.actividad_terminado p{
-    color: black;
-     margin-left: 5%;
-    
-}
-
-
-.info_actividad{
-    margin-left: 5%;
-}
-
-.info_actividad h3{
-    margin: 0%;
-    font-weight: normal;
-    font-size: 1.4em;
-}
-.info_actividad p{
-    margin: 0%;
-}
-
-.actividad{
-    display: flex;
-    background-color:#023E8A ;  
-    color: white;
-    padding: 5%;
-    border-radius: 14px;
-    align-items: center;
-
-}
-
-.bottom-bar{
-    background-color: white;
-    width: 100vw;
-    position: fixed;
-    bottom: 0%;
-}
-.bottom-bar div{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: .2em;
-    max-width: 530px;
-    margin: auto;
-}
-
-.bottom-bar a{
-    width: 7%;
-}
-
-.bottom-bar svg{
-    fill: #AAA;   
-}
-
-.add{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 300px;
-    background-color: #023E8A;
-    color: white;
-    text-decoration: none;
-    font-size:4em;
-    width: 1.1em !important;
-    height: 1.1em;    
-    padding: 0;
-}
-
-
-.bottom-bar_icon-active{
-    fill: black !important;
-}
-@media only screen and (min-width:730px){
-    #lista{
-        padding: 3em;
-        border-radius: 0%;
-        padding: 1.9em;
-        padding-bottom: 5em;
-    }
-    .actividad h3{
-        font-size:clamp(25px,12vw,30px );
-    }
-    .actividad p{
-        font-size: clamp(5px,12vw,20px);
-    }
+  }
+  .actividad h3 {
+    font-size: clamp(25px, 12vw, 30px);
+  }
+  .actividad p {
+    font-size: clamp(5px, 12vw, 20px);
+  }
 }

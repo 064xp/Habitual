@@ -45,8 +45,32 @@ CREATE TABLE History (
 	isOverdueEntry BOOLEAN NOT NULL DEFAULT false
 );
 
-
 -- Functions
+CREATE OR REPLACE FUNCTION hasActivity (
+	_userID INTEGER,
+	_habitID INTEGER,
+	--default day is current day for user
+	_day DATE = NULL
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	userTzOffset INTEGER := (SELECT tzOffset FROM Users WHERE userID = _userID);
+	latestEntry TIMESTAMP := timeAtTz(userTzOffset, (SELECT datetime FROM History WHERE habitID = _habitID ORDER BY datetime DESC LIMIT 1));
+	userDay DATE := _day;
+BEGIN
+	IF userDay IS NULL THEN
+		SELECT timeAtTz(userTzOffset)::DATE INTO userDay;
+	END IF;
+
+	IF latestEntry < userDay OR latestEntry IS null THEN
+		RETURN false;
+	END IF;
+	RETURN true;
+END
+$$;
+
 CREATE OR REPLACE FUNCTION insertHabit(
 	_name VARCHAR(200),
 	_userID INTEGER,
@@ -112,31 +136,6 @@ BEGIN
 	ELSE
 		RETURN daysPending;
 	END IF;
-END
-$$;
-
-CREATE OR REPLACE FUNCTION hasActivity (
-	_userID INTEGER,
-	_habitID INTEGER,
-	--default day is current day for user
-	_day DATE = NULL
-)
-RETURNS BOOLEAN
-LANGUAGE plpgsql
-AS $$
-DECLARE
-	userTzOffset INTEGER := (SELECT tzOffset FROM Users WHERE userID = _userID);
-	latestEntry TIMESTAMP := timeAtTz(userTzOffset, (SELECT datetime FROM History WHERE habitID = _habitID ORDER BY datetime DESC LIMIT 1));
-	userDay DATE := _day;
-BEGIN
-	IF userDay IS NULL THEN
-		SELECT timeAtTz(userTzOffset)::DATE INTO userDay;
-	END IF;
-
-	IF latestEntry < userDay OR latestEntry IS null THEN
-		RETURN false;
-	END IF;
-	RETURN true;
 END
 $$;
 
