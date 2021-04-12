@@ -26,30 +26,63 @@ function conseguirHabitos() {
       alert("Ocurrió un error, intentelo más tarde.");
       return;
     }
-    console.log(res.body);
     var completados = res.body.habits.filter(function (habito) {
       return habito.completed;
     });
-    var pendientes = res.body.habits.filter(function (habito) {
-      return !habito.completed;
+    var completadosHoy = res.body.habits.filter(function (habito) {
+      return habito.completed && habito.frequency.includes(new Date().getDay());
     });
-    mostrarHabitos(pendientes);
-    mostrarHabitos(completados, true);
+    var pendientesHoy = res.body.habits.filter(function (habito) {
+      return (
+        !habito.completed && habito.frequency.includes(new Date().getDay())
+      );
+    });
+    var habitosOtroDia = res.body.habits.filter(function (habito) {
+      return (
+        !habito.completed && !habito.frequency.includes(new Date().getDay())
+      );
+    });
+    mostrarHabitos(pendientesHoy, "pendientes");
+    mostrarHabitos(completados, "completados");
+    mostrarHabitos(habitosOtroDia, "otroDia");
+
+    const completadoNum = document.querySelector("#info_completado-num");
+    const completadoPorciento = document.querySelector("#info_porcentaje-num");
+
+    completadoNum.innerText =
+      completadosHoy.length +
+      "/" +
+      (pendientesHoy.length + completadosHoy.length);
+
+    completadoPorciento.innerText = porcentaje(
+      completadosHoy.length,
+      pendientesHoy.length + completadosHoy.length
+    ).toFixed();
   });
 }
 
-function mostrarHabitos(habitos, completado = false) {
-  const cont = completado
-    ? document.querySelector("#completados")
-    : document.querySelector("#pendientes");
+function mostrarHabitos(habitos, tipo) {
+  let cont = "";
+  switch (tipo) {
+    case "pendientes":
+      cont = document.querySelector("#pendientes");
+      break;
+    case "completados":
+      cont = document.querySelector("#completados");
+      break;
+    case "otroDia":
+      cont = document.querySelector("#habitos-otro-dia");
+      break;
+  }
   const template = `
-  <div class="actividad ${completado ? "actividad_terminado" : null}">
+  <div class="actividad ${tipo == "completados" ? "actividad_terminado" : ""}">
     <input
       type="checkbox"
       name="Pendiente"
-      id="habito_{{}}"
       class="Habito_Check"
-      ${completado ? "checked" : null}
+      id="habito_{{}}"
+      ${tipo == "completados" ? "checked" : ""}
+      data-habitid={{}}
     />
     <label for="habito_{{}}" class="Habito_Check_Label"></label>
     <div class="info_actividad">
@@ -60,6 +93,7 @@ function mostrarHabitos(habitos, completado = false) {
   `;
   habitos.forEach(function (habito) {
     crearElemento(cont, template, [
+      habito.habitid,
       habito.habitid,
       habito.habitid,
       habito.name,
@@ -78,4 +112,8 @@ function crearElemento(padre, str, valores) {
 
 function escapeHTML(str) {
   return new Option(str).innerHTML;
+}
+
+function porcentaje(valor, total) {
+  return (valor / total) * 100;
 }
