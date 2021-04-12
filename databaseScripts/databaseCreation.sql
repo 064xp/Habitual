@@ -1,14 +1,14 @@
 -- Database: habitual
 
 -- DROP DATABASE habitual;
-CREATE DATABASE habitual
-    WITH
-    OWNER = habitual
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'en_US.utf8'
-    LC_CTYPE = 'en_US.utf8'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1;
+-- CREATE DATABASE habitual
+--     WITH
+--     OWNER = habitual
+--     ENCODING = 'UTF8'
+--     LC_COLLATE = 'en_US.utf8'
+--     LC_CTYPE = 'en_US.utf8'
+--     TABLESPACE = pg_default
+--     CONNECTION LIMIT = -1;
 
 -- Tables
 CREATE TABLE Users (
@@ -31,7 +31,7 @@ CREATE TABLE Habits (
 	name VARCHAR(200) NOT NULL,
 	frequency INTEGER [],
 	type INTEGER REFERENCES HabitTypes (typeID) NOT NULL,
-	startDate DATE NOT NULL,
+	startDate TIMESTAMP NOT NULL,
 	daysPending INTEGER NOT NULL,
 	reminderHour INTEGER,
 	reminderMinute INTEGER,
@@ -53,7 +53,7 @@ CREATE OR REPLACE FUNCTION insertHabit(
 	_frequency INTEGER [],
 	_type INTEGER,
 	_reminder INTEGER [],
-	_startDate DATE = CURRENT_DATE
+	_startDate TIMESTAMP = NOW()
 )
 RETURNS INTEGER
 LANGUAGE plpgsql
@@ -101,8 +101,9 @@ RETURNS INTEGER
 LANGUAGE plpgsql
 AS $$
 DECLARE
+	startDate TIMESTAMP := (SELECT startDate FROM Habits WHERE habitID = _habitID);
 	totalDays INTEGER := (SELECT days FROM HabitTypes WHERE typeId = _newType);
-	activitiesDone INTEGER := (SELECT COUNT(DISTINCT dateTime::date) FROM History WHERE habitID = _habitID);
+	activitiesDone INTEGER := (SELECT COUNT(DISTINCT dateTime::date) FROM History WHERE habitID = _habitID AND dateTime > startDate);
 	daysPending INTEGER;
 BEGIN
 	SELECT totalDays - activitiesDone INTO daysPending;
@@ -114,18 +115,24 @@ BEGIN
 END
 $$;
 
-CREATE OR REPLACE FUNCTION hasActivityToday (
+CREATE OR REPLACE FUNCTION hasActivity (
 	_userID INTEGER,
-	_habitID INTEGER
+	_habitID INTEGER,
+	--default day is current day for user
+	_day DATE = NULL
 )
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 AS $$
 DECLARE
 	userTzOffset INTEGER := (SELECT tzOffset FROM Users WHERE userID = _userID);
-	latestEntry TIMESTAMP := (SELECT datetime FROM History WHERE habitID = _habitID ORDER BY datetime DESC LIMIT 1);
-	userDay DATE := (SELECT (now() AT TIME ZONE ('-' || userTzOffset || 'min')::INTERVAL)::DATE);
+	latestEntry TIMESTAMP := timeAtTz(userTzOffset, (SELECT datetime FROM History WHERE habitID = _habitID ORDER BY datetime DESC LIMIT 1));
+	userDay DATE := _day;
 BEGIN
+	IF userDay IS NULL THEN
+		SELECT timeAtTz(userTzOffset)::DATE INTO userDay;
+	END IF;
+
 	IF latestEntry < userDay OR latestEntry IS null THEN
 		RETURN false;
 	END IF;
@@ -144,8 +151,9 @@ RETURNS TABLE (
 	reminderHour INTEGER,
 	reminderMinute INTEGER,
 	type INTEGER,
-	startDate DATE,
-	dayPending INTEGER,
+	startDate TIMESTAMP,
+	daysPending INTEGER,
+	isOverdue BOOLEAN,
 	totalDays INTEGER,
 	completed BOOLEAN
 )
@@ -155,9 +163,9 @@ BEGIN
   RETURN QUERY
     SELECT
       h.habitId, h.name, h.frequency, h.reminderHour, h.reminderMinute,
-      h.type, h.startDate, h.daysPending,
+      h.type, h.startDate, h.daysPending, h.isOverdue,
       (SELECT days FROM HabitTypes WHERE typeID=h.type),
-	  (SELECT * FROM hasActivityToday(_userID, h.habitID))
+	  (SELECT * FROM hasActivity(_userID, h.habitID))
     FROM Habits as h WHERE userID=_userID
     LIMIT _ammount;
 END
@@ -213,6 +221,57 @@ BEGIN
 END
 $$;
 
+CREATE OR REPLACE FUNCTION timeAtTz(
+	_tzOffset INTEGER, 
+	_time TIMESTAMPTZ = NOW()
+)
+RETURNS TIMESTAMP
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	RETURN _time AT TIME ZONE (_tzOffset*-1||'min')::INTERVAL;
+END
+$$;
+
+CREATE OR REPLACE FUNCTION insertHistoryEntry(
+	_habitID INTEGER, 
+	_isOverdueEntry BOOLEAN = false, 
+	_dateTime TIMESTAMPTZ = NOW()
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	newEntryID INTEGER;
+BEGIN	
+	INSERT INTO History (habitID, dateTime, isOverdueEntry) 
+		VALUES (_habitID, _dateTime, _isOverdueEntry)
+		RETURNING entryID INTO newEntryID;
+	RETURN newEntryID;
+END
+$$;
+
+
+-- Views
+CREATE OR REPLACE VIEW overdueHabits AS 
+SELECT h.habitID, u.userID, h.name, h.isOverdue, h.frequency, h.startDate, u.tzOffset
+		FROM Habits h 
+		INNER JOIN Users u ON  h.userID = u.userID
+		WHERE 
+			(SELECT DATE_PART('dow', timeAtTz(u.tzOffset) - '1day'::INTERVAL)) = ANY(h.frequency)
+			AND NOT hasActivity(h.userID, h.habitID, (timeAtTz(u.tzOffset) - '1day'::INTERVAL)::DATE)
+			AND DATE_PART('hour', timeAtTz(u.tzOffset)) = 0
+			AND timeAtTz(u.tzOffset, h.startDate) < timeAtTz(u.tzOffset)::DATE
+			AND NOT h.isOverdue;
+
+-- Stored Procedures
+CREATE OR REPLACE PROCEDURE setHabitOverdue(_habitID INTEGER) 
+LANGUAGE SQL
+AS $$
+	UPDATE Habits SET isOverdue = true WHERE habitID = _habitID;
+	SELECT insertHistoryEntry(_habitID, true, NOW() - '10min'::INTERVAL);
+$$;
+
 
 -- Trigger Functions
 CREATE OR REPLACE FUNCTION updateDaysPendingTypeChange()
@@ -234,7 +293,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE userID INTEGER := (SELECT userID FROM Habits WHERE habitID = NEW.habitID);
 BEGIN
-	IF NOT hasActivityToday(userID, NEW.habitID) THEN
+	IF NOT hasActivity(userID, NEW.habitID) THEN
 		UPDATE Habits SET daysPending = daysPending - 1 WHERE habitID = NEW.habitID;
 	END IF;
 	RETURN NEW;
@@ -251,7 +310,7 @@ BEGIN
 END
 $$;
 
--- Trigger
+-- Triggers
 CREATE TRIGGER trHabitTypeChange
 AFTER UPDATE ON Habits
 FOR EACH ROW
@@ -261,7 +320,7 @@ CREATE TRIGGER trHabitActivityIns
 BEFORE INSERT ON History
 FOR EACH ROW
 	EXECUTE PROCEDURE updateDaysPendingActivityIns();
-	
+
 CREATE TRIGGER trHabitActivityDel
 AFTER DELETE ON History
 FOR EACH ROW
@@ -282,9 +341,11 @@ INSERT INTO HabitTypes (typeID, name, days)
 CREATE ROLE habitualUser
 	WITH encrypted password '' LOGIN;
 
-GRANT UPDATE(name, email, password), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
+GRANT UPDATE(name, email, password, tzOffset), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE habits_habitid_seq TO habitualUser;
-GRANT UPDATE(name, frequency, type, reminderHour, reminderMinute, daysPending), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
+GRANT UPDATE(name, frequency, type, reminderHour, reminderMinute, daysPending, isOverdue), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
 GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
+GRANT USAGE, SELECT ON SEQUENCE history_entryid_seq TO habitualUser;
 GRANT SELECT ON TABLE HabitTypes TO habitualUser;
+GRANT SELECT ON overdueHabits TO habitualUser;

@@ -127,8 +127,7 @@ function rellenarCampos(habit) {
   recordatorioToggle.checked = false;
   if (habit.reminderhour != null) {
     recordatorioToggle.checked = true;
-    var timeStr = timeToString([habit.reminderhour, habit.reminderminute]);
-    inputRec.value = timeToString(convertTime(timeStr, "local"));
+    inputRec.value = timeToString([habit.reminderhour, habit.reminderminute]);
   }
 }
 
