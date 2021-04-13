@@ -1,12 +1,50 @@
+var habitosState = null;
+
 window.addEventListener("load", function () {
   document.querySelector("#nombre-usuario").innerText = localStorage.getItem(
     "name"
   );
-  var fecha = conseguirFecha();
-  document.querySelector("#fecha").innerText = fecha[0] + "\n" + fecha[1];
+  document.querySelector("#fecha").innerText = conseguirFecha();
 
   conseguirHabitos();
 });
+
+function HabitosState(habitos) {
+  //hábitos completos
+  this.habitos = habitos;
+  //hábitos clasificados
+  this.completados = [];
+  this.pendientesHoy = [];
+  this.otroDia = [];
+  this.completadosHoy = [];
+  //métodos
+  this.clasificarHabitos = clasificarHabitos;
+  this.actualizarValores = actualizarValores;
+  this.mostrarHabitos = mostrarHabitos;
+  this.contenedores = {
+    completados: document.querySelector("#completados"),
+    pendientesHoy: document.querySelector("#pendientes"),
+    otroDia: document.querySelector("#habitos-otro-dia"),
+  };
+
+  this.clasificarHabitos();
+  this.actualizarValores();
+}
+
+function clasificarHabitos() {
+  this.completados = this.habitos.filter(function (habito) {
+    return habito.completed;
+  });
+  this.completadosHoy = this.habitos.filter(function (habito) {
+    return habito.completed && habito.frequency.includes(new Date().getDay());
+  });
+  this.pendientesHoy = this.habitos.filter(function (habito) {
+    return !habito.completed && habito.frequency.includes(new Date().getDay());
+  });
+  this.otroDia = this.habitos.filter(function (habito) {
+    return !habito.completed && !habito.frequency.includes(new Date().getDay());
+  });
+}
 
 function conseguirHabitos() {
   requests.get("/api/habits").then(function (res) {
@@ -14,60 +52,30 @@ function conseguirHabitos() {
       alert("Ocurrió un error, intentelo más tarde.");
       return;
     }
-    actualizarValores(res.body.habits);
+    habitosState = new HabitosState(res.body.habits);
   });
 }
 
-function actualizarValores(habitos) {
-  var c = clasificarHabitos(habitos);
-  mostrarHabitos(c.pendientesHoy, "pendientes");
-  mostrarHabitos(c.completados, "completados");
-  mostrarHabitos(c.habitosOtroDia, "otroDia");
+function actualizarValores() {
+  this.mostrarHabitos("pendientesHoy");
+  this.mostrarHabitos("completados");
+  this.mostrarHabitos("otroDia");
 
   const completadoNum = document.querySelector("#info_completado-num");
   const completadoPorciento = document.querySelector("#info_porcentaje-num");
 
   completadoNum.innerText =
-    c.completadosHoy.length +
+    this.completadosHoy.length +
     "/" +
-    (c.pendientesHoy.length + c.completadosHoy.length);
+    (this.pendientesHoy.length + this.completadosHoy.length);
 
   completadoPorciento.innerText = porcentaje(
-    c.completadosHoy.length,
-    c.pendientesHoy.length + c.completadosHoy.length
+    this.completadosHoy.length,
+    this.pendientesHoy.length + this.completadosHoy.length
   ).toFixed();
 }
 
-function clasificarHabitos(habitos) {
-  var res = {};
-  res.completados = habitos.filter(function (habito) {
-    return habito.completed;
-  });
-  res.completadosHoy = habitos.filter(function (habito) {
-    return habito.completed && habito.frequency.includes(new Date().getDay());
-  });
-  res.pendientesHoy = habitos.filter(function (habito) {
-    return !habito.completed && habito.frequency.includes(new Date().getDay());
-  });
-  res.habitosOtroDia = habitos.filter(function (habito) {
-    return !habito.completed && !habito.frequency.includes(new Date().getDay());
-  });
-  return res;
-}
-
-function mostrarHabitos(habitos, tipo) {
-  let cont = "";
-  switch (tipo) {
-    case "pendientes":
-      cont = document.querySelector("#pendientes");
-      break;
-    case "completados":
-      cont = document.querySelector("#completados");
-      break;
-    case "otroDia":
-      cont = document.querySelector("#habitos-otro-dia");
-      break;
-  }
+function mostrarHabitos(tipo) {
   const template = `
   <div class="actividad ${tipo == "completados" ? "actividad_terminado" : ""}">
     <input
@@ -85,15 +93,16 @@ function mostrarHabitos(habitos, tipo) {
     </div>
   </div>
   `;
-  habitos.forEach(function (habito) {
-    crearElemento(cont, template, [
+  for (var i = 0; i < this[tipo].length; i++) {
+    var habito = this[tipo][i];
+    crearElemento(this.contenedores[tipo], template, [
       habito.habitid,
       habito.habitid,
       habito.habitid,
       habito.name,
       habito.frequency.length,
     ]);
-  });
+  }
 }
 
 function crearElemento(padre, str, valores) {
@@ -110,10 +119,15 @@ function conseguirFecha() {
   //prettier-ignore
   const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
   var fecha = new Date();
-  return [
-    dias[fecha.getDay()] + " " + fecha.getDate(),
-    meses[fecha.getMonth()] + " " + fecha.getFullYear().toString().substring(2),
-  ];
+  return (
+    dias[fecha.getDay()] +
+    " " +
+    fecha.getDate() +
+    "\n" +
+    meses[fecha.getMonth()] +
+    " " +
+    fecha.getFullYear().toString().substring(2)
+  );
 }
 
 function escapeHTML(str) {
