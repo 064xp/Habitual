@@ -8,57 +8,51 @@ window.addEventListener("load", function () {
   conseguirHabitos();
 });
 
-function conseguirFecha() {
-  //prettier-ignore
-  const dias = ['Domingo','Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-  //prettier-ignore
-  const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-  var fecha = new Date();
-  return [
-    dias[fecha.getDay()] + " " + fecha.getDate(),
-    meses[fecha.getMonth()] + " " + fecha.getFullYear().toString().substring(2),
-  ];
-}
-
 function conseguirHabitos() {
   requests.get("/api/habits").then(function (res) {
     if (!res.ok) {
       alert("Ocurrió un error, intentelo más tarde.");
       return;
     }
-    var completados = res.body.habits.filter(function (habito) {
-      return habito.completed;
-    });
-    var completadosHoy = res.body.habits.filter(function (habito) {
-      return habito.completed && habito.frequency.includes(new Date().getDay());
-    });
-    var pendientesHoy = res.body.habits.filter(function (habito) {
-      return (
-        !habito.completed && habito.frequency.includes(new Date().getDay())
-      );
-    });
-    var habitosOtroDia = res.body.habits.filter(function (habito) {
-      return (
-        !habito.completed && !habito.frequency.includes(new Date().getDay())
-      );
-    });
-    mostrarHabitos(pendientesHoy, "pendientes");
-    mostrarHabitos(completados, "completados");
-    mostrarHabitos(habitosOtroDia, "otroDia");
-
-    const completadoNum = document.querySelector("#info_completado-num");
-    const completadoPorciento = document.querySelector("#info_porcentaje-num");
-
-    completadoNum.innerText =
-      completadosHoy.length +
-      "/" +
-      (pendientesHoy.length + completadosHoy.length);
-
-    completadoPorciento.innerText = porcentaje(
-      completadosHoy.length,
-      pendientesHoy.length + completadosHoy.length
-    ).toFixed();
+    actualizarValores(res.body.habits);
   });
+}
+
+function actualizarValores(habitos) {
+  var c = clasificarHabitos(habitos);
+  mostrarHabitos(c.pendientesHoy, "pendientes");
+  mostrarHabitos(c.completados, "completados");
+  mostrarHabitos(c.habitosOtroDia, "otroDia");
+
+  const completadoNum = document.querySelector("#info_completado-num");
+  const completadoPorciento = document.querySelector("#info_porcentaje-num");
+
+  completadoNum.innerText =
+    c.completadosHoy.length +
+    "/" +
+    (c.pendientesHoy.length + c.completadosHoy.length);
+
+  completadoPorciento.innerText = porcentaje(
+    c.completadosHoy.length,
+    c.pendientesHoy.length + c.completadosHoy.length
+  ).toFixed();
+}
+
+function clasificarHabitos(habitos) {
+  var res = {};
+  res.completados = habitos.filter(function (habito) {
+    return habito.completed;
+  });
+  res.completadosHoy = habitos.filter(function (habito) {
+    return habito.completed && habito.frequency.includes(new Date().getDay());
+  });
+  res.pendientesHoy = habitos.filter(function (habito) {
+    return !habito.completed && habito.frequency.includes(new Date().getDay());
+  });
+  res.habitosOtroDia = habitos.filter(function (habito) {
+    return !habito.completed && !habito.frequency.includes(new Date().getDay());
+  });
+  return res;
 }
 
 function mostrarHabitos(habitos, tipo) {
@@ -108,6 +102,18 @@ function crearElemento(padre, str, valores) {
   });
   padre.innerHTML += str;
   return str;
+}
+
+function conseguirFecha() {
+  //prettier-ignore
+  const dias = ['Domingo','Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  //prettier-ignore
+  const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  var fecha = new Date();
+  return [
+    dias[fecha.getDay()] + " " + fecha.getDate(),
+    meses[fecha.getMonth()] + " " + fecha.getFullYear().toString().substring(2),
+  ];
 }
 
 function escapeHTML(str) {
