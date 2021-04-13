@@ -84,30 +84,33 @@ function actualizarValores() {
 
 function mostrarHabitos(tipo) {
   const template = `
-  <div class="
-    actividad
-    ${tipo == "completados" ? "actividad_terminado" : ""}
-    {{}}
-    ">
-    <input
-      type="checkbox"
-      name="Pendiente"
-      class="Habito_Check"
-      id="habito_{{}}"
-      ${tipo == "completados" ? "checked" : ""}
-      data-habitid={{}}
-    />
-    <label for="habito_{{}}" class="Habito_Check_Label"></label>
-    <div class="info_actividad">
-      <h3>{{}}</h3>
-      <p>{{}} veces por semana</p>
+  <a href="/editarHabito.html?habitID={{}}" class="habito-link">
+    <div class="
+      actividad
+      ${tipo == "completados" ? "actividad_terminado" : ""}
+      {{}}
+      ">
+      <input
+        type="checkbox"
+        name="Pendiente"
+        class="Habito_Check"
+        id="habito_{{}}"
+        ${tipo == "completados" ? "checked" : ""}
+        data-habitid={{}}
+      />
+      <label for="habito_{{}}" class="Habito_Check_Label"></label>
+      <div class="info_actividad">
+        <h3>{{}}</h3>
+        <p>{{}} veces por semana</p>
+      </div>
     </div>
-  </div>
+  </a>
   `;
   this.contenedores[tipo].innerHTML = "";
   for (var i = 0; i < this[tipo].length; i++) {
     var habito = this[tipo][i];
     crearElemento(this.contenedores[tipo], template, [
+      habito.habitid,
       habito.isoverdue ? "habito-vencido" : "",
       habito.habitid,
       habito.habitid,
