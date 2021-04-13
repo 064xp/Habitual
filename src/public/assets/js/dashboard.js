@@ -203,5 +203,6 @@ function escapeHTML(str) {
 }
 
 function porcentaje(valor, total) {
-  return (valor / total) * 100;
+  var porcentaje = (valor / total) * 100;
+  return isNaN(porcentaje) ? 0 : porcentaje;
 }

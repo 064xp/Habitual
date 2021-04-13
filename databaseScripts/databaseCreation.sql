@@ -154,7 +154,7 @@ RETURNS TABLE (
 	daysPending INTEGER,
 	isOverdue BOOLEAN,
 	totalDays INTEGER,
-	completed BOOLEAN
+	doneToday BOOLEAN
 )
 LANGUAGE plpgsql
 AS $$
@@ -164,7 +164,7 @@ BEGIN
       h.habitId, h.name, h.frequency, h.reminderHour, h.reminderMinute,
       h.type, h.startDate, h.daysPending, h.isOverdue,
       (SELECT days FROM HabitTypes WHERE typeID=h.type),
-	  (SELECT * FROM hasActivity(_userID, h.habitID))
+	  ((SELECT * FROM hasActivity(_userID, h.habitID)) OR h.daysPending = 0)
     FROM Habits as h WHERE userID=_userID
     LIMIT _ammount;
 END
