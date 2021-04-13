@@ -120,6 +120,10 @@ header h2 {
   background-color: #d7d7d7 !important;
 }
 
+.habito-vencido {
+  background-color: #d23434 !important;
+}
+
 .actividad_terminado h3,
 .actividad_terminado p {
   color: black;

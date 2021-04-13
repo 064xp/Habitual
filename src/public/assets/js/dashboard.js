@@ -38,16 +38,16 @@ function HabitosState(habitos) {
 //Definición de métodos
 function clasificarHabitos() {
   this.completados = this.habitos.filter(function (habito) {
-    return habito.completed;
+    return habito.donetoday;
   });
   this.completadosHoy = this.habitos.filter(function (habito) {
-    return habito.completed && habito.frequency.includes(new Date().getDay());
+    return habito.donetoday && habito.frequency.includes(new Date().getDay());
   });
   this.pendientesHoy = this.habitos.filter(function (habito) {
-    return !habito.completed && habito.frequency.includes(new Date().getDay());
+    return !habito.donetoday && habito.frequency.includes(new Date().getDay());
   });
   this.otroDia = this.habitos.filter(function (habito) {
-    return !habito.completed && !habito.frequency.includes(new Date().getDay());
+    return !habito.donetoday && !habito.frequency.includes(new Date().getDay());
   });
 }
 
@@ -84,7 +84,11 @@ function actualizarValores() {
 
 function mostrarHabitos(tipo) {
   const template = `
-  <div class="actividad ${tipo == "completados" ? "actividad_terminado" : ""}">
+  <div class="
+    actividad
+    ${tipo == "completados" ? "actividad_terminado" : ""}
+    {{}}
+    ">
     <input
       type="checkbox"
       name="Pendiente"
@@ -104,6 +108,7 @@ function mostrarHabitos(tipo) {
   for (var i = 0; i < this[tipo].length; i++) {
     var habito = this[tipo][i];
     crearElemento(this.contenedores[tipo], template, [
+      habito.isoverdue ? "habito-vencido" : "",
       habito.habitid,
       habito.habitid,
       habito.habitid,
@@ -123,7 +128,8 @@ function agregarActividad(habitID) {
       var habito = this.habitos.find(function (habito) {
         return habito.habitid == habitID;
       });
-      habito.completed = true;
+      habito.donetoday = true;
+      habito.isoverdue = false;
 
       this.actualizarValores();
     }.bind(this)
@@ -140,7 +146,7 @@ function eliminarActividad(habitID) {
       var habito = this.habitos.find(function (habito) {
         return habito.habitid == habitID;
       });
-      habito.completed = false;
+      habito.donetoday = false;
 
       this.actualizarValores();
     }.bind(this)
