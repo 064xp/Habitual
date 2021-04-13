@@ -1,3 +1,4 @@
+requests.customHeaders.tz_offset = new Date().getTimezoneOffset();
 var habitosState = null;
 
 window.addEventListener("load", function () {
@@ -21,16 +22,20 @@ function HabitosState(habitos) {
   this.clasificarHabitos = clasificarHabitos;
   this.actualizarValores = actualizarValores;
   this.mostrarHabitos = mostrarHabitos;
+  this.agregarActividad = agregarActividad;
+  this.eliminarActividad = eliminarActividad;
+  this.agregarListenersCheck = agregarListenersCheck;
+  //Contenedores para los hábitos
   this.contenedores = {
     completados: document.querySelector("#completados"),
     pendientesHoy: document.querySelector("#pendientes"),
     otroDia: document.querySelector("#habitos-otro-dia"),
   };
 
-  this.clasificarHabitos();
   this.actualizarValores();
 }
 
+//Definición de métodos
 function clasificarHabitos() {
   this.completados = this.habitos.filter(function (habito) {
     return habito.completed;
@@ -57,9 +62,11 @@ function conseguirHabitos() {
 }
 
 function actualizarValores() {
+  this.clasificarHabitos();
   this.mostrarHabitos("pendientesHoy");
   this.mostrarHabitos("completados");
   this.mostrarHabitos("otroDia");
+  this.agregarListenersCheck();
 
   const completadoNum = document.querySelector("#info_completado-num");
   const completadoPorciento = document.querySelector("#info_porcentaje-num");
@@ -93,6 +100,7 @@ function mostrarHabitos(tipo) {
     </div>
   </div>
   `;
+  this.contenedores[tipo].innerHTML = "";
   for (var i = 0; i < this[tipo].length; i++) {
     var habito = this[tipo][i];
     crearElemento(this.contenedores[tipo], template, [
@@ -105,6 +113,57 @@ function mostrarHabitos(tipo) {
   }
 }
 
+function agregarActividad(habitID) {
+  requests.post("/api/activities/new", { habitID: habitID }).then(
+    function (res) {
+      if (!res.ok) {
+        alert("Ocurrió un error, intenta más tarde");
+        return;
+      }
+      var habito = this.habitos.find(function (habito) {
+        return habito.habitid == habitID;
+      });
+      habito.completed = true;
+
+      this.actualizarValores();
+    }.bind(this)
+  );
+}
+
+function eliminarActividad(habitID) {
+  requests.delete("/api/activities/delete", { habitID: habitID }).then(
+    function (res) {
+      if (!res.ok) {
+        alert("Ocurrió un error, intenta más tarde");
+        return;
+      }
+      var habito = this.habitos.find(function (habito) {
+        return habito.habitid == habitID;
+      });
+      habito.completed = false;
+
+      this.actualizarValores();
+    }.bind(this)
+  );
+}
+
+function agregarListenersCheck() {
+  const habitoChecks = document.querySelectorAll(".Habito_Check");
+
+  for (var i = 0; i < habitoChecks.length; i++) {
+    var checkEl = habitoChecks[i];
+
+    checkEl.addEventListener(
+      "change",
+      function (e) {
+        if (e.target.checked) this.agregarActividad(e.target.dataset.habitid);
+        else this.eliminarActividad(e.target.dataset.habitid);
+      }.bind(this)
+    );
+  }
+}
+
+//Funciones de ayuda generales
 function crearElemento(padre, str, valores) {
   valores.forEach(function (val) {
     str = str.replace("{{}}", escapeHTML(val));

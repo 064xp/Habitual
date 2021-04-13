@@ -127,6 +127,27 @@ module.exports.addHistoryEntry = async (habitID, dateTime = new Date()) => {
   return result.rows[0].inserthistoryentry;
 };
 
+module.exports.removeHistoryEntry = async (userID, habitID, entryID = null) => {
+  if (entryID) {
+    const result = await pool.query(
+      "DELETE FROM History WHERE entryID = $1 RETURNING entryID",
+      [entryID]
+    );
+    return result.rows[0].entryid;
+  } else {
+    const result = await pool.query(
+      `DELETE FROM History
+        WHERE entryID = (SELECT entryID FROM History
+                          WHERE habitID = $1
+                          ORDER BY dateTime DESC
+                          LIMIT 1)
+        RETURNING entryID`,
+      [habitID]
+    );
+    return result.rows[0].entryid;
+  }
+};
+
 module.exports.resetHabit = async (habit) => {
   try {
     const typeQuery = await pool.query(
@@ -144,5 +165,20 @@ module.exports.resetHabit = async (habit) => {
     console.log(`Error while reseting habit ${habit.habitid}`);
     console.log(err);
     return false;
+  }
+};
+
+module.exports.habitBelongsTo = async (habitID, userID) => {
+  try {
+    const habit = await pool.query(
+      "SELECT * FROM Habits WHERE habitID = $1 AND userID = $2",
+      [habitID, userID]
+    );
+    return habit.rows.length !== 0;
+  } catch (err) {
+    console.log(
+      `Error while validating habit ${habitID} belongs to userID ${userID}`
+    );
+    return null;
   }
 };
