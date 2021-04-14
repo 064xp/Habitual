@@ -84,24 +84,30 @@ function actualizarValores() {
 
 function mostrarHabitos(tipo) {
   const template = `
-  <a href="/editarHabito.html?habitID={{}}" class="habito-link">
-    <div class="
-      actividad
-      ${tipo == "completados" ? "actividad_terminado" : ""}
-      {{}}
-      ">
+  <a href="/editarHabito.html?habitID={{1}}" class="habito-link">
+    <div class="actividad
+      ${tipo == "completados" ? "habito-terminado " : ""}
+      {{2}}
+    ">
       <input
         type="checkbox"
         name="Pendiente"
         class="Habito_Check"
-        id="habito_{{}}"
+        id="habito_{{1}}"
         ${tipo == "completados" ? "checked" : ""}
-        data-habitid={{}}
+        data-habitid={{1}}
       />
-      <label for="habito_{{}}" class="Habito_Check_Label"></label>
+      <label for="habito_{{1}}" class="Habito_Check_Label"></label>
       <div class="info_actividad">
-        <h3>{{}}</h3>
-        <p>{{}} veces por semana</p>
+        <h3>{{3}}</h3>
+        <div class="habito-semana">
+          {{4}}
+        </div>
+      </div>
+      <div class="habito-dias-cont">
+        <div>
+          <span class="habito-dias-num">{{5}}</span>/{{6}}
+        </div>
       </div>
     </div>
   </a>
@@ -116,11 +122,10 @@ function mostrarHabitos(tipo) {
     crearElemento(this.contenedores[tipo], template, [
       habito.habitid,
       clases,
-      habito.habitid,
-      habito.habitid,
-      habito.habitid,
       habito.name,
-      habito.frequency.length,
+      generarSemana(habito),
+      habito.totaldays - habito.dayspending,
+      habito.totaldays,
     ]);
   }
 }
@@ -137,6 +142,7 @@ function agregarActividad(habitID) {
       });
       habito.donetoday = true;
       habito.isoverdue = false;
+      habito.dayspending -= 1;
 
       this.actualizarValores();
     }.bind(this)
@@ -154,6 +160,7 @@ function eliminarActividad(habitID) {
         return habito.habitid == habitID;
       });
       habito.donetoday = false;
+      habito.dayspending += 1;
 
       this.actualizarValores();
     }.bind(this)
@@ -176,10 +183,26 @@ function agregarListenersCheck() {
   }
 }
 
+function generarSemana(habito) {
+  var diasSemana = ["L", "M", "Mi", "J", "V", "S", "D"];
+  var html = "";
+  for (var i = 0; i < diasSemana.length; i++) {
+    var freqDia = i == 6 ? 0 : i + 1;
+    html += `<span
+    ${habito.frequency.includes(freqDia) ? 'class="dia-semana_sel"' : ""}
+    >
+    ${diasSemana[i]}
+    </span>
+    `;
+  }
+  return html;
+}
+
 //Funciones de ayuda generales
 function crearElemento(padre, str, valores) {
-  valores.forEach(function (val) {
-    str = str.replace("{{}}", escapeHTML(val));
+  valores.forEach((valor, index) => {
+    var findStr = "{{" + (index + 1) + "}}";
+    str = str.replaceAll(findStr, valor);
   });
   padre.innerHTML += str;
   return str;

@@ -37,8 +37,9 @@ header h2 {
 #lista {
   background-color: #f5f5f5;
   flex-grow: 1;
-  padding: 1.9em;
+  padding: 1.9em 1em;
   padding-bottom: 5em;
+  border-radius: 30px 30px 0px 0px;
 }
 
 #info_completado {
@@ -64,7 +65,6 @@ header h2 {
   margin-bottom: 0.1em;
   color: #f5f5f5;
   font-size: clamp(40px, 12vw, 80px);
-  /* position: relative; */
 }
 
 #info_completado h4 {
@@ -78,10 +78,6 @@ header h2 {
   font-size: 0.6em;
   position: relative;
   top: -11%;
-}
-
-#lista {
-  border-radius: 30px 30px 0px 0px;
 }
 
 .habitos-container {
@@ -98,6 +94,20 @@ header h2 {
 
 .habito-link {
   text-decoration: none;
+}
+
+.actividad {
+  display: flex;
+  justify-content: space-between;
+  background-color: #023e8a;
+  color: white;
+  padding: 5%;
+  border-radius: 14px;
+  align-items: center;
+  margin: 1em 0;
+  /* box-shadow: 12px 12px 16px -7px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 12px 12px 16px -7px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 12px 12px 16px -7px rgba(0, 0, 0, 0.3); */
 }
 
 .Habito_Check {
@@ -120,7 +130,7 @@ header h2 {
   cursor: pointer;
 }
 
-.actividad_terminado {
+.habito-terminado {
   background-color: #d7d7d7 !important;
 }
 
@@ -132,40 +142,86 @@ header h2 {
   background-color: #2bbd4b !important;
 }
 
-.actividad_terminado h3,
-.actividad_terminado p {
+.habito-completado .habito-dias-cont {
+  border-color: #023e8a;
+}
+
+.habito-terminado .habito-dias-cont div {
+  color: black;
+}
+
+.habito-terminado h3 {
   color: black;
   margin-left: 5%;
 }
 
-.habito-completado h3,
-.habito-completado p {
+.habito-completado h3 {
   color: white;
+}
+
+.habito-completado .habito-dias-cont div {
+  color: #023e8a;
 }
 
 .info_actividad {
-  margin-left: 5%;
+  flex-grow: 2;
+  margin: 0 0 0 1em;
+  width: 40%;
 }
 
 .info_actividad h3 {
-  margin: 0%;
+  margin: 0;
   font-weight: normal;
   font-size: 1.4em;
   text-decoration: none;
+  word-wrap: break-word;
 }
 
-.info_actividad p {
-  margin: 0;
-}
-
-.actividad {
+.info_actividad .habito-semana {
   display: flex;
-  background-color: #023e8a;
+  justify-content: space-between;
+  width: 85%;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.5em;
+  -webkit-box-shadow: inset 2px 0px 18px 2px rgba(0, 0, 0, 0.07);
+  box-shadow: inset 2px 0px 18px 2px rgba(0, 0, 0, 0.07);
+}
+
+.info_actividad .habito-semana span {
   color: white;
-  padding: 5%;
-  border-radius: 14px;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+  font-size: clamp(15px, 4vw, 18px);
+}
+
+.info_actividad .habito-semana .dia-semana_sel {
+  background: white;
+  color: #023e8a;
+  font-weight: bold;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.habito-dias-cont {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  margin: 1em 0;
+  justify-content: center;
+  height: 6em;
+  width: 6em;
+  font-size: clamp(10px, 3vw, 17px);
+  text-align: center;
+  line-height: 1em;
+  border: 0.7em solid #2bbd4b;
+  box-sizing: border-box;
+  border-radius: 100%;
+}
+
+.habito-dias-cont .habito-dias-num {
+  font-size: 2em;
 }
 
 .bottom-bar {
@@ -217,20 +273,23 @@ header h2 {
   fill: black !important;
 }
 
+@media only screen and (min-width: 550px) {
+  .actividad h3 {
+    font-size: clamp(25px, 12vw, 35px);
+  }
+
+  .Habito_Check_Label {
+    width: 2em;
+    height: 2em;
+  }
+}
+
 @media only screen and (min-width: 730px) {
   #lista {
     padding: 3em;
     border-radius: 0%;
     padding: 1.9em;
     padding-bottom: 5em;
-  }
-  .Habito_Check_Label {
-    width: 2em;
-    height: 2em;
-  }
-
-  .actividad h3 {
-    font-size: clamp(25px, 12vw, 30px);
   }
 
   .actividad p {

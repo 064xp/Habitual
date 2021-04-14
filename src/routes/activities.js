@@ -43,7 +43,7 @@ router.delete("/delete", [verify, extractTzHeader], async (req, res) => {
     return res.json({ status: "success", entryID: deletedEntry });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ status: "errro", error: "Database error" });
+    return res.status(500).json({ status: "error", error: "Database error" });
   }
 });
 
