@@ -1,190 +1,298 @@
-body{
-    background-color: #023E8A;
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
+body {
+  background-color: #023e8a;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
 }
 
 main {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-header{
-    display: flex;
-    color:#F5F5F5;
-    justify-content: space-between;
-    margin: .8em;
-    
+header {
+  display: flex;
+  color: #f5f5f5;
+  justify-content: space-between;
+  margin: 0.8em;
+  margin-bottom: 0;
 }
 
-header h2{
-    margin: 0%;
-    font-weight: normal;
-}
-#fecha{
-    text-align: right;
+header h2 {
+  margin: 0%;
+  font-weight: normal;
+  font-size: 1.2em;
 }
 
-#lista{
-    background-color: #F5F5F5;
-    flex-grow: 1;
+#fecha {
+  text-align: right;
+}
+
+@media only screen and (min-width: 450px) {
+  header h2 {
+    font-size: 1.5em;
+  }
+}
+
+#lista {
+  background-color: #f5f5f5;
+  flex-grow: 1;
+  padding: 1.9em 1em;
+  padding-bottom: 5em;
+  border-radius: 30px 30px 0px 0px;
+}
+
+#info_completado {
+  margin: auto;
+  border-radius: 100%;
+  width: 35vw;
+  height: 35vw;
+  border: 1em solid #2bbd4b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5em;
+  max-width: 220px;
+  max-height: 220px;
+  min-width: 120px;
+  min-height: 120px;
+}
+
+#info_completado h2 {
+  font-weight: normal;
+  margin: 0%;
+  margin-bottom: 0.1em;
+  color: #f5f5f5;
+  font-size: clamp(40px, 12vw, 80px);
+}
+
+#info_completado h4 {
+  margin: 0%;
+  color: #f5f5f5;
+  font-size: clamp(18px, 5vw, 20px);
+  text-align: center;
+}
+
+#info_porcentaje #info_porcentaje-signo {
+  font-size: 0.6em;
+  position: relative;
+  top: -11%;
+}
+
+.habitos-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 530px;
+  margin: auto;
+}
+
+.habitos-container h2 {
+  margin-bottom: 0.25em;
+  font-weight: normal;
+}
+
+.habito-link {
+  text-decoration: none;
+}
+
+.actividad {
+  display: flex;
+  justify-content: space-between;
+  background-color: #023e8a;
+  color: white;
+  padding: 5%;
+  border-radius: 14px;
+  align-items: center;
+  margin: 1em 0;
+  /* box-shadow: 12px 12px 16px -7px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 12px 12px 16px -7px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 12px 12px 16px -7px rgba(0, 0, 0, 0.3); */
+}
+
+.Habito_Check {
+  display: none;
+}
+
+.Habito_Check:checked + .Habito_Check_Label {
+  background-color: #023e8a;
+  background-image: url("../img/check.svg");
+  background-size: 60%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.Habito_Check_Label {
+  border-radius: 100%;
+  background-color: white;
+  width: 1.5em;
+  height: 1.5em;
+  cursor: pointer;
+}
+
+.habito-terminado {
+  background-color: #d7d7d7 !important;
+}
+
+.habito-vencido {
+  background-color: #d23434 !important;
+}
+
+.habito-completado {
+  background-color: #2bbd4b !important;
+}
+
+.habito-completado .habito-dias-cont {
+  border-color: #023e8a;
+}
+
+.habito-terminado .habito-dias-cont div {
+  color: black;
+}
+
+.habito-terminado h3 {
+  color: black;
+  margin-left: 5%;
+}
+
+.habito-completado h3 {
+  color: white;
+}
+
+.habito-completado .habito-dias-cont div {
+  color: white;
+}
+
+.info_actividad {
+  flex-grow: 2;
+  margin: 0 0 0 1em;
+  width: 40%;
+}
+
+.info_actividad h3 {
+  margin: 0;
+  font-weight: normal;
+  font-size: 1.4em;
+  text-decoration: none;
+  word-wrap: break-word;
+}
+
+.info_actividad .habito-semana {
+  display: flex;
+  justify-content: space-between;
+  width: 85%;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.5em;
+  -webkit-box-shadow: inset 2px 0px 18px 2px rgba(0, 0, 0, 0.07);
+  box-shadow: inset 2px 0px 18px 2px rgba(0, 0, 0, 0.07);
+}
+
+.info_actividad .habito-semana span {
+  color: white;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+  font-size: clamp(15px, 4vw, 18px);
+}
+
+.info_actividad .habito-semana .dia-semana_sel {
+  background: white;
+  color: #023e8a;
+  font-weight: bold;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.habito-dias-cont {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 6em;
+  width: 6em;
+  font-size: clamp(10px, 3vw, 17px);
+  text-align: center;
+  line-height: 1em;
+  border: 0.7em solid #2bbd4b;
+  box-sizing: border-box;
+  border-radius: 100%;
+}
+
+.habito-dias-cont .habito-dias-num {
+  font-size: 2em;
+}
+
+.bottom-bar {
+  background-color: white;
+  width: 100vw;
+  height: clamp(55px, 10vh, 70px);
+  position: fixed;
+  bottom: 0%;
+  box-shadow: -1px -4px 12px -4px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: -1px -4px 12px -4px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: -1px -4px 12px -4px rgba(0, 0, 0, 0.2);
+}
+
+.bottom-bar div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0.2em;
+  max-width: 530px;
+  margin: auto;
+}
+
+.bottom-bar a {
+  height: 50%;
+}
+
+.bottom-bar svg {
+  fill: #aaa;
+  height: 100%;
+}
+
+.bottom-bar .add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  height: 90%;
+  padding: 0;
+}
+
+.bottom-bar .add img {
+  height: 120%;
+}
+
+.bottom-bar_icon-active {
+  fill: black !important;
+}
+
+@media only screen and (min-width: 550px) {
+  .actividad h3 {
+    font-size: clamp(25px, 12vw, 35px);
+  }
+
+  .Habito_Check_Label {
+    width: 2em;
+    height: 2em;
+  }
+}
+
+@media only screen and (min-width: 730px) {
+  #lista {
+    padding: 3em;
+    border-radius: 0%;
     padding: 1.9em;
     padding-bottom: 5em;
-    
-}
-#info_completado{
-    margin: auto;
-    border-radius: 100%;
-    width: 48vw;
-    height: 48vw;
-    border: 1.5em solid #2BBD4B;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1.5em;
-    max-width: 280px;
-    max-height: 280px;
-    }
+  }
 
-#info_completado h2{
-    font-weight: normal;
-    margin: 0%;
-    margin-bottom: .1m;
-    color:#F5F5F5 ;
-    font-size: clamp(40px,12vw,80px );
-
-}
-
-#info_completado h4{
-    margin: 0%;
-    color:#F5F5F5;
-    font-size: clamp(10px,5vw,20px );
-
-}
-
-#lista{
-    border-radius: 30px 30px 0px 0px;
-}
-
-#pendientes{
-    display: flex;
-    flex-direction: column;
-    max-width: 530px;
-    margin: auto;
-}
-#pendientes h2{
-    margin-bottom: .25em;
-    font-weight: normal;
-}
-.Habito_Check{
-    display: none;
-
-
-}
-.Habito_Check:checked + .Habito_Check_Label{
-    background-color: #023E8A;
-    background-image: url("../img/check.svg");
-    background-size: 60%;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-.Habito_Check_Label{
-    border-radius: 200px;
-    background-color: white;
-    width:1.5em;
-    height:1.5em;
-    cursor: pointer;
-}
-
-.actividad_terminado{
-   background-color:  #d7d7d7 !important;
-   
-  
-}
-.actividad_terminado h3,.actividad_terminado p{
-    color: black;
-     margin-left: 5%;
-    
-}
-
-
-.info_actividad{
-    margin-left: 5%;
-}
-
-.info_actividad h3{
-    margin: 0%;
-    font-weight: normal;
-    font-size: 1.4em;
-}
-.info_actividad p{
-    margin: 0%;
-}
-
-.actividad{
-    display: flex;
-    background-color:#023E8A ;  
-    color: white;
-    padding: 5%;
-    border-radius: 14px;
-    align-items: center;
-
-}
-
-.bottom-bar{
-    background-color: white;
-    width: 100vw;
-    position: fixed;
-    bottom: 0%;
-}
-.bottom-bar div{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: .2em;
-    max-width: 530px;
-    margin: auto;
-}
-
-.bottom-bar a{
-    width: 7%;
-}
-
-.bottom-bar svg{
-    fill: #AAA;   
-}
-
-.add{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 300px;
-    background-color: #023E8A;
-    color: white;
-    text-decoration: none;
-    font-size:4em;
-    width: 1.1em !important;
-    height: 1.1em;    
-    padding: 0;
-}
-
-
-.bottom-bar_icon-active{
-    fill: black !important;
-}
-@media only screen and (min-width:730px){
-    #lista{
-        padding: 3em;
-        border-radius: 0%;
-        padding: 1.9em;
-        padding-bottom: 5em;
-    }
-    .actividad h3{
-        font-size:clamp(25px,12vw,30px );
-    }
-    .actividad p{
-        font-size: clamp(5px,12vw,20px);
-    }
+  .actividad p {
+    font-size: clamp(5px, 12vw, 20px);
+  }
 }
