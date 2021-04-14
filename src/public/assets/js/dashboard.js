@@ -2,9 +2,8 @@ requests.customHeaders.tz_offset = new Date().getTimezoneOffset();
 var habitosState = null;
 
 window.addEventListener("load", function () {
-  document.querySelector("#nombre-usuario").innerText = localStorage.getItem(
-    "name"
-  );
+  document.querySelector("#saludo").innerText =
+    conseguirSaludo() + "\n" + localStorage.getItem("name");
   document.querySelector("#fecha").innerText = conseguirFecha();
 
   conseguirHabitos();
@@ -232,4 +231,13 @@ function escapeHTML(str) {
 function porcentaje(valor, total) {
   var porcentaje = (valor / total) * 100;
   return isNaN(porcentaje) ? 0 : porcentaje;
+}
+
+function conseguirSaludo() {
+  var hora = new Date().getHours();
+  var saludo = "";
+  if (hora > 0 && hora < 12) saludo = "Buenos días";
+  else if (hora >= 12 && hora < 20) saludo = "Buenas tardes";
+  else if (hora >= 20) saludo = "Buenas noches";
+  return saludo;
 }
