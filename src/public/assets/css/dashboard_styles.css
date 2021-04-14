@@ -128,10 +128,19 @@ header h2 {
   background-color: #d23434 !important;
 }
 
+.habito-completado {
+  background-color: #2bbd4b !important;
+}
+
 .actividad_terminado h3,
 .actividad_terminado p {
   color: black;
   margin-left: 5%;
+}
+
+.habito-completado h3,
+.habito-completado p {
+  color: white;
 }
 
 .info_actividad {

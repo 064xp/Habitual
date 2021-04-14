@@ -109,9 +109,13 @@ function mostrarHabitos(tipo) {
   this.contenedores[tipo].innerHTML = "";
   for (var i = 0; i < this[tipo].length; i++) {
     var habito = this[tipo][i];
+    var clases = "";
+    clases += habito.isoverdue ? "habito-vencido " : "";
+    clases += habito.dayspending == 0 ? "habito-completado " : "";
+
     crearElemento(this.contenedores[tipo], template, [
       habito.habitid,
-      habito.isoverdue ? "habito-vencido" : "",
+      clases,
       habito.habitid,
       habito.habitid,
       habito.habitid,
