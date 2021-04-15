@@ -11,7 +11,7 @@ window.addEventListener("load", function () {
 
 function HabitosState(habitos) {
   //hábitos completos
-  this.habitos = habitos;
+  this.habitos = habitos || [];
   //hábitos clasificados
   this.completados = [];
   this.pendientesHoy = [];
