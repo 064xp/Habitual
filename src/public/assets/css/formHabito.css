@@ -14,15 +14,15 @@ body {
 
 header {
   color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 1em 1.4em;
   margin: 0;
+  position: relative;
 }
 
 header h1 {
+  display: inline-block;
   margin: 0;
+  padding-right: 1.2em;
 }
 
 #titulo_nombre-habito {
@@ -30,6 +30,9 @@ header h1 {
 }
 
 .btn-cerrar {
+  position: absolute;
+  right: 1em;
+  top: 1em;
   background: white;
   display: block;
   width: 1.3em;
