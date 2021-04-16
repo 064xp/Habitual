@@ -138,12 +138,16 @@ header h2 {
   background-color: #d23434 !important;
 }
 
+.habito-vencido .habito-dias-cont {
+  border-color: #a20000;
+}
+
 .habito-completado {
   background-color: #2bbd4b !important;
 }
 
 .habito-completado .habito-dias-cont {
-  border-color: #023e8a;
+  border-color: #02861f;
 }
 
 .habito-terminado .habito-dias-cont div {
