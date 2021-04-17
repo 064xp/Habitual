@@ -45,7 +45,7 @@ CREATE TABLE History (
 	isOverdueEntry BOOLEAN NOT NULL DEFAULT false
 );
 
-CREATE TABLE FMCTokens (
+CREATE TABLE FCMTokens (
 	token VARCHAR(163) PRIMARY KEY NOT NULL UNIQUE,
 	userID INTEGER REFERENCES Users (userID) NOT NULL
 );
@@ -353,3 +353,4 @@ GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE history_entryid_seq TO habitualUser;
 GRANT SELECT ON TABLE HabitTypes TO habitualUser;
 GRANT SELECT ON overdueHabits TO habitualUser;
+GRANT UPDATE, SELECT, INSERT, DELETE ON TABLE FCMTokens TO habitualUser;
