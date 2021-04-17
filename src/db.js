@@ -54,19 +54,20 @@ module.exports.updateTimezone = async (userID, newTzOffset) => {
 };
 
 module.exports.getUserHabits = async (userID, ammount = null) => {
-  const result = await pool.query(
-    "SELECT json_agg(h) from (SELECT * from getUserHabits($1, $2)) h",
-    [userID, ammount]
-  );
-  return result.rows[0].json_agg;
+  const result = await pool.query("SELECT * from getUserHabits($1, $2)", [
+    userID,
+    ammount,
+  ]);
+  return result.rows;
 };
 
 module.exports.getHabit = async (userID, habitID) => {
   const result = await pool.query(
-    "SELECT json_agg(h) from (SELECT * FROM Habits WHERE habitid = $1 and userID = $2) h",
+    "SELECT * FROM Habits WHERE habitID = $1 AND userID = $2",
     [habitID, userID]
   );
-  return result.rows[0].json_agg ? result.rows[0].json_agg[0] : null;
+  console.log(result);
+  return result.rows.length > 0 ? result.rows[0] : null;
 };
 
 module.exports.insertHabit = async (
