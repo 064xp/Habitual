@@ -15,8 +15,7 @@ window.addEventListener("load", function () {
     if (!habitID) window.location = "/dashboard.html";
     requests.get("/api/habits/" + habitID).then(function (res) {
       if (!res.ok) {
-        alert("Ocurrio un error, intentalo mas tarde");
-        window.location = "/dashboard.html";
+        alertError("Ocurrio un error");
       }
       rellenarCampos(res.body.habit);
     });
@@ -52,23 +51,15 @@ function onSubmit(e) {
 
   if (site == "auth_nuevoHabito") {
     requests.post("/api/habits/new", data).then(function (res) {
-      if (res.ok) {
-        alert("Agregado correctamente");
-        window.location = "/dashboard.html";
-      } else {
-        alert(res.body.error);
-      }
+      if (res.ok) alertRedirect("El hábito se agregó correctamente");
+      else alertError("Ocurrió un error al intentar agregar el hábito.");
     });
   } else if (site == "auth_editarHabito") {
     requests
       .put("/api/habits/update/" + getParam("habitID"), data)
       .then(function (res) {
-        if (res.ok) {
-          alert("Modificado correctamente");
-          window.location = "/dashboard.html";
-        } else {
-          alert(res.body.error);
-        }
+        if (res.ok) alertRedirect("El hábito se modificó correctamente");
+        else alertError("Ocurrió un error modificar el hábito.");
       });
   }
 }
@@ -138,12 +129,39 @@ function rellenarCampos(habit) {
 }
 
 function eliminarHabito(habitID) {
-  const confirmacion = confirm("¿Realmente quieres eliminar este hábito?");
-  if (confirmacion) {
-    requests.delete("/api/habits/" + habitID).then(function (res) {
-      if (!res.ok) alert("Ocurrió un error, intentalo más tarde");
-      else alert("El hábito se eliminó correctamente");
-      window.location = "/dashboard.html";
-    });
-  }
+  swal({
+    title: "¿Realmente quieres eliminar este hábito?",
+    text: "Una vez eliminado, no será posible recuperarlo.",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+  }).then((confirmacion) => {
+    if (confirmacion) {
+      requests.delete("/api/habits/" + habitID).then(function (res) {
+        if (!res.ok) alertError("Ocurrió un error el eliminar el hábito.");
+        else alertRedirect("El hábito se eliminó correctamente");
+      });
+    }
+  });
+}
+
+function alertRedirect(titulo) {
+  swal({
+    title: titulo,
+    icon: "success",
+  });
+  setTimeout(function () {
+    window.location = "dashboard.html";
+  }, 1500);
+}
+
+function alertError(titulo, texto = "Intenta de nuevo más tarde") {
+  swal({
+    title: titulo,
+    text: texto,
+    icon: "error",
+    button: "OK",
+  }).then(function () {
+    window.location = "dashboard.html";
+  });
 }
