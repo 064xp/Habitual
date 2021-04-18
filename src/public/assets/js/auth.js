@@ -17,6 +17,7 @@ function login(correo, password) {
   requests.post("/api/user/login", credenciales).then(function (res) {
     if (res.ok) {
       localStorage.setItem("name", res.body.name);
+      localStorage.setItem("email", correo);
       window.location = "/dashboard.html";
     } else {
       document.querySelector(".auth-error").classList.remove("hide");
