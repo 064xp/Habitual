@@ -9,16 +9,29 @@ var regTokens = [
   "fW0Z7sdSHDosRDlAYaYoCi:APA91bHd710BZkAGv0AlmmjDCTXL2jP5m5-9O10IcKHvFiX5pGyc7yZoN-JvbtHyGHG-eISdnuYYFisYi65Yoceeh3tyUxKiPreMcaDszfNTfCHGOjuteYall4UuinrfhXY6aUufJA90",
 ];
 
-module.exports.sendNotification = (userTokens, title, body) => {
+module.exports.sendReminderNotification = (
+  userTokens,
+  title,
+  body,
+  habitID = null,
+  habitName = null,
+  image = "https://i.imgur.com/Bow93vn.png"
+) => {
+  if (!userTokens || userTokens.length === 0) return;
   const message = {
     notification: {
       title: title,
       body: body,
     },
+    data: {
+      habitName: habitName,
+      habitID: habitID,
+    },
     tokens: userTokens,
     webpush: {
       headers: {
         Urgency: "high",
+        image: image,
       },
     },
   };

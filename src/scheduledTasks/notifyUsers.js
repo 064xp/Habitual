@@ -1,6 +1,6 @@
 const { promisify } = require("util");
 const { pool, setHabitOverdue, getUserFCMTokens } = require("../db");
-const { sendNotification } = require("../firebase/notifications");
+const { sendReminderNotification } = require("../firebase/notifications");
 const Cursor = require("pg-cursor");
 
 Cursor.prototype.readAsync = promisify(Cursor.prototype.read);
@@ -15,10 +15,12 @@ module.exports = async () => {
     let userFCMTokens = await getUserFCMTokens(habit.userid);
     userFCMTokens = userFCMTokens.map((tokenObj) => tokenObj.token);
 
-    sendNotification(
+    sendReminderNotification(
       userFCMTokens,
-      "Notificación de Habitual",
-      `Es hora de ${habit.name}!`
+      `Habitual | Es hora de ${habit.name}!`,
+      "No rompas con tu racha! Cumple tu meta.",
+      habit.habitid.toString(),
+      habit.name
     );
   }
 

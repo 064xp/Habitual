@@ -10,16 +10,22 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
+
+messaging.onMessage(function (payload) {
+  console.log(payload);
+  swal({
+    title: payload.data.habitName,
+    text: `Es hora de ${payload.data.habitName}.\nCumple tu meta!`,
+    icon: "assets/img/bell.svg",
+  });
+});
+
 const recordatorioToggle = document.querySelector("#recordatorio-toggle");
 
 if (recordatorioToggle)
   recordatorioToggle.addEventListener("change", function () {
     if (this.checked) pedirPermisoNotificar();
   });
-
-messaging.onMessage(function (payload) {
-  console.log(payload);
-});
 
 function registrarFCMToken() {
   messaging
