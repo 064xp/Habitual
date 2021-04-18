@@ -12,7 +12,8 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 messaging.onMessage(function (payload) {
-  console.log(payload);
+  var audio = new Audio("assets/audio/notification.mp3");
+  audio.play();
   swal({
     title: payload.data.habitName,
     text: `Es hora de ${payload.data.habitName}.\nCumple tu meta!`,
