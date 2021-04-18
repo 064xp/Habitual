@@ -1,37 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link rel="stylesheet" href="assets/css/config.css">
+    <link rel="stylesheet" href="assets/css/config.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
       rel="stylesheet"
     />
     <title>Configuración</title>
-</head>
-<body>
+  </head>
+  <body>
+    <header>
+      <div id="user-info">
+        <h2 id="user-name">Steve</h2>
+        <h4 id="email">mebckid@gmail.com</h4>
+      </div>
+    </header>
     <main>
-        <header>
-            <h2 id="user">Steve</h2>
-            <h4 id="email">mebckid@gmail.com</h4>
-        </header>
-        <section>
-            <ul class="list">
-                <li><a href="">Cuenta</a> </li>
-                <li><a href="">Notificaciones</a></li>
-                <li><a href="">Cambiar Contraseña</a></li>
-                <li><a href="">Acerca de Habitual</a></li>
-            </ul>
-        </section>
-        <div>
-            <button><a href="">Cerrar Sesión</a></button>
-        </div>
-           
+      <ul class="lista-links">
+        <li>
+          <a href="#" class="lista-links_link"
+            ><img src="assets/img/account.svg" alt="" />Cuenta</a
+          >
+        </li>
+        <li>
+          <a href="#" class="lista-links_link"
+            ><img src="assets/img/notifications.svg" alt="" />Notificaciones</a
+          >
+        </li>
+        <li>
+          <a href="#" class="lista-links_link"
+            ><img src="assets/img/info.svg" alt="" />Acerca de Habitual</a
+          >
+        </li>
+      </ul>
+      <button id="btn-signout">Cerrar Sesión</button>
     </main>
-    
-</body>
+  </body>
 </html>
