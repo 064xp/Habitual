@@ -11,6 +11,8 @@ const pool = new Pool({
   database: "habitual",
 });
 
+module.exports.pool = pool;
+
 module.exports.insertUser = async (user) => {
   const result = await pool.query("SELECT insertUser($1, $2, $3);", [
     user.name,
@@ -52,19 +54,19 @@ module.exports.updateTimezone = async (userID, newTzOffset) => {
 };
 
 module.exports.getUserHabits = async (userID, ammount = null) => {
-  const result = await pool.query(
-    "SELECT json_agg(h) from (SELECT * from getUserHabits($1, $2)) h",
-    [userID, ammount]
-  );
-  return result.rows[0].json_agg;
+  const result = await pool.query("SELECT * from getUserHabits($1, $2)", [
+    userID,
+    ammount,
+  ]);
+  return result.rows;
 };
 
 module.exports.getHabit = async (userID, habitID) => {
   const result = await pool.query(
-    "SELECT json_agg(h) from (SELECT * FROM Habits WHERE habitid = $1 and userID = $2) h",
+    "SELECT * FROM Habits WHERE habitID = $1 AND userID = $2",
     [habitID, userID]
   );
-  return result.rows[0].json_agg ? result.rows[0].json_agg[0] : null;
+  return result.rows.length > 0 ? result.rows[0] : null;
 };
 
 module.exports.insertHabit = async (
@@ -110,4 +112,94 @@ module.exports.deleteHabit = async (userID, habitID) => {
     habitID,
   ]);
   return result.rows[0].deletehabit;
+};
+
+module.exports.setHabitOverdue = async (habitID) => {
+  const result = await pool.query("CALL setHabitOverdue($1)", [habitID]);
+  return result;
+};
+
+module.exports.addHistoryEntry = async (habitID, dateTime = new Date()) => {
+  const result = await pool.query("SELECT insertHistoryEntry($1, false, $2)", [
+    habitID,
+    dateTime,
+  ]);
+  return result.rows[0].inserthistoryentry;
+};
+
+module.exports.removeHistoryEntry = async (userID, habitID, entryID = null) => {
+  if (entryID) {
+    const result = await pool.query(
+      "DELETE FROM History WHERE entryID = $1 RETURNING entryID",
+      [entryID]
+    );
+    return result.rows[0].entryid;
+  } else {
+    const result = await pool.query(
+      `DELETE FROM History
+        WHERE entryID = (SELECT entryID FROM History
+                          WHERE habitID = $1
+                          ORDER BY dateTime DESC
+                          LIMIT 1)
+        RETURNING entryID`,
+      [habitID]
+    );
+    return result.rows[0].entryid;
+  }
+};
+
+module.exports.resetHabit = async (habit) => {
+  try {
+    const typeQuery = await pool.query(
+      "SELECT days FROM habitTypes WHERE typeID = $1",
+      [habit.type]
+    );
+    const typeDays = typeQuery.rows[0].days;
+
+    const result = await pool.query(
+      "UPDATE Habits SET startDate = NOW(), daysPending = $1, isOverdue = false WHERE habitID = $2",
+      [typeDays, habit.habitid]
+    );
+    return true;
+  } catch (err) {
+    console.log(`Error while reseting habit ${habit.habitid}`);
+    console.log(err);
+    return false;
+  }
+};
+
+module.exports.habitBelongsTo = async (habitID, userID) => {
+  try {
+    const habit = await pool.query(
+      "SELECT * FROM Habits WHERE habitID = $1 AND userID = $2",
+      [habitID, userID]
+    );
+    return habit.rows.length !== 0;
+  } catch (err) {
+    console.log(
+      `Error while validating habit ${habitID} belongs to userID ${userID}`
+    );
+    return null;
+  }
+};
+
+module.exports.addFCMToken = async (userID, token) => {
+  const res = await pool.query(
+    "INSERT INTO FCMTokens (token, userID) VALUES ($1, $2)",
+    [token, userID]
+  );
+};
+
+module.exports.deleteFCMToken = async (token) => {
+  const res = await pool.query("DELETE FROM FCMTokens WHERE token = $1", [
+    token,
+  ]);
+};
+
+module.exports.getUserFCMTokens = async (userID) => {
+  const tokens = await pool.query(
+    "SELECT token FROM FCMTokens WHERE userID = $1",
+    [userID]
+  );
+  return tokens.rows;
 };

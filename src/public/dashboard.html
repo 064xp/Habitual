@@ -17,51 +17,28 @@
     <main>
       <section>
         <header>
-          <h2 id="saludo">Buenos días,<br />Steve</h2>
-          <h2 id="fecha">
-            Lunes 07 <br />
-            Feb 21
-          </h2>
+          <h2 id="saludo"></h2>
+          <h2 id="fecha"></h2>
         </header>
         <div id="info_completado">
-          <h2>80%</h2>
-          <h4>4/5 Completado</h4>
+          <h2 id="info_porcentaje">
+            <span id="info_porcentaje-num"></span
+            ><span id="info_porcentaje-signo">%</span>
+          </h2>
+          <h4><span id="info_completado-num"></span> hoy</h4>
         </div>
       </section>
-      <section id="lista">
-        <div id="pendientes">
-          <h2>Pendiente</h2>
-          <div class="actividad">
-            <input
-              type="checkbox"
-              name="Pendiente"
-              id="Habito_1"
-              class="Habito_Check"
-            />
-            <label for="Habito_1" class="Habito_Check_Label"></label>
-            <div class="info_actividad">
-              <h3>Hacer Ejercicio</h3>
-              <p>4 veces por semana</p>
-            </div>
 
-            <div></div>
-          </div>
+      <section id="lista">
+        <div class="habitos-container">
+          <h2>Pendiente para Hoy</h2>
+          <div id="pendientes"></div>
+
+          <h2>Pendiente para otro día</h2>
+          <div id="habitos-otro-dia"></div>
+
           <h2>Terminado</h2>
-          <div id="terminados">
-            <div class="actividad actividad_terminado">
-              <input
-                type="checkbox"
-                name="Pendiente"
-                id="Habito_2"
-                class="Habito_Check"
-              />
-              <label for="Habito_2" class="Habito_Check_Label"></label>
-              <div class="info_actividad">
-                <h3>Leer</h3>
-                <p>5 veces por semana</p>
-              </div>
-            </div>
-          </div>
+          <div id="completados"></div>
         </div>
       </section>
     </main>
@@ -91,5 +68,10 @@
     const site = "auth_dashboard";
   </script>
   <script src="assets/js/requests.js"></script>
-  <script src="assets/js/verifyAuth.js"></script>
+  <!-- <script src="assets/js/verifyAuth.js"></script> -->
+  <script src="assets/js/sweetalert.min.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-messaging.js"></script>
+  <script src="assets/js/firebase.js"></script>
 </html>

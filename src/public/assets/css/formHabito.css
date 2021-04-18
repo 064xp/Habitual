@@ -14,14 +14,13 @@ body {
 
 header {
   color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1em 1.4em;
+  padding: 1em 3.5em 1em 1.4em;
   margin: 0;
+  position: relative;
 }
 
 header h1 {
+  display: inline-block;
   margin: 0;
 }
 
@@ -30,6 +29,9 @@ header h1 {
 }
 
 .btn-cerrar {
+  position: absolute;
+  right: 1em;
+  top: 1em;
   background: white;
   display: block;
   width: 1.3em;
@@ -265,4 +267,46 @@ header h1 {
 
 .hide {
   display: none;
+}
+
+/* Estilos de notificaciones */
+.swal-icon--custom {
+  width: 25%;
+  transform-origin: top center;
+  animation: 400ms ease-in 1s infinite running swing;
+  animation-iteration-count: infinite;
+}
+
+.swal-text {
+  text-align: center;
+}
+
+.swal-button--confirm {
+  background: #023e8a;
+}
+
+.swal-button--confirm:hover {
+  background: #0b60cb !important;
+}
+
+@keyframes swing {
+  20% {
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+
+  40% {
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+
+  60% {
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+
+  80% {
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+
+  to {
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
 }

@@ -24,6 +24,7 @@ nav h1 {
   color: white;
   font-size: 3em;
   font-weight: normal;
+  margin-top: 0;
 }
 
 .user_form {
@@ -64,6 +65,7 @@ nav h1 {
   margin: 0.5em auto 0.5em auto;
   font-size: 1.9em;
   border: none;
+  cursor: pointer;
 }
 
 .user_form a {
