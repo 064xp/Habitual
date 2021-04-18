@@ -40,7 +40,7 @@ CREATE TABLE Habits (
 
 CREATE TABLE History (
 	entryID SERIAL PRIMARY KEY NOT NULL,
-	habitID INTEGER REFERENCES Habits (habitID) NOT NULL,
+	habitID INTEGER REFERENCES Habits (habitID) ON DELETE CASCADE NOT NULL,
 	dateTime TIMESTAMP NOT NULL,
 	isOverdueEntry BOOLEAN NOT NULL DEFAULT false
 );
@@ -230,7 +230,7 @@ AS $$
 DECLARE
 	deletedHabit INTEGER;
 BEGIN	
-	DELETE FROM Habits WHERE habitID = _habitID AND userID = _userID RETURNING habitID into deletedHabit;
+	DELETE CASCADE FROM Habits WHERE habitID = _habitID AND userID = _userID RETURNING habitID into deletedHabit;
 
 	RAISE NOTICE 'success';
 	RETURN deletedHabit;
