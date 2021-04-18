@@ -26,15 +26,18 @@ function registrarFCMToken() {
     .getToken()
     .then(function (token) {
       if (!getTokenSent()) {
-        //send to server
-        localStorage.setItem("FCMTokenSent", true);
+        requests
+          .post("/api/users/fcm-token", {
+            token: token,
+          })
+          .then(function (res) {
+            if (res.ok) setTokenSent(true);
+          });
       }
-      console.log(token);
     })
     .catch(function () {
       recordatorioToggle.checked = false;
-      localStorage.setItem("FCMTokenSent", false);
-      console.log("Failed getting token");
+      setTokenSent(false);
     });
 }
 
@@ -42,10 +45,7 @@ function pedirPermisoNotificar() {
   console.log("Requesting permission...");
   Notification.requestPermission().then((permission) => {
     if (permission === "granted") {
-      console.log("Notification permission granted.");
       registrarFCMToken();
-    } else {
-      console.log("Unable to get permission to notify.");
     }
   });
 }
@@ -57,9 +57,13 @@ function eliminarFCMToken() {
       messaging
         .deleteToken(tokenActual)
         .then(() => {
-          console.log(tokenActual);
-          console.log("Token deleted.");
-          localStorage.setItem("FCMTokenSent", false);
+          requests
+            .delete("/api/users/fcm-token", {
+              token: tokenActual,
+            })
+            .then(function (res) {
+              if (res.ok) setTokenSent(false);
+            });
         })
         .catch((err) => {
           console.log("Unable to delete token. ", err);

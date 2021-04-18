@@ -195,3 +195,11 @@ module.exports.deleteFCMToken = async (token) => {
     token,
   ]);
 };
+
+module.exports.getUserFCMTokens = async (userID) => {
+  const tokens = await pool.query(
+    "SELECT token FROM FCMTokens WHERE userID = $1",
+    [userID]
+  );
+  return tokens.rows;
+};

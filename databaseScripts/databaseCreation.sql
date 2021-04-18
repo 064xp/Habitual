@@ -51,6 +51,18 @@ CREATE TABLE FCMTokens (
 );
 
 -- Functions
+CREATE OR REPLACE FUNCTION timeAtTz(
+	_tzOffset INTEGER, 
+	_time TIMESTAMPTZ = NOW()
+)
+RETURNS TIMESTAMP
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	RETURN _time AT TIME ZONE (_tzOffset*-1||'min')::INTERVAL;
+END
+$$;
+
 CREATE OR REPLACE FUNCTION hasActivity (
 	_userID INTEGER,
 	_habitID INTEGER,
@@ -225,18 +237,6 @@ BEGIN
 END
 $$;
 
-CREATE OR REPLACE FUNCTION timeAtTz(
-	_tzOffset INTEGER, 
-	_time TIMESTAMPTZ = NOW()
-)
-RETURNS TIMESTAMP
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	RETURN _time AT TIME ZONE (_tzOffset*-1||'min')::INTERVAL;
-END
-$$;
-
 CREATE OR REPLACE FUNCTION insertHistoryEntry(
 	_habitID INTEGER, 
 	_isOverdueEntry BOOLEAN = false, 
@@ -267,6 +267,13 @@ SELECT h.habitID, u.userID, h.name, h.isOverdue, h.frequency, h.startDate, u.tzO
 			AND DATE_PART('hour', timeAtTz(u.tzOffset)) = 0
 			AND timeAtTz(u.tzOffset, h.startDate) < timeAtTz(u.tzOffset)::DATE
 			AND NOT h.isOverdue;
+
+CREATE OR REPLACE VIEW notificationHabits AS
+SELECT u.userID, h.habitID, h.name FROM Habits h
+	INNER JOIN Users u ON h.userID = u.userID 
+	WHERE 
+		EXTRACT('hour' FROM timeAtTz(u.tzOffset)) = h.reminderHour 
+		AND EXTRACT('minute' FROM timeAtTz(u.tzOffset)) = h.reminderMinute
 
 -- Stored Procedures
 CREATE OR REPLACE PROCEDURE setHabitOverdue(_habitID INTEGER) 
@@ -354,3 +361,4 @@ GRANT USAGE, SELECT ON SEQUENCE history_entryid_seq TO habitualUser;
 GRANT SELECT ON TABLE HabitTypes TO habitualUser;
 GRANT SELECT ON overdueHabits TO habitualUser;
 GRANT UPDATE, SELECT, INSERT, DELETE ON TABLE FCMTokens TO habitualUser;
+GRANT SELECT ON notificationHabits TO habitualUser;

@@ -9,7 +9,7 @@ var regTokens = [
   "fW0Z7sdSHDosRDlAYaYoCi:APA91bHd710BZkAGv0AlmmjDCTXL2jP5m5-9O10IcKHvFiX5pGyc7yZoN-JvbtHyGHG-eISdnuYYFisYi65Yoceeh3tyUxKiPreMcaDszfNTfCHGOjuteYall4UuinrfhXY6aUufJA90",
 ];
 
-const sendNotification = (userTokens, title, body) => {
+module.exports.sendNotification = (userTokens, title, body) => {
   const message = {
     notification: {
       title: title,
@@ -34,5 +34,3 @@ const sendNotification = (userTokens, title, body) => {
       console.log("Error sending message:", error);
     });
 };
-
-sendNotification(regTokens, "Test", "Hello man!");

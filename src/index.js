@@ -13,6 +13,7 @@ const jsonValidation = require("./middleware/jsonValidation");
 const logging = require("./middleware/logging");
 
 const checkOverdueHabits = require("./scheduledTasks/checkOverdueHabits");
+const notifyUsers = require("./scheduledTasks/notifyUsers");
 
 const app = express();
 app.set("trust proxy", true);
@@ -25,7 +26,11 @@ app.use(jsonValidation);
 app.use(cookieParser());
 
 //Scheduled tasks
+//Every hour
 const overdueHabitsJob = schedule.scheduleJob("0 * * * *", checkOverdueHabits);
+//prettier-ignore
+//Every Minute
+const notificationsJob = schedule.scheduleJob("*/1 * * * *", notifyUsers);
 
 //Routers
 app.use("/api/user", authRouter);
