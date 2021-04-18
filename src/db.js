@@ -183,3 +183,24 @@ module.exports.habitBelongsTo = async (habitID, userID) => {
     return null;
   }
 };
+
+module.exports.addFCMToken = async (userID, token) => {
+  const res = await pool.query(
+    "INSERT INTO FCMTokens (token, userID) VALUES ($1, $2)",
+    [token, userID]
+  );
+};
+
+module.exports.deleteFCMToken = async (token) => {
+  const res = await pool.query("DELETE FROM FCMTokens WHERE token = $1", [
+    token,
+  ]);
+};
+
+module.exports.getUserFCMTokens = async (userID) => {
+  const tokens = await pool.query(
+    "SELECT token FROM FCMTokens WHERE userID = $1",
+    [userID]
+  );
+  return tokens.rows;
+};

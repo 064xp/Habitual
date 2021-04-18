@@ -5,7 +5,6 @@ const Cursor = require("pg-cursor");
 Cursor.prototype.readAsync = promisify(Cursor.prototype.read);
 
 module.exports = async () => {
-  const finished = false;
   const client = await pool.connect();
   const cursor = client.query(new Cursor("SELECT * FROM overdueHabits;"));
 
