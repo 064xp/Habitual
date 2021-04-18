@@ -66,7 +66,6 @@ module.exports.getHabit = async (userID, habitID) => {
     "SELECT * FROM Habits WHERE habitID = $1 AND userID = $2",
     [habitID, userID]
   );
-  console.log(result);
   return result.rows.length > 0 ? result.rows[0] : null;
 };
 
