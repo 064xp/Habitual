@@ -20,25 +20,21 @@ messaging.onMessage(function (payload) {
   });
 });
 
-const recordatorioToggle = document.querySelector("#recordatorio-toggle");
-
-if (recordatorioToggle)
-  recordatorioToggle.addEventListener("change", function () {
-    if (this.checked) pedirPermisoNotificar();
-  });
-
 function registrarFCMToken() {
-  messaging
+  return messaging
     .getToken()
     .then(function (token) {
       if (!getTokenSent()) {
-        requests
+        return requests
           .post("/api/users/fcm-token", {
             token: token,
           })
           .then(function (res) {
-            if (res.ok) setTokenSent(true);
-          });
+            if (res.ok) {
+              setTokenSent(true);
+            }
+          })
+          .catch((err) => console.log(err));
       }
     })
     .catch(function () {
@@ -51,23 +47,27 @@ function pedirPermisoNotificar() {
   console.log("Requesting permission...");
   Notification.requestPermission().then((permission) => {
     if (permission === "granted") {
-      registrarFCMToken();
+      registrarFCMToken().then(function () {
+        console.log("Token registrado");
+      });
     }
   });
 }
 
 function eliminarFCMToken() {
-  messaging
+  return messaging
     .getToken()
     .then((tokenActual) => {
-      messaging
+      return messaging
         .deleteToken(tokenActual)
         .then(() => {
-          requests
+          console.log("delete token firebas");
+          return requests
             .delete("/api/users/fcm-token", {
               token: tokenActual,
             })
             .then(function (res) {
+              console.log("delete token postgres");
               if (res.ok) setTokenSent(false);
             });
         })

@@ -228,12 +228,14 @@ header h2 {
   font-size: 2em;
 }
 
+/* Estilos nav bottom bar */
 .bottom-bar {
   background-color: white;
   width: 100vw;
   height: clamp(55px, 10vh, 70px);
   position: fixed;
-  bottom: 0%;
+  bottom: 0;
+  left: 0;
   box-shadow: -1px -4px 12px -4px rgba(0, 0, 0, 0.2);
   -webkit-box-shadow: -1px -4px 12px -4px rgba(0, 0, 0, 0.2);
   -moz-box-shadow: -1px -4px 12px -4px rgba(0, 0, 0, 0.2);
@@ -276,6 +278,7 @@ header h2 {
 .bottom-bar_icon-active {
   fill: black !important;
 }
+/* Fin Estilos nav bottom bar */
 
 @media only screen and (min-width: 550px) {
   .actividad h3 {

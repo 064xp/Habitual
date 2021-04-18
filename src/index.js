@@ -33,7 +33,7 @@ const overdueHabitsJob = schedule.scheduleJob("0 * * * *", checkOverdueHabits);
 const notificationsJob = schedule.scheduleJob("*/1 * * * *", notifyUsers);
 
 //Routers
-app.use("/api/user", authRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/habits", habitRouter);
 app.use("/api/activities", activityRouter);
 app.use("/api/users", usersRouter);

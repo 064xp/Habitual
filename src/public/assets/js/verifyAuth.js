@@ -42,7 +42,7 @@ function validateAuthToken(cookie = "authToken") {
       resolve(false);
     });
   } else {
-    return requests.get("/api/user/verifyToken").then(function (res) {
+    return requests.get("/api/auth/verifyToken").then(function (res) {
       if (res.ok) return true;
       else return false;
     });

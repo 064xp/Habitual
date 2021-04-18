@@ -50,7 +50,12 @@ router.post("/login", async (req, res) => {
       secure: process.env.NODE_ENV == "production" ? true : false,
       sameSite: "strict",
     })
-    .json({ status: "success", token: token, name: user.name });
+    .json({
+      status: "success",
+      token: token,
+      name: user.name,
+      email: user.email,
+    });
 
   updateTimezone(user.userid, req.headers.tz_offset);
 });
@@ -61,7 +66,7 @@ router.get("/verifyToken", verify, (req, res) => {
 
 router.post("/logout", verify, (req, res) => {
   res.clearCookie("authToken");
-  res.redirect("/");
+  res.json({ status: "logged out" });
 });
 
 module.exports = router;

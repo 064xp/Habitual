@@ -236,7 +236,7 @@ function porcentaje(valor, total) {
 function conseguirSaludo() {
   var hora = new Date().getHours();
   var saludo = "";
-  if (hora > 0 && hora < 12) saludo = "Buenos días";
+  if (hora >= 0 && hora < 12) saludo = "Buenos días";
   else if (hora >= 12 && hora < 20) saludo = "Buenas tardes";
   else if (hora >= 20) saludo = "Buenas noches";
   return saludo;

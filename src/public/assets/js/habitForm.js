@@ -3,6 +3,12 @@ requests.customHeaders.tz_offset = new Date().getTimezoneOffset();
 window.addEventListener("load", function () {
   document.querySelector("#habito-form").addEventListener("submit", onSubmit);
 
+  const recordatorioToggle = document.querySelector("#recordatorio-toggle");
+
+  recordatorioToggle.addEventListener("change", function () {
+    if (this.checked && !getTokenSent()) pedirPermisoNotificar();
+  });
+
   if (site == "auth_editarHabito") {
     //Obtener datos de habito por su ID y rellenar campos
     var habitID = getParam("habitID");

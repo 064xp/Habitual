@@ -71,49 +71,57 @@ main {
   color: #d23434;
   font-size: clamp(20px, 3vw, 23px);
   padding: 0.3em 0;
+  cursor: pointer;
 }
 
-/* Estilos Nav */
+/* Estilos nav bottom bar */
 .bottom-bar {
   background-color: white;
   width: 100vw;
+  height: clamp(55px, 10vh, 70px);
   position: fixed;
   bottom: 0;
   left: 0;
+  box-shadow: -1px -4px 12px -4px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: -1px -4px 12px -4px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: -1px -4px 12px -4px rgba(0, 0, 0, 0.2);
 }
 
 .bottom-bar div {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  height: 100%;
+  box-sizing: border-box;
   padding: 0.2em;
   max-width: 530px;
   margin: auto;
 }
 
 .bottom-bar a {
-  width: 7%;
+  height: 50%;
 }
 
 .bottom-bar svg {
   fill: #aaa;
+  height: 100%;
 }
 
-.add {
+.bottom-bar .add {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 300px;
-  background-color: #023e8a;
   color: white;
   text-decoration: none;
-  font-size: 4em;
-  width: 1.1em !important;
-  height: 1.1em;
+  height: 90%;
   padding: 0;
+}
+
+.bottom-bar .add img {
+  height: 120%;
 }
 
 .bottom-bar_icon-active {
   fill: black !important;
 }
-/* Fin Estilos Nav */
+/* Fin Estilos nav bottom bar */

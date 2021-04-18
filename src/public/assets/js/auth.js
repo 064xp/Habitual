@@ -14,14 +14,17 @@ function login(correo, password) {
     password: password || document.querySelector("#pass").value,
   };
 
-  requests.post("/api/user/login", credenciales).then(function (res) {
+  requests.post("/api/auth/login", credenciales).then(function (res) {
     if (res.ok) {
       localStorage.setItem("name", res.body.name);
-      localStorage.setItem("email", correo);
-      window.location = "/dashboard.html";
+      localStorage.setItem("email", res.body.email);
     } else {
       document.querySelector(".auth-error").classList.remove("hide");
     }
+    if (Notification.permission == "granted")
+      registrarFCMToken().then(function () {
+        window.location = "/dashboard.html";
+      });
   });
 }
 
@@ -33,7 +36,7 @@ function signUp() {
 
   if (validar(nombre, correo, password, confirmacion)) {
     requests
-      .post("/api/user/signup", {
+      .post("/api/auth/signup", {
         name: nombre,
         email: correo,
         password: password,
