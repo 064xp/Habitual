@@ -23,7 +23,7 @@ main {
 
 #user-info {
   text-align: left;
-  padding: 1em 1.3em;
+  padding: 1em 2em;
   max-width: 560px;
   margin: auto;
 }
@@ -31,13 +31,14 @@ main {
 #user-name {
   margin: 0;
   font-weight: normal;
-  font-size: 2.3em;
+  font-size: clamp(38px, 5vw, 50px);
 }
 
 #email {
   margin: 0;
   font-weight: normal;
   color: #606060;
+  font-size: clamp(18px, 2vw, 20px);
 }
 
 .lista-links {
@@ -54,6 +55,7 @@ main {
 .lista-links_link {
   display: flex;
   align-items: center;
+  font-size: clamp(17px, 3vw, 23px);
 }
 
 .lista-links_link img {
@@ -67,6 +69,51 @@ main {
   border-top: 1px solid #cccbcb;
   border-bottom: 1px solid #cccbcb;
   color: #d23434;
-  font-size: 1.3em;
+  font-size: clamp(20px, 3vw, 23px);
   padding: 0.3em 0;
 }
+
+/* Estilos Nav */
+.bottom-bar {
+  background-color: white;
+  width: 100vw;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+.bottom-bar div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0.2em;
+  max-width: 530px;
+  margin: auto;
+}
+
+.bottom-bar a {
+  width: 7%;
+}
+
+.bottom-bar svg {
+  fill: #aaa;
+}
+
+.add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 300px;
+  background-color: #023e8a;
+  color: white;
+  text-decoration: none;
+  font-size: 4em;
+  width: 1.1em !important;
+  height: 1.1em;
+  padding: 0;
+}
+
+.bottom-bar_icon-active {
+  fill: black !important;
+}
+/* Fin Estilos Nav */
