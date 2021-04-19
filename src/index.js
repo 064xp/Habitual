@@ -19,7 +19,12 @@ const app = express();
 app.set("trust proxy", true);
 
 //Middleware
-app.use("/", express.static(path.join(__dirname, "public")));
+app.use(
+  "/",
+  express.static(path.join(__dirname, "public"), {
+    extensions: ["html"],
+  })
+);
 app.use(logging);
 app.use(express.json());
 app.use(jsonValidation);

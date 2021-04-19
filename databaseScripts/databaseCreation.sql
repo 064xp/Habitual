@@ -310,7 +310,7 @@ SELECT u.userID, h.habitID, h.name FROM Habits h
 	WHERE 
 		EXTRACT('hour' FROM timeAtTz(u.tzOffset)) = h.reminderHour 
 		AND EXTRACT('minute' FROM timeAtTz(u.tzOffset)) = h.reminderMinute
-		AND EXTRACT('dow' FROM timeAtTz(u.tzOffset))= ANY(h.frequency) 
+		AND EXTRACT('dow' FROM timeAtTz(u.tzOffset))= ANY(h.frequency);
 
 
 -- Procedimientos almacenados
