@@ -6,7 +6,7 @@ if (process.env.NODE_ENV == "debug") {
 }
 
 const pool = new Pool({
-  connectionString: process.env.DB_CONNECTION,
+  connectionString: process.env.DATABASE_URL,
   ssl:
     process.env.NODE_ENV == "debug"
       ? false
