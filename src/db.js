@@ -1,13 +1,18 @@
 const Pool = require("pg").Pool;
-const dotenv = require("dotenv");
-dotenv.config();
+
+if (process.env.NODE_ENV == "debug") {
+  const dotenv = require("dotenv");
+  dotenv.config();
+}
 
 const pool = new Pool({
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  host: process.env.DATABASE_URL,
-  port: 5432,
-  database: process.env.DB_NAME,
+  connectionString: process.env.DB_CONNECTION,
+  ssl:
+    process.env.NODE_ENV == "debug"
+      ? false
+      : {
+          rejectUnauthorized: false,
+        },
 });
 
 module.exports.pool = pool;

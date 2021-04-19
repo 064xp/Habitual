@@ -38,4 +38,6 @@ app.use("/api/habits", habitRouter);
 app.use("/api/activities", activityRouter);
 app.use("/api/users", usersRouter);
 
-app.listen(3002, () => console.log("Server listening on port 3002"));
+app.listen(process.env.PORT, () =>
+  console.log(`Server listening on port ${process.env.PORT}`)
+);
