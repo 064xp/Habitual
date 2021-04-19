@@ -139,9 +139,12 @@ function agregarActividad(habitID) {
       var habito = this.habitos.find(function (habito) {
         return habito.habitid == habitID;
       });
+
+      if (habito.isoverdue) habito.dayspending = habito.totaldays - 1;
+      else habito.dayspending -= 1;
+
       habito.donetoday = true;
       habito.isoverdue = false;
-      habito.dayspending -= 1;
 
       this.actualizarValores();
     }.bind(this)

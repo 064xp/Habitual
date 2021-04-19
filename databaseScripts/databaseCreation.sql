@@ -310,6 +310,7 @@ SELECT u.userID, h.habitID, h.name FROM Habits h
 	WHERE 
 		EXTRACT('hour' FROM timeAtTz(u.tzOffset)) = h.reminderHour 
 		AND EXTRACT('minute' FROM timeAtTz(u.tzOffset)) = h.reminderMinute
+		AND EXTRACT('dow' FROM timeAtTz(u.tzOffset))= ANY(h.frequency) 
 
 
 -- Procedimientos almacenados
@@ -362,7 +363,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 	UPDATE Habits SET daysPending = daysPending + 1 WHERE habitID = OLD.habitID;
-	RETURN NEW;
+	RETURN OLD;
 END
 $$;
 
@@ -382,7 +383,7 @@ FOR EACH ROW
 
 --: Cuando el usuario elimina una actividad
 CREATE TRIGGER trHabitActivityDel
-AFTER DELETE ON History
+BEFORE DELETE ON History
 FOR EACH ROW
 	EXECUTE PROCEDURE updateDaysPendingActivityDel();
 

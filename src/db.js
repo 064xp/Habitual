@@ -1,14 +1,13 @@
 const Pool = require("pg").Pool;
 const dotenv = require("dotenv");
-
 dotenv.config();
 
 const pool = new Pool({
-  user: "habitualuser",
+  user: process.env.DB_USER,
   password: process.env.DB_PASS,
   host: process.env.DATABASE_URL,
   port: 5432,
-  database: "habitual",
+  database: process.env.DB_NAME,
 });
 
 module.exports.pool = pool;
@@ -158,7 +157,7 @@ module.exports.resetHabit = async (habit) => {
 
     const result = await pool.query(
       "UPDATE Habits SET startDate = NOW(), daysPending = $1, isOverdue = false WHERE habitID = $2",
-      [typeDays, habit.habitid]
+      [typeDays - 1, habit.habitid]
     );
     return true;
   } catch (err) {
