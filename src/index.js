@@ -14,6 +14,7 @@ const logging = require("./middleware/logging");
 
 const checkOverdueHabits = require("./scheduledTasks/checkOverdueHabits");
 const notifyUsers = require("./scheduledTasks/notifyUsers");
+const dynoWake = require("./scheduledTasks/dynoWake");
 
 const app = express();
 app.set("trust proxy", true);
@@ -36,6 +37,10 @@ const overdueHabitsJob = schedule.scheduleJob("0 * * * *", checkOverdueHabits);
 //prettier-ignore
 //Every Minute
 const notificationsJob = schedule.scheduleJob("*/1 * * * *", notifyUsers);
+//prettier-ignore
+//Every 28 mins keep heroku dyno awake
+// const notificationsJob = schedule.scheduleJob("*/28 * * * *", dynoWake);
+const dynoWakeJob = schedule.scheduleJob("*/1 * * * *", dynoWake);
 
 //Routers
 app.use("/api/auth", authRouter);
