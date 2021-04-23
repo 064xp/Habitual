@@ -53,7 +53,11 @@ function clasificarHabitos() {
 function conseguirHabitos() {
   requests.get("/api/habits").then(function (res) {
     if (!res.ok) {
-      alert("Ocurrió un error, intentelo más tarde.");
+      swal({
+        title: "Ocurrió un error",
+        text: "Inténtalo de nuevo más tarde",
+        icon: "error",
+      });
       return;
     }
     habitosState = new HabitosState(res.body.habits);
@@ -133,7 +137,11 @@ function agregarActividad(habitID) {
   requests.post("/api/activities/new", { habitID: habitID }).then(
     function (res) {
       if (!res.ok) {
-        alert("Ocurrió un error, intenta más tarde");
+        swal({
+          title: "Ocurrió un error",
+          text: `Inténtalo de nuevo más tarde\n${res.body.error}`,
+          icon: "error",
+        });
         return;
       }
       var habito = this.habitos.find(function (habito) {
@@ -155,7 +163,11 @@ function eliminarActividad(habitID) {
   requests.delete("/api/activities/delete", { habitID: habitID }).then(
     function (res) {
       if (!res.ok) {
-        alert("Ocurrió un error, intenta más tarde");
+        swal({
+          title: "Ocurrió un error",
+          text: `Inténtalo de nuevo más tarde\n${res.body.error}`,
+          icon: "error",
+        });
         return;
       }
       var habito = this.habitos.find(function (habito) {

@@ -38,5 +38,12 @@ function makeRequest(url, method, body, headers) {
     .then(function (json) {
       resObj.body = json;
       return resObj;
+    })
+    .catch(function (err) {
+      swal({
+        title: "Ocurrió un error",
+        text: "Inténtalo de nuevo más tarde",
+        icon: "error",
+      });
     });
 }
