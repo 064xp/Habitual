@@ -87,7 +87,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 	userTzOffset INTEGER := (SELECT tzOffset FROM Users WHERE userID = _userID);
-	latestEntry TIMESTAMP := timeAtTz(userTzOffset, (SELECT datetime FROM History WHERE habitID = _habitID ORDER BY datetime DESC LIMIT 1));
+	latestEntry TIMESTAMP := timeAtTz(userTzOffset, (SELECT datetime FROM History WHERE habitID = _habitID AND isOverdueEntry = false ORDER BY datetime DESC LIMIT 1));
 	userDay DATE := _day;
 BEGIN
 	IF userDay IS NULL THEN
@@ -348,7 +348,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE userID INTEGER := (SELECT userID FROM Habits WHERE habitID = NEW.habitID);
 BEGIN
-	IF NOT hasActivity(userID, NEW.habitID) THEN
+	IF NOT hasActivity(userID, NEW.habitID) AND NOT NEW.isOverdueEntry THEN
 		UPDATE Habits SET daysPending = daysPending - 1 WHERE habitID = NEW.habitID;
 	END IF;
 	RETURN NEW;
@@ -405,7 +405,7 @@ CREATE ROLE habitualUser
 GRANT UPDATE(name, email, password, tzOffset), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE habits_habitid_seq TO habitualUser;
-GRANT UPDATE(name, frequency, type, reminderHour, reminderMinute, daysPending, isOverdue), SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
+GRANT UPDATE, SELECT, INSERT, DELETE ON TABLE Habits TO habitualUser;
 GRANT SELECT, INSERT, DELETE ON TABLE History TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE history_entryid_seq TO habitualUser;
 GRANT SELECT ON TABLE HabitTypes TO habitualUser;
