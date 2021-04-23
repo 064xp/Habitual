@@ -45,6 +45,10 @@ function signUp() {
       .then(function (res) {
         if (res.ok) {
           login(correo, password);
+        } else if (res.body.error === "Email is already in use") {
+          document
+            .querySelector("#error-email_exists")
+            .classList.remove("hide");
         }
       });
   }
