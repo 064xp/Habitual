@@ -41,7 +41,7 @@ CREATE TABLE Habits (
 	reminderHour INTEGER,
 	reminderMinute INTEGER,
 	-- Si el usuario no cumplió la actividad el día especificado
-	isOverdue BOOLEAN NOT NULL DEFAULT false 
+	isOverdue BOOLEAN NOT NULL DEFAULT false
 );
 
 --: Tabla para almacenar historial de actividades realizadas
@@ -62,7 +62,7 @@ CREATE TABLE FCMTokens (
 
 --: Regresa la hora actual en la zona horaria especificada
 CREATE OR REPLACE FUNCTION timeAtTz(
-	_tzOffset INTEGER, 
+	_tzOffset INTEGER,
 	_time TIMESTAMPTZ = NOW()
 )
 RETURNS TIMESTAMP
@@ -152,7 +152,7 @@ EXCEPTION
 END
 $$;
 
---: Calcula los días faltantes para completar el hábito 
+--: Calcula los días faltantes para completar el hábito
 -- dependiendo del tipo de hábito y los días consecutivos que ya tenga registrados
 CREATE OR REPLACE FUNCTION getDaysPending (_habitID INTEGER, _newType INTEGER)
 RETURNS INTEGER
@@ -233,7 +233,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 	updatedHabit INTEGER;
-BEGIN	
+BEGIN
 	UPDATE Habits SET name=_name, frequency=_frequency, type=_type, reminderHour=_reminder[1], reminderMinute=_reminder[2]
 		WHERE habitID = _habitID RETURNING habitID into updatedHabit;
 
@@ -252,7 +252,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 	deletedHabit INTEGER;
-BEGIN	
+BEGIN
 	DELETE FROM Habits WHERE habitID = _habitID AND userID = _userID RETURNING habitID into deletedHabit;
 
 	RAISE NOTICE 'success';
@@ -260,11 +260,11 @@ BEGIN
 END
 $$;
 
---: Registrar una actividad de un hábito en el historial 
+--: Registrar una actividad de un hábito en el historial
 CREATE OR REPLACE FUNCTION insertHistoryEntry(
-	_habitID INTEGER, 
+	_habitID INTEGER,
 	-- Si es un entrada especificando que está vencido el hábito
-	_isOverdueEntry BOOLEAN = false, 
+	_isOverdueEntry BOOLEAN = false,
 	_dateTime TIMESTAMPTZ = NOW()
 )
 RETURNS INTEGER
@@ -272,8 +272,8 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 	newEntryID INTEGER;
-BEGIN	
-	INSERT INTO History (habitID, dateTime, isOverdueEntry) 
+BEGIN
+	INSERT INTO History (habitID, dateTime, isOverdueEntry)
 		VALUES (_habitID, _dateTime, _isOverdueEntry)
 		RETURNING entryID INTO newEntryID;
 	RETURN newEntryID;
@@ -286,11 +286,11 @@ $$;
 --: Regresa todos los hábitos que están vencidos, es decir
 -- que el usuario no cumplió la actividad el día que debía
 -- Esto corre cada hora
-CREATE OR REPLACE VIEW overdueHabits AS 
+CREATE OR REPLACE VIEW overdueHabits AS
 SELECT h.habitID, u.userID, h.name, h.isOverdue, h.frequency, h.startDate, u.tzOffset
-		FROM Habits h 
+		FROM Habits h
 		INNER JOIN Users u ON  h.userID = u.userID
-		WHERE 
+		WHERE
 			-- Donde el día de ayer para el usuario esté especificado en el hábito
 			(SELECT DATE_PART('dow', timeAtTz(u.tzOffset) - '1day'::INTERVAL)) = ANY(h.frequency)
 			-- y no tenga registrada una actividad el día de ayer
@@ -306,16 +306,16 @@ SELECT h.habitID, u.userID, h.name, h.isOverdue, h.frequency, h.startDate, u.tzO
 -- para la hora actual
 CREATE OR REPLACE VIEW notificationHabits AS
 SELECT u.userID, h.habitID, h.name FROM Habits h
-	INNER JOIN Users u ON h.userID = u.userID 
-	WHERE 
-		EXTRACT('hour' FROM timeAtTz(u.tzOffset)) = h.reminderHour 
+	INNER JOIN Users u ON h.userID = u.userID
+	WHERE
+		EXTRACT('hour' FROM timeAtTz(u.tzOffset)) = h.reminderHour
 		AND EXTRACT('minute' FROM timeAtTz(u.tzOffset)) = h.reminderMinute
 		AND EXTRACT('dow' FROM timeAtTz(u.tzOffset))= ANY(h.frequency);
 
 
 -- Procedimientos almacenados
 --: Marcar a un hábito como vencido
-CREATE OR REPLACE PROCEDURE setHabitOverdue(_habitID INTEGER) 
+CREATE OR REPLACE PROCEDURE setHabitOverdue(_habitID INTEGER)
 LANGUAGE SQL
 AS $$
 	UPDATE Habits SET isOverdue = true WHERE habitID = _habitID;
@@ -325,7 +325,7 @@ $$;
 
 -- Funciones de Trigger
 
---: Actualizar los días pendientes del hábito si el usuario 
+--: Actualizar los días pendientes del hábito si el usuario
 -- lo cambia de tipo
 CREATE OR REPLACE FUNCTION updateDaysPendingTypeChange()
 RETURNS TRIGGER
@@ -341,7 +341,7 @@ END
 $$;
 
 --: Restar uno a los días pendientes cuando el usuario registra
--- una actividad 
+-- una actividad
 CREATE OR REPLACE FUNCTION updateDaysPendingActivityIns()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -356,7 +356,7 @@ END
 $$;
 
 --: Sumar uno a los días pendientes cuando el usuario borra
--- una actividad 
+-- una actividad
 CREATE OR REPLACE FUNCTION updateDaysPendingActivityDel()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -400,7 +400,7 @@ INSERT INTO HabitTypes (typeID, name, days)
 
 -- Creación de Rol de usuario y darle permiso sobre las tablas
 CREATE ROLE habitualUser
-	WITH encrypted password '' LOGIN;
+	WITH encrypted password 'habitual' LOGIN;
 
 GRANT UPDATE(name, email, password, tzOffset), SELECT, INSERT, DELETE ON TABLE Users TO habitualUser;
 GRANT USAGE, SELECT ON SEQUENCE users_userid_seq TO habitualUser;
