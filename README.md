@@ -11,8 +11,8 @@
 
 <h2 align="center" style="margin-top: 0;"><a href="https://habitual-tracker.herokuapp.com/">Ver demo</a></h2>
 <p align="center">
-  <a href="#descripcin">Descripción</a> •
-  <a href="#tecnologas">Tecnologías</a> •
+  <a href="#descripción">Descripción</a> •
+  <a href="#tecnologías">Tecnologías</a> •
   <a href="#correr-localmente">Correr Localmente</a> •
   <a href="#licencia">Licencia</a>
 
