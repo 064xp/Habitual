@@ -84,7 +84,7 @@ Debes crear un archivo con las variables de entorno en `/src/.env`
 El contenido deberá seguir el siguiente formato
 
 ```
-DATABASE_URL=postgres://habitualUser:habitual@localhost:5432/habitual
+DATABASE_URL=postgres://habitualuser:habitual@localhost:5432/Habitual
 JWT_SECRET=StringAleatorio(puedesDejarloAsi)
 NODE_ENV=debug
 PORT=3000

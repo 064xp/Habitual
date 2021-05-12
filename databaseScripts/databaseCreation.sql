@@ -152,27 +152,6 @@ EXCEPTION
 END
 $$;
 
---: Calcula los días faltantes para completar el hábito
--- dependiendo del tipo de hábito y los días consecutivos que ya tenga registrados
-CREATE OR REPLACE FUNCTION getDaysPending (_habitID INTEGER, _newType INTEGER)
-RETURNS INTEGER
-LANGUAGE plpgsql
-AS $$
-DECLARE
-	startDate TIMESTAMP := (SELECT startDate FROM Habits WHERE habitID = _habitID);
-	totalDays INTEGER := (SELECT days FROM HabitTypes WHERE typeId = _newType);
-	activitiesDone INTEGER := (SELECT COUNT(DISTINCT dateTime::date) FROM History WHERE habitID = _habitID AND dateTime > startDate);
-	daysPending INTEGER;
-BEGIN
-	SELECT totalDays - activitiesDone INTO daysPending;
-	IF daysPending < 0 THEN
-		RETURN 0;
-	ELSE
-		RETURN daysPending;
-	END IF;
-END
-$$;
-
 --: Obtiene los hábitos de un usuario
 -- Regresa la columan "doneToday" para saber si ya tiene
 -- una actividad para ese hábito registrada hoy
@@ -331,9 +310,16 @@ CREATE OR REPLACE FUNCTION updateDaysPendingTypeChange()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
+DECLARE 
+	newTotalDays INTEGER;
+	oldTotalDays INTEGER;
+	activitiesDone INTEGER;
 BEGIN
 	IF OLD.type <> NEW.type THEN
-		UPDATE Habits SET daysPending=getDaysPending(NEW.habitID, NEW.type)
+		SELECT days INTO newTotalDays FROM habitTypes where typeID = NEW.type;
+		SELECT days INTO oldTotalDays FROM habitTypes where typeID = OLD.type;
+		SELECT (oldTotalDays - OLD.daysPending) INTO activitiesDone;
+		UPDATE Habits SET daysPending = newTotalDays - activitiesDone
 					WHERE habitID = NEW.habitID;
 	END IF;
 	RETURN NEW;
