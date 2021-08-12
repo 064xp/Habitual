@@ -1,20 +1,21 @@
 const form = document.querySelector(".user_form");
 requests.customHeaders.tz_offset = new Date().getTimezoneOffset();
 
-form.addEventListener("submit", function (e) {
+form.addEventListener("submit", function(e) {
   e.preventDefault();
   const formType = form.getAttribute("data-form-type");
   if (formType == "login") login();
   else if (formType == "signup") signUp();
+  else if (formType == "password_reset") passReset();
 });
 
 function login(correo, password) {
   const credenciales = {
     email: correo || document.querySelector("#email").value,
-    password: password || document.querySelector("#pass").value,
+    password: password || document.querySelector("#pass").value
   };
 
-  requests.post("/api/auth/login", credenciales).then(function (res) {
+  requests.post("/api/auth/login", credenciales).then(function(res) {
     if (res.ok) {
       localStorage.setItem("name", res.body.name);
       localStorage.setItem("email", res.body.email);
@@ -22,7 +23,7 @@ function login(correo, password) {
       document.querySelector(".auth-error").classList.remove("hide");
     }
     if (Notification.permission == "granted")
-      registrarFCMToken().then(function () {
+      registrarFCMToken().then(function() {
         window.location = "/dashboard.html";
       });
   });
@@ -40,9 +41,9 @@ function signUp() {
         name: nombre,
         email: correo,
         password: password,
-        repeat_password: confirmacion,
+        repeat_password: confirmacion
       })
-      .then(function (res) {
+      .then(function(res) {
         if (res.ok) {
           login(correo, password);
         } else if (res.body.error === "Email is already in use") {
@@ -61,7 +62,7 @@ function validar(nombre, correo, password, confirmacion) {
   let esValido = true;
 
   //esconder todos los errores
-  errores.forEach(function (el) {
+  errores.forEach(function(el) {
     if (!el.classList.contains("hide")) el.classList.add("hide");
   });
 
@@ -80,4 +81,25 @@ function validar(nombre, correo, password, confirmacion) {
   }
 
   return esValido;
+}
+
+function passReset() {
+  const email = document.querySelector("#email").value;
+
+  requests
+    .post("/api/auth/passwordReset", {
+      email: email
+    })
+    .then(function(res) {
+      if (res.ok) {
+        swal({
+          title: "Enseguida recibirás un correo con un link de recuperación!",
+          icon: "success"
+        }).then(function() {
+          window.location = "/";
+        });
+      } else {
+        document.querySelector(".auth-error").classList.remove("hide");
+      }
+    });
 }

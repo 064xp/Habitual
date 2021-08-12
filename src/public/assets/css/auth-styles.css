@@ -42,10 +42,11 @@ nav h1 {
 .user_form label {
   font-size: 1.5em;
   margin-top: 1em;
+  margin-bottom: 0.5rem;
 }
 
 .user_form label:first-child {
-  margin: 0;
+  margin-top: 0;
 }
 
 .user_form input {

@@ -23,7 +23,7 @@ app.set("trust proxy", true);
 app.use(
   "/",
   express.static(path.join(__dirname, "public"), {
-    extensions: ["html"],
+    extensions: ["html"]
   })
 );
 app.use(logging);
@@ -39,7 +39,7 @@ const overdueHabitsJob = schedule.scheduleJob("0 * * * *", checkOverdueHabits);
 const notificationsJob = schedule.scheduleJob("*/1 * * * *", notifyUsers);
 //prettier-ignore
 //Every 28 mins keep heroku dyno awake
-const dynoWakeJob = schedule.scheduleJob("*/28 * * * *", dynoWake);
+// const dynoWakeJob = schedule.scheduleJob("*/28 * * * *", dynoWake);
 
 //Routers
 app.use("/api/auth", authRouter);

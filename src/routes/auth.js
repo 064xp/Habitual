@@ -1,11 +1,13 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { sendMail } = require("../mailer");
+
 const {
   insertUser,
   emailExists,
   getUser,
-  updateTimezone,
+  updateTimezone
 } = require("../db.js");
 const { validateUser } = require("../validation.js");
 const verify = require("./verifyToken");
@@ -48,13 +50,13 @@ router.post("/login", async (req, res) => {
     .cookie("authToken", token, {
       maxAge: 1000 * 60 * 60 * 24 * 30,
       secure: process.env.NODE_ENV == "production" ? true : false,
-      sameSite: "strict",
+      sameSite: "strict"
     })
     .json({
       status: "success",
       token: token,
       name: user.name,
-      email: user.email,
+      email: user.email
     });
 
   updateTimezone(user.userid, req.headers.tz_offset);
@@ -67,6 +69,34 @@ router.get("/verifyToken", verify, (req, res) => {
 router.post("/logout", verify, (req, res) => {
   res.clearCookie("authToken");
   res.json({ status: "logged out" });
+});
+
+router.post("/passwordReset", async (req, res) => {
+  const exists = await emailExists(req.body.email);
+  const resetLink = "test.com";
+  const emailBody = `
+    <img src="https://i.imgur.com/Bow93vn.png" alt="Habitual"/>
+    <h1>Reestablece tu contraseña de Habitual</h1>
+    <p>Da click en este link ${resetLink}</p>
+    <p><em>Si no solicitaste un cambio de contraseña, por favor, ignore esta notificación</em></p>
+  `;
+
+  if (exists) {
+    sendMail(
+      req.body.email,
+      "Reestablece tu contraseña de Habitual",
+      emailBody,
+      true
+    )
+      .then(info => {
+        console.log("Email sent: " + info.response);
+        return res.json({ status: "success" });
+      })
+      .catch(error => {
+        console.log(error);
+        return res.status(500).json({ status: "failed" });
+      });
+  }
 });
 
 module.exports = router;
