@@ -19,6 +19,18 @@ module.exports.validateUser = user => {
   return schema.validate(user);
 };
 
+module.exports.validatePassword = passwords => {
+  const schema = Joi.object({
+    password: Joi.string()
+      .min(6)
+      .max(35)
+      .required(),
+    passwordConf: Joi.ref("password")
+  });
+
+  return schema.validate(passwords);
+};
+
 module.exports.validateHabit = habit => {
   const schema = Joi.object({
     name: Joi.string()

@@ -134,6 +134,9 @@ function passReset() {
         }).then(function() {
           window.location = "/";
         });
+      } else if (res.status === 400) {
+        authError.innerText = res.body.error;
+        authError.classList.remove("hide");
       } else {
         swal({
           title: "Ocurrió un error",

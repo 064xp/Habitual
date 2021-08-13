@@ -12,7 +12,7 @@ const {
   getRecoveryEntry,
   changeUserPassword
 } = require("../db.js");
-const { validateUser } = require("../utils/validation.js");
+const { validateUser, validatePassword } = require("../utils/validation.js");
 const { generateCode } = require("../utils/helperFunctions.js");
 const verify = require("./verifyToken");
 
@@ -86,10 +86,12 @@ router.post("/passwordReset", async (req, res) => {
       const resetLink =
         process.env.DOMAIN + `/passwordResetForm.html?recoveryCode=${code}`;
       const emailBody = `
-      <img src="https://i.imgur.com/Bow93vn.png" alt="Habitual"/>
-      <h1>Reestablece tu contraseña de Habitual</h1>
-      <h2 style="font-weight: normal;">Da click en este link ${resetLink} para reestablecer tu contraseña</h2>
-      <p><em>Si no solicitaste un cambio de contraseña, por favor, ignora esta notificación</em></p>
+      <p style="text-align:center;">
+        <img src="https://i.imgur.com/Bow93vn.png" alt="Habitual"/>
+      </p>
+      <h1  style="text-align:center;  font-family: sans-serif;">Reestablece tu contraseña de Habitual</h1>
+      <h2 style="font-weight: normal; text-align: center;  font-family: sans-serif;">Da click en este link <p>${resetLink}</p> para reestablecer tu contraseña</h2>
+      <p style="text-align:center;  font-family: sans-serif;"><em>Si no solicitaste un cambio de contraseña, por favor, ignora esta notificación</em></p>
     `;
 
       await sendMail(
@@ -129,6 +131,9 @@ router.post("/resetPassword", async (req, res) => {
   const recoveryCode = req.body.code;
   const password = req.body.password;
   const passwordConf = req.body.passwordConf;
+
+  const { error } = validatePassword({ password, passwordConf });
+  if (error) return res.status(400).json({ error: error.details[0].message });
 
   const recoveryEntry = await getRecoveryEntry(recoveryCode);
   if (recoveryEntry === undefined) {
