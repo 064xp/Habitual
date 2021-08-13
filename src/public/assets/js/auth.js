@@ -22,13 +22,13 @@ function login(correo, password) {
     if (res.ok) {
       localStorage.setItem("name", res.body.name);
       localStorage.setItem("email", res.body.email);
+      if (Notification.permission == "granted")
+        registrarFCMToken().then(function() {
+          window.location = "/dashboard.html";
+        });
     } else {
       document.querySelector(".auth-error").classList.remove("hide");
     }
-    if (Notification.permission == "granted")
-      registrarFCMToken().then(function() {
-        window.location = "/dashboard.html";
-      });
   });
 }
 
