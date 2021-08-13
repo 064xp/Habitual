@@ -1,15 +1,19 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { sendMail } = require("../mailer");
-
+const uuid = require("uuid");
+const { sendMail } = require("../utils/mailer");
 const {
   insertUser,
   emailExists,
   getUser,
-  updateTimezone
+  updateTimezone,
+  addRecoveryCode,
+  getRecoveryEntry,
+  changeUserPassword
 } = require("../db.js");
-const { validateUser } = require("../validation.js");
+const { validateUser } = require("../utils/validation.js");
+const { generateCode } = require("../utils/helperFunctions.js");
 const verify = require("./verifyToken");
 
 router.post("/signup", async (req, res) => {
@@ -73,29 +77,85 @@ router.post("/logout", verify, (req, res) => {
 
 router.post("/passwordReset", async (req, res) => {
   const exists = await emailExists(req.body.email);
-  const resetLink = "test.com";
-  const emailBody = `
-    <img src="https://i.imgur.com/Bow93vn.png" alt="Habitual"/>
-    <h1>Reestablece tu contraseña de Habitual</h1>
-    <p>Da click en este link ${resetLink}</p>
-    <p><em>Si no solicitaste un cambio de contraseña, por favor, ignore esta notificación</em></p>
-  `;
-
   if (exists) {
-    sendMail(
-      req.body.email,
-      "Reestablece tu contraseña de Habitual",
-      emailBody,
-      true
-    )
-      .then(info => {
-        console.log("Email sent: " + info.response);
-        return res.json({ status: "success" });
-      })
-      .catch(error => {
-        console.log(error);
-        return res.status(500).json({ status: "failed" });
-      });
+    try {
+      const user = await getUser(req.body.email);
+      const code = uuid.v4();
+      await addRecoveryCode(user.userid, code);
+
+      const resetLink =
+        process.env.DOMAIN + `/passwordResetForm.html?recoveryCode=${code}`;
+      const emailBody = `
+      <img src="https://i.imgur.com/Bow93vn.png" alt="Habitual"/>
+      <h1>Reestablece tu contraseña de Habitual</h1>
+      <h2 style="font-weight: normal;">Da click en este link ${resetLink} para reestablecer tu contraseña</h2>
+      <p><em>Si no solicitaste un cambio de contraseña, por favor, ignora esta notificación</em></p>
+    `;
+
+      await sendMail(
+        req.body.email,
+        "Reestablece tu contraseña de Habitual",
+        emailBody,
+        true
+      );
+      return res.json({ status: "success" });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ status: "failed" });
+    }
+  }
+});
+
+router.post("/validateRecoveryCode", async (req, res) => {
+  const recoveryCode = req.body.code;
+  const recoveryEntry = await getRecoveryEntry(recoveryCode);
+  if (recoveryEntry === undefined) {
+    return res
+      .status(401)
+      .json({ status: "failed", error: "Recovery code is not valid" });
+  }
+
+  const now = new Date();
+  // If code was generated more than 5 minutes ago
+  if ((now - recoveryEntry.created) / 1000 / 60 > 5) {
+    return res
+      .status(410)
+      .json({ status: "failed", error: "Recovery code has expired" });
+  }
+  return res.json({ status: "success", error: "Recovery code is valid" });
+});
+
+router.post("/resetPassword", async (req, res) => {
+  const recoveryCode = req.body.code;
+  const password = req.body.password;
+  const passwordConf = req.body.passwordConf;
+
+  const recoveryEntry = await getRecoveryEntry(recoveryCode);
+  if (recoveryEntry === undefined) {
+    return res
+      .status(401)
+      .json({ status: "failed", error: "Recovery code is not valid" });
+  }
+
+  if (password !== passwordConf) {
+    return res
+      .status(400)
+      .json({ status: "failed", error: "Passwords do not match" });
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashed = await bcrypt.hash(password, salt);
+    await changeUserPassword(recoveryEntry.userid, hashed);
+    return res.json({
+      status: "sucess",
+      error: "Password updated succesfully"
+    });
+  } catch (e) {
+    console.log(e);
+    return res
+      .status(500)
+      .json({ status: "failed", error: "Error while updating the password" });
   }
 });
 

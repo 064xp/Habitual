@@ -1,12 +1,15 @@
 const form = document.querySelector(".user_form");
+let code;
 requests.customHeaders.tz_offset = new Date().getTimezoneOffset();
 
 form.addEventListener("submit", function(e) {
   e.preventDefault();
+
   const formType = form.getAttribute("data-form-type");
   if (formType == "login") login();
   else if (formType == "signup") signUp();
-  else if (formType == "password_reset") passReset();
+  else if (formType == "password_reset_email") passResetEmail();
+  else if (formType == "password_reset_form") passReset();
 });
 
 function login(correo, password) {
@@ -83,7 +86,7 @@ function validar(nombre, correo, password, confirmacion) {
   return esValido;
 }
 
-function passReset() {
+function passResetEmail() {
   const email = document.querySelector("#email").value;
 
   requests
@@ -102,4 +105,84 @@ function passReset() {
         document.querySelector(".auth-error").classList.remove("hide");
       }
     });
+}
+
+function passReset() {
+  const password = document.querySelector("#password").value;
+  const passwordConf = document.querySelector("#passwordConf").value;
+  const authError = document.querySelector(".auth-error");
+  const resetCode = authError.classList.add("hide");
+
+  if (password !== passwordConf) {
+    authError.innerText = "Las contraseñas no concuerdan";
+    authError.classList.remove("hide");
+    return;
+  }
+
+  requests
+    .post("/api/auth/resetPassword", {
+      code: code,
+      password: password,
+      passwordConf: passwordConf
+    })
+    .then(function(res) {
+      if (res.ok) {
+        swal({
+          title: "Contraseña cambiada exitosamente!",
+          icon: "success",
+          timer: 1500
+        }).then(function() {
+          window.location = "/";
+        });
+      } else {
+        swal({
+          title: "Ocurrió un error",
+          text: "Inténtalo de nuevo más tarde",
+          icon: "error"
+        });
+      }
+    });
+}
+
+function validateRecoveryCode() {
+  const params = new URLSearchParams(window.location.search);
+  code = params.get("recoveryCode");
+
+  if (code === null) {
+    showInvalidRecoveryCode();
+    return;
+  }
+
+  requests
+    .post("/api/auth/validateRecoveryCode", {
+      code: code
+    })
+    .then(function(res) {
+      if (res.status !== 200) {
+        showInvalidRecoveryCode(res.status);
+      }
+    });
+}
+
+function showInvalidRecoveryCode(statusCode = 401) {
+  const errorModal = document.querySelector(".invalid-error");
+  const modalTitle = document.querySelector("#invalid-error_title");
+  const modalP = document.querySelector("#invalid-error_p");
+
+  if (statusCode === 401) {
+    modalTitle.innerText = "Este link no es válido";
+    modalP.innerText =
+      "Verifique que haya seguido el enlace que recibió a su correo correctamente.";
+  } else if (statusCode === 410) {
+    modalTitle.innerText = "Este link ha expirado";
+    modalP.innerText =
+      "Ya ha pasado mucho tiempo desde que generó este link. Por favor genere uno nuevo.";
+  }
+
+  form.classList.add("hide");
+  errorModal.classList.remove("hide");
+}
+
+if (site === "init_passResetForm") {
+  validateRecoveryCode();
 }

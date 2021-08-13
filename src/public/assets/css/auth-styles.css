@@ -88,5 +88,43 @@ nav h1 {
 }
 
 .hide {
-  display: none;
+  display: none !important;
+}
+
+.invalid-error {
+  background: white;
+  width: 80vw;
+  max-width: 600px;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.invalid-error img {
+  width: 30%;
+  margin-bottom: 1rem;
+}
+
+.invalid-error a {
+  color: #023e8a;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+}
+
+#invalid-error_title {
+  color: black;
+  margin: 0.5rem 0;
+  font-weight: normal;
+  text-align: center;
+}
+
+#invalid-error_p {
+  color: black;
+  margin: 0;
+  font-size: 1.5rem;
+  color: #585858;
+  text-align: center;
 }

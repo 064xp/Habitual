@@ -11,27 +11,27 @@ const pool = new Pool({
     process.env.NODE_ENV == "debug"
       ? false
       : {
-          rejectUnauthorized: false,
-        },
+          rejectUnauthorized: false
+        }
 });
 
 module.exports.pool = pool;
 
-module.exports.insertUser = async (user) => {
+module.exports.insertUser = async user => {
   const result = await pool.query("SELECT insertUser($1, $2, $3);", [
     user.name,
     user.email,
-    user.password,
+    user.password
   ]);
   return result.rows[0].insertuser;
 };
 
-module.exports.emailExists = async (userEmail) => {
+module.exports.emailExists = async userEmail => {
   const result = await pool.query("SELECT emailExists($1)", [userEmail]);
   return result.rows[0].emailexists;
 };
 
-module.exports.getUser = async (email) => {
+module.exports.getUser = async email => {
   const result = await pool.query(
     "SELECT userId, name, email, password  FROM Users WHERE email = $1",
     [email]
@@ -48,7 +48,7 @@ module.exports.updateTimezone = async (userID, newTzOffset) => {
     try {
       await pool.query("UPDATE Users SET tzoffset = $1 WHERE userID = $2", [
         newTzOffset,
-        userID,
+        userID
       ]);
     } catch (e) {
       console.log(`Error updating timezone for user ${userID}`);
@@ -60,7 +60,7 @@ module.exports.updateTimezone = async (userID, newTzOffset) => {
 module.exports.getUserHabits = async (userID, ammount = null) => {
   const result = await pool.query("SELECT * from getUserHabits($1, $2)", [
     userID,
-    ammount,
+    ammount
   ]);
   return result.rows;
 };
@@ -89,7 +89,7 @@ module.exports.insertHabit = async (
       frequency, //3
       type, //4
       reminder, //5
-      startDate, //6
+      startDate //6
     ]
   );
   return result.rows[0].inserthabit;
@@ -113,12 +113,12 @@ module.exports.updateHabit = async (
 module.exports.deleteHabit = async (userID, habitID) => {
   const result = await pool.query("SELECT deleteHabit($1, $2)", [
     userID,
-    habitID,
+    habitID
   ]);
   return result.rows[0].deletehabit;
 };
 
-module.exports.setHabitOverdue = async (habitID) => {
+module.exports.setHabitOverdue = async habitID => {
   const result = await pool.query("CALL setHabitOverdue($1)", [habitID]);
   return result;
 };
@@ -126,7 +126,7 @@ module.exports.setHabitOverdue = async (habitID) => {
 module.exports.addHistoryEntry = async (habitID, dateTime = new Date()) => {
   const result = await pool.query("SELECT insertHistoryEntry($1, false, $2)", [
     habitID,
-    dateTime,
+    dateTime
   ]);
   return result.rows[0].inserthistoryentry;
 };
@@ -152,7 +152,7 @@ module.exports.removeHistoryEntry = async (userID, habitID, entryID = null) => {
   }
 };
 
-module.exports.resetHabit = async (habit) => {
+module.exports.resetHabit = async habit => {
   try {
     const typeQuery = await pool.query(
       "SELECT days FROM habitTypes WHERE typeID = $1",
@@ -194,16 +194,39 @@ module.exports.addFCMToken = async (userID, token) => {
   );
 };
 
-module.exports.deleteFCMToken = async (token) => {
+module.exports.deleteFCMToken = async token => {
   const res = await pool.query("DELETE FROM FCMTokens WHERE token = $1", [
-    token,
+    token
   ]);
 };
 
-module.exports.getUserFCMTokens = async (userID) => {
+module.exports.getUserFCMTokens = async userID => {
   const tokens = await pool.query(
     "SELECT token FROM FCMTokens WHERE userID = $1",
     [userID]
   );
   return tokens.rows;
+};
+
+module.exports.addRecoveryCode = async (userID, code) => {
+  const res = await pool.query(
+    "INSERT INTO RecoveryCodes (userID, code) VALUES ($1, $2)",
+    [userID, code]
+  );
+};
+
+module.exports.getRecoveryEntry = async code => {
+  if (!code) return undefined;
+  const res = await pool.query("SELECT * FROM RecoveryCodes WHERE code = $1", [
+    code
+  ]);
+  return res.rows[0];
+};
+
+module.exports.changeUserPassword = async (userId, newPassword) => {
+  const result = await pool.query(
+    "UPDATE Users SET password = $1 WHERE userid = $2",
+    [newPassword, userId]
+  );
+  return result.rows[0];
 };

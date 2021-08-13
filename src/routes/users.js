@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const verify = require("./verifyToken");
 const db = require("../db");
-const { validateHabit } = require("../validation");
+const { validateHabit } = require("../utils/validation");
 
 router.post("/fcm-token", verify, async (req, res) => {
   const { token } = req.body;

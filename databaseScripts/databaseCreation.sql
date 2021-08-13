@@ -58,6 +58,13 @@ CREATE TABLE FCMTokens (
 	userID INTEGER REFERENCES Users (userID) NOT NULL
 );
 
+--: Tabla para almacenar codigos de recuperación de contraseña
+CREATE TABLE RecoveryCodes (
+	code VARCHAR(36) PRIMARY KEY,
+	userID INTEGER REFERENCES Users (userID) NOT NULL,
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Funciones
 
 --: Regresa la hora actual en la zona horaria especificada
@@ -398,3 +405,4 @@ GRANT SELECT ON TABLE HabitTypes TO habitualUser;
 GRANT SELECT ON overdueHabits TO habitualUser;
 GRANT UPDATE, SELECT, INSERT, DELETE ON TABLE FCMTokens TO habitualUser;
 GRANT SELECT ON notificationHabits TO habitualUser;
+GRANT UPDATE, SELECT, INSERT, DELETE ON TABLE RecoveryCodes TO habitualUser;
